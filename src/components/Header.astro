@@ -1,0 +1,27 @@
+---
+const links = [
+  { text: 'Inicio', href: '/' },
+  { text: 'Música', href: '/music' },
+  { text: 'Tecnología', href: '/tech' },
+  { text: 'Arte', href: '/art' },
+  { text: 'Deportes', href: '/sports' },
+];
+---
+
+<header class="bg-gray-800 text-white py-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Logo o Título del sitio -->
+    <a href="/" class="text-2xl font-bold">Variedades</a>
+
+    <!-- Menú de navegación -->
+    <nav>
+      <ul class="flex space-x-4">
+        {links.map(({ text, href }) => (
+          <li>
+            <a href={href} class="hover:text-gray-400">{text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
