@@ -1,0 +1,102 @@
+<div class="fixed bottom-0 left-0 right-0 h-32 pointer-events-none z-50">
+  <canvas id="waveCanvas" class="w-full h-full"></canvas>
+</div>
+
+<script>
+class Wave {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.points = [];
+    this.mouse = { x: 0, y: 0 };
+    this.numberOfPoints = 20;
+    this.init();
+    this.bindEvents();
+    this.animate();
+  }
+
+  init() {
+    this.resize();
+    for (let i = 0; i <= this.numberOfPoints; i++) {
+      this.points.push({
+        x: (this.canvas.width / this.numberOfPoints) * i,
+        y: this.canvas.height / 2,
+        originY: this.canvas.height / 2,
+        speed: 0.1,
+        amplitude: 0
+      });
+    }
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = this.canvas.parentElement.offsetHeight;
+  }
+
+  bindEvents() {
+    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('mousemove', (e) => {
+      this.mouse = {
+        x: e.clientX,
+        y: e.clientY
+      };
+    });
+  }
+
+  animate() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Dibuja las ondas
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.canvas.height / 2);
+
+    for (let i = 0; i < this.points.length; i++) {
+      const point = this.points[i];
+      
+      // Calcula la distancia al mouse
+      const dx = this.mouse.x - point.x;
+      const dy = this.mouse.y - point.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // Ajusta la amplitud basada en la distancia
+      if (distance < 100) {
+        point.amplitude = Math.max(point.amplitude, (100 - distance) / 10);
+      }
+      
+      // Actualiza la posición Y
+      point.y = point.originY + Math.sin(Date.now() * point.speed) * point.amplitude;
+      
+      // Reduce gradualmente la amplitud
+      point.amplitude *= 0.99;
+
+      // Dibuja la curva
+      if (i === 0) {
+        this.ctx.moveTo(point.x, point.y);
+      } else {
+        const xc = (point.x + this.points[i - 1].x) / 2;
+        const yc = (point.y + this.points[i - 1].y) / 2;
+        this.ctx.quadraticCurveTo(this.points[i - 1].x, this.points[i - 1].y, xc, yc);
+      }
+    }
+
+    // Estilo de la onda
+    this.ctx.strokeStyle = '#00f3ff';
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    
+    // Efecto de brillo
+    this.ctx.shadowColor = '#00f3ff';
+    this.ctx.shadowBlur = 10;
+    
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Inicializa las ondas cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('waveCanvas');
+  if (canvas) {
+    new Wave(canvas);
+  }
+});
+</script> 

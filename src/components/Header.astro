@@ -1,27 +1,71 @@
 ---
-const links = [
-  { text: 'Inicio', href: '/' },
-  { text: 'Música', href: '/music' },
-  { text: 'Tecnología', href: '/tech' },
-  { text: 'Arte', href: '/art' },
-  { text: 'Deportes', href: '/sports' },
+const navItems = [
+  { href: "#sobre-mi", text: "Sobre Mí" },
+  { href: "#proyectos", text: "Proyectos" },
+  { href: "#habilidades", text: "Habilidades" },
+  { href: "#github", text: "GitHub" },
+  { href: "#contacto", text: "Contacto" },
 ];
 ---
 
-<header class="bg-gray-800 text-white py-4">
-  <div class="container mx-auto flex justify-between items-center">
-    <!-- Logo o Título del sitio -->
-    <a href="/" class="text-2xl font-bold">Variedades</a>
+<header class="fixed w-full z-50 bg-bermuda-950/80 backdrop-blur-sm">
+  <nav class="container mx-auto px-4 py-4">
+    <div class="flex items-center justify-between">
+      <a href="/" class="text-2xl font-bold text-bermuda-400">ASC</a>
 
-    <!-- Menú de navegación -->
-    <nav>
-      <ul class="flex space-x-4">
-        {links.map(({ text, href }) => (
-          <li>
-            <a href={href} class="hover:text-gray-400">{text}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+      <div class="hidden md:flex space-x-6">
+        {
+          navItems.map((item) => (
+            <a
+              href={item.href}
+              class="text-bermuda-100 hover:text-bermuda-400 transition-colors"
+            >
+              {item.text}
+            </a>
+          ))
+        }
+      </div>
+
+      <button id="menu-toggle" class="md:hidden text-white">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Menú móvil -->
+  <div id="mobile-menu" class="hidden md:hidden">
+    <div class="px-4 py-2 space-y-2">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class="block text-gray-300 hover:text-primary transition-colors"
+          >
+            {item.text}
+          </a>
+        ))
+      }
+    </div>
   </div>
 </header>
+
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuToggle?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
+  });
+</script>

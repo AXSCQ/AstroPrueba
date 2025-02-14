@@ -1,18 +1,14 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "baseUrl": "./src",  
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["./*"], 
+      "@/*": ["src/*"]
     },
-    "strict": true, 
-    "module": "ESNext",
-    "target": "ES2020",
-    "moduleResolution": "node",
+    "types": ["astro/client"],
     "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "jsxImportSource": "react"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.astro"],
   "exclude": ["node_modules"]
 }

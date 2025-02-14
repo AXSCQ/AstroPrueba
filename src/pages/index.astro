@@ -1,16 +1,202 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import Layout from "../layouts/Layout.astro";
+import DawPanel from "../components/DawPanel.astro";
+import { Image } from 'astro:assets';
+import perfilImage from "../assets/images/perfil.jpg";
+import bajistaImage from "../assets/images/bajista.jpg";
+import laptopImage from "../assets/images/laptop.jpg";
+import ProjectModal from "../components/ProjectModal.astro";
+import SoundWaves from "../components/SoundWaves.astro";
+
+// Definición de los proyectos
+const projects = [
+  {
+    title: "Proyecto 1",
+    shortDescription: "Breve descripción del proyecto 1",
+    description: "Una descripción más detallada del proyecto 1 y sus características principales...",
+    image: laptopImage,
+    features: [
+      "Característica 1",
+      "Característica 2",
+      "Característica 3"
+    ],
+    technologies: ["React", "Node.js", "MongoDB"]
+  },
+  {
+    title: "Proyecto 2",
+    shortDescription: "Breve descripción del proyecto 2",
+    description: "Una descripción más detallada del proyecto 2 y sus características principales...",
+    image: laptopImage,
+    features: [
+      "Característica 1",
+      "Característica 2",
+      "Característica 3"
+    ],
+    technologies: ["Vue", "Express", "PostgreSQL"]
+  },
+  {
+    title: "Proyecto 3",
+    shortDescription: "Breve descripción del proyecto 3",
+    description: "Una descripción más detallada del proyecto 3 y sus características principales...",
+    image: laptopImage,
+    features: [
+      "Característica 1",
+      "Característica 2",
+      "Característica 3"
+    ],
+    technologies: ["Angular", "Django", "MySQL"]
+  },
+  {
+    title: "Proyecto 4",
+    shortDescription: "Breve descripción del proyecto 4",
+    description: "Una descripción más detallada del proyecto 4 y sus características principales...",
+    image: laptopImage,
+    features: [
+      "Característica 1",
+      "Característica 2",
+      "Característica 3"
+    ],
+    technologies: ["Next.js", "FastAPI", "Redis"]
+  }
+];
 ---
 
-<Layout title="Explora el Mundo de la Música">
-  <section class="text-center">
-	<h2 class="text-3xl font-bold text-center mb-6" data-aos="fade-up">Explora los Géneros Musicales</h2>
-	<div class="flex justify-center" data-aos="zoom-in">
-	  <img src="/images/music_section.webp" alt="Explora diferentes géneros musicales" class="rounded-lg shadow-lg w-full max-w-3xl">
-	</div>
-      <Card href="/about" title="Géneros Musicales" body="Descubre diferentes estilos de música." />
-      <Card href="/contact" title="Instrumentos Populares" body="Conoce los instrumentos más utilizados." />
-    </ul>
-  </section>
+<Layout title="Axel Simon Condori - Portfolio">
+  <div class="min-h-screen bg-cyber-950 p-4 md:p-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
+      <!-- Profile Panel -->
+      <DawPanel title="PROFILE" variant="default" class="lg:col-span-2">
+        <div class="flex items-center gap-6">
+          <Image
+            src={perfilImage}
+            alt="Axel Simon Condori"
+            class="w-32 h-32 rounded-xl object-cover border border-neon-blue/20 animate-glow"
+            width={128}
+            height={128}
+          />
+          <div>
+            <h1 class="text-3xl font-bold text-white mb-2">
+              Axel Simon <span class="text-neon-blue">Condori</span>
+            </h1>
+            <p class="text-white/60">Desarrollador Full Stack & Músico</p>
+          </div>
+        </div>
+      </DawPanel>
+
+      <!-- Music Projects -->
+      <DawPanel title="MUSIC PROJECTS" variant="music">
+        <div class="relative">
+          <Image
+            src={bajistaImage}
+            alt="Music Projects"
+            class="w-full h-48 object-cover rounded-lg"
+            width={300}
+            height={200}
+          />
+          <div class="mt-4 space-y-2">
+            {
+              ['Bass', 'Production', 'Mixing'].map((skill, index) => (
+                <div class="flex items-center gap-2" data-key={index}>
+                  <div class="flex-1 h-1 bg-cyber-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-neon-purple w-4/5 animate-pulse-slow"></div>
+                  </div>
+                  <span class="text-xs text-white/60">{skill}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </DawPanel>
+
+      <!-- Code Editor Panel -->
+      <DawPanel title="CODE EDITOR" variant="code" class="lg:col-span-2">
+        <div class="font-mono text-sm">
+          <pre class="text-white/80">
+            <code>{`class Developer {
+  name = "Axel"
+  skills = ["React", "Node", "Python"]
+  passions = ["Code", "Music"]
+}`}</code>
+          </pre>
+        </div>
+      </DawPanel>
+
+      <!-- Projects Grid -->
+      <DawPanel title="PROJECTS" variant="default">
+        <div class="grid grid-cols-2 gap-2">
+          {
+            projects.map((project, i) => (
+              <div 
+                class="aspect-square bg-cyber-800 rounded-lg p-2 hover:bg-cyber-700 transition-all cursor-pointer border border-neon-blue/10 hover:border-neon-blue/30 group"
+                onclick={`document.getElementById('project-${i}').showModal()`}
+              >
+                <div class="w-full h-full rounded bg-cyber-700/50 group-hover:bg-cyber-600/50 transition-all relative overflow-hidden">
+                  {project.image && (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all"
+                      width={300}
+                      height={300}
+                    />
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/80 to-transparent p-4 flex flex-col justify-end">
+                    <h3 class="text-neon-blue font-medium">{project.title}</h3>
+                    <p class="text-sm text-white/60">{project.shortDescription}</p>
+                  </div>
+                </div>
+              </div>
+
+              <ProjectModal id={`project-${i}`}>
+                <h2 slot="title">{project.title}</h2>
+                <div class="prose prose-invert max-w-none">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    class="w-full h-64 object-cover rounded-lg mb-4"
+                    width={600}
+                    height={300}
+                  />
+                  <p>{project.description}</p>
+                  <h3>Características principales:</h3>
+                  <ul>
+                    {project.features.map(feature => (
+                      <li>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div slot="technologies" class="flex flex-wrap gap-2">
+                  {project.technologies.map(tech => (
+                    <span class="px-2 py-1 bg-cyber-700 text-neon-blue text-sm rounded-full">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </ProjectModal>
+            ))
+          }
+        </div>
+      </DawPanel>
+
+      <!-- Contact Panel -->
+      <DawPanel title="CONTACT" variant="contact">
+        <div class="space-y-4">
+          <a href="mailto:tu@email.com" class="block p-2 bg-cyber-800/50 rounded-lg hover:bg-cyber-700/50 transition-colors">
+            <span class="text-neon-pink">></span> tu@email.com
+          </a>
+          <div class="flex gap-2">
+            <a href="#" class="flex-1 p-2 bg-cyber-800/50 rounded-lg text-center hover:bg-cyber-700/50 transition-colors">
+              GitHub
+            </a>
+            <a href="#" class="flex-1 p-2 bg-cyber-800/50 rounded-lg text-center hover:bg-cyber-700/50 transition-colors">
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </DawPanel>
+    </div>
+  </div>
+
+  <!-- Añade el componente de ondas al final del Layout -->
+  <SoundWaves />
 </Layout>

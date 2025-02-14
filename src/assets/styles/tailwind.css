@@ -2,4 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Aquí puedes agregar estilos personalizados adicionales */
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-full font-medium transition-all duration-300;
+  }
+  
+  .btn-primary {
+    @apply bg-neon-blue text-cyber-950 hover:bg-neon-blue/80 transform hover:-translate-y-0.5;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-neon-blue text-neon-blue hover:bg-neon-blue/10 transform hover:-translate-y-0.5;
+  }
+
+  .card {
+    @apply bg-cyber-800/50 backdrop-blur-sm border border-neon-blue/10 rounded-lg;
+  }
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-cyber-800/50 backdrop-blur-sm border border-neon-blue/20;
+}
+
+/* Animaciones personalizadas */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animaciones personalizadas */
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1;
+}
+
+.hover-glow {
+  @apply transition-all duration-300 hover:shadow-lg hover:shadow-neon-blue/20;
+}
+
+/* Gradientes */
+.gradient-mask-b {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}

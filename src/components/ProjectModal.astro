@@ -1,0 +1,52 @@
+---
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<dialog id={id} class="modal bg-transparent">
+  <div class="fixed inset-0 bg-cyber-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-cyber-800 border border-neon-blue/20 rounded-lg w-full max-w-2xl relative overflow-hidden">
+      <!-- Efecto de brillo en las esquinas -->
+      <div class="absolute -top-10 -left-10 w-20 h-20 bg-neon-blue/20 blur-xl"></div>
+      <div class="absolute -bottom-10 -right-10 w-20 h-20 bg-neon-purple/20 blur-xl"></div>
+
+      <!-- Header del modal -->
+      <div class="flex items-center justify-between p-4 border-b border-neon-blue/10">
+        <h3 class="text-xl font-semibold text-neon-blue">
+          <slot name="title" />
+        </h3>
+        <button onclick="closeModal(this)" class="text-cyber-600 hover:text-neon-blue transition-colors">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Contenido -->
+      <div class="p-6">
+        <slot />
+      </div>
+
+      <!-- Footer con tecnologías -->
+      <div class="border-t border-neon-blue/10 p-4">
+        <slot name="technologies" />
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  function closeModal(button: HTMLButtonElement) {
+    const modal = button.closest('dialog');
+    modal?.close();
+  }
+</script>
+
+<style>
+  .modal::backdrop {
+    background: transparent;
+  }
+</style> 

@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  variant?: 'default' | 'music' | 'code' | 'contact';
+  class?: string;
+}
+
+const { title, variant = 'default', class: className = '' } = Astro.props;
+
+const variants = {
+  default: 'from-cyber-800/50 to-cyber-700/30 border-neon-blue/20',
+  music: 'from-neon-purple/10 to-cyber-700/30 border-neon-purple/20',
+  code: 'from-neon-green/10 to-cyber-700/30 border-neon-green/20',
+  contact: 'from-neon-pink/10 to-cyber-700/30 border-neon-pink/20'
+};
+---
+
+<div class={`panel bg-gradient-to-br ${variants[variant]} backdrop-blur-md rounded-xl border p-4 relative overflow-hidden ${className}`}>
+  <!-- Panel Header -->
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-medium text-white/80 flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></span>
+      {title}
+    </h3>
+    <div class="flex gap-1">
+      <div class="w-1 h-4 bg-neon-blue/30 animate-wave"></div>
+      <div class="w-1 h-4 bg-neon-blue/30 animate-wave" style="animation-delay: 0.1s"></div>
+      <div class="w-1 h-4 bg-neon-blue/30 animate-wave" style="animation-delay: 0.2s"></div>
+    </div>
+  </div>
+  
+  <!-- Panel Content -->
+  <div class="relative z-10">
+    <slot />
+  </div>
+
+  <!-- Decorative Elements -->
+  <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-br from-neon-blue/10 to-transparent rounded-full blur-xl"></div>
+</div>
+
+<style>
+  .panel {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .animate-wave {
+    animation: wave 1.5s ease-in-out infinite;
+    transform-origin: bottom;
+  }
+</style> 
