@@ -6,17 +6,30 @@
   .btn {
     @apply px-6 py-3 rounded-full font-medium transition-all duration-300;
   }
-  
+
   .btn-primary {
     @apply bg-neon-blue text-cyber-950 hover:bg-neon-blue/80 transform hover:-translate-y-0.5;
   }
-  
+
   .btn-outline {
     @apply border-2 border-neon-blue text-neon-blue hover:bg-neon-blue/10 transform hover:-translate-y-0.5;
   }
 
   .card {
     @apply bg-cyber-800/50 backdrop-blur-sm border border-neon-blue/10 rounded-lg;
+  }
+
+  /* Estilos para el ecualizador de música */
+  .equalizer-bar {
+    @apply rounded-t-sm;
+    transform-origin: bottom;
+    will-change: transform, opacity;
+  }
+
+  /* Estilos para las tarjetas de contacto */
+  .contact-card-optimized {
+    @apply relative overflow-hidden;
+    will-change: transform, box-shadow;
   }
 }
 
@@ -27,13 +40,50 @@
 
 /* Animaciones personalizadas */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Efecto de ecualizador */
+@keyframes equalize {
+  0% {
+    transform: scaleY(0.2);
+  }
+
+  50% {
+    transform: scaleY(var(--scale-y, 1));
+  }
+
+  100% {
+    transform: scaleY(0.2);
+  }
+}
+
+.animate-equalize {
+  animation: equalize 1s ease-in-out infinite;
+  animation-delay: calc(var(--bar-index, 0) * 0.05s);
+}
+
+/* Optimización para animaciones */
+.transition-height {
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.transition-expand {
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
 }
 
 /* Scroll suave */
@@ -53,4 +103,125 @@ html {
 /* Gradientes */
 .gradient-mask-b {
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+/* Estilo para dialog */
+dialog {
+  &::backdrop {
+    @apply bg-cyber-950/70 backdrop-blur-sm;
+    will-change: opacity;
+  }
+}
+
+/* Estilos específicos para animaciones */
+.contact-modal-enter {
+  animation: contactModalEnter 0.3s ease-out forwards;
+}
+
+.contact-modal-exit {
+  animation: contactModalExit 0.3s ease-in forwards;
+}
+
+/* Optimización para dispositivos móviles */
+@media (max-width: 768px) {
+  .contact-card-optimized.mobile-expanded {
+    z-index: 10;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--shadow-color, rgba(0, 243, 255, 0.5));
+  }
+
+  /* Reducir complejidad visual en móviles */
+  .equalizer-bar {
+    transition: transform 0.1s ease-out;
+  }
+}
+
+@keyframes contactModalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes contactModalExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Optimizaciones para rendimiento */
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Animaciones para el modal de contacto */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.form-slide-in {
+  animation: slideDown 0.3s ease forwards;
+}
+
+/* Estilo para las tarjetas de contacto */
+.contact-card-optimized form input,
+.contact-card-optimized form textarea {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.contact-card-optimized form input:focus,
+.contact-card-optimized form textarea:focus {
+  box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Animación de carga */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Fix para la visualización en dispositivos móviles */
+@media (max-width: 640px) {
+  .contact-card-optimized .max-h-0 {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .contact-card-optimized form,
+  .contact-card-optimized form input,
+  .contact-card-optimized form textarea {
+    max-width: 100%;
+    width: 100%;
+  }
 }

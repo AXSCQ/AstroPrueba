@@ -1,102 +1,176 @@
-<div class="fixed bottom-0 left-0 right-0 h-32 pointer-events-none z-50">
-  <canvas id="waveCanvas" class="w-full h-full"></canvas>
+<div class="fixed bottom-0 left-0 right-0 h-32 pointer-events-none z-50 opacity-0 transition-opacity duration-500" id="equalizerContainer">
+  <div class="flex items-end justify-center h-full w-full px-4 gap-[2px]">
+    <!-- Las barras del ecualizador se generarán dinámicamente con JavaScript -->
+  </div>
 </div>
 
 <script>
-class Wave {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    this.points = [];
-    this.mouse = { x: 0, y: 0 };
-    this.numberOfPoints = 20;
-    this.init();
-    this.bindEvents();
-    this.animate();
-  }
+  class AudioEqualizer {
+    constructor() {
+      this.container = document.getElementById('equalizerContainer');
+      this.barCount = 32; // Reducido para mejor rendimiento
+      this.maxHeight = 100; 
+      this.bars = [];
+      this.mousePosition = { x: 0, y: 0 };
+      this.isVisible = false;
+      this.timeoutId = null;
+      this.active = false;
+      this.frameCount = 0;
+      
+      this.init();
+    }
 
-  init() {
-    this.resize();
-    for (let i = 0; i <= this.numberOfPoints; i++) {
-      this.points.push({
-        x: (this.canvas.width / this.numberOfPoints) * i,
-        y: this.canvas.height / 2,
-        originY: this.canvas.height / 2,
-        speed: 0.1,
-        amplitude: 0
+    init() {
+      // Crear las barras del ecualizador
+      const barsContainer = this.container.querySelector('div');
+      
+      for (let i = 0; i < this.barCount; i++) {
+        const bar = document.createElement('div');
+        const height = Math.floor(Math.random() * 20) + 5; // Altura inicial aleatoria
+        
+        // Crear el degradado de color púrpura a azul con clase para optimizar
+        bar.className = 'equalizer-bar w-3 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t-sm transform transition-height will-change-transform';
+        bar.style.height = `${height}px`;
+        
+        barsContainer.appendChild(bar);
+        this.bars.push({ 
+          element: bar, 
+          height, 
+          targetHeight: height,
+          baseHeight: 5 + Math.random() * 15, // Altura base aleatoria para el estado inactivo
+          phase: Math.random() * Math.PI * 2 // Fase aleatoria para animación
+        });
+      }
+
+      // Eventos del mouse - uso de throttle para optimizar
+      let lastMoveTime = 0;
+      const moveThrottle = 16; // Aprox. 60fps
+      
+      document.addEventListener('mousemove', (event) => {
+        const now = Date.now();
+        if (now - lastMoveTime >= moveThrottle) {
+          lastMoveTime = now;
+          this.handleMouseMove(event);
+        }
+      });
+      
+      // Iniciar animación con optimización de framerate
+      this.animate();
+    }
+
+    handleMouseMove(event) {
+      this.mousePosition = {
+        x: event.clientX,
+        y: event.clientY
+      };
+      
+      // Mostrar el ecualizador cuando el mouse se mueve cerca de la parte inferior
+      if (window.innerHeight - this.mousePosition.y < 150) {
+        if (!this.isVisible) {
+          this.container.style.opacity = '1';
+          this.isVisible = true;
+        }
+        
+        this.active = true;
+        
+        // Actualizar alturas de las barras basadas en la posición X del mouse
+        this.updateBars();
+        
+        // Reiniciar el temporizador de ocultación
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId);
+        }
+        
+        this.timeoutId = setTimeout(() => {
+          this.active = false;
+          
+          // Esperar a que terminen las animaciones y luego ocultar
+          setTimeout(() => {
+            if (!this.active) {
+              this.container.style.opacity = '0';
+              this.isVisible = false;
+            }
+          }, 1500);
+        }, 2000); // Ocultar después de 2 segundos sin movimiento
+      }
+    }
+
+    updateBars() {
+      if (!this.active) return;
+      
+      const containerRect = this.container.getBoundingClientRect();
+      const mouseX = this.mousePosition.x - containerRect.left;
+      
+      this.bars.forEach((bar, index) => {
+        const barX = (containerRect.width / this.barCount) * index + (containerRect.width / this.barCount / 2);
+        const distance = Math.abs(mouseX - barX);
+        const maxDistance = 200;
+        
+        // Calcular nueva altura basada en la distancia al mouse
+        if (distance < maxDistance) {
+          // Crear un efecto de onda donde las barras cercanas al mouse son más altas
+          const factor = Math.pow(1 - (distance / maxDistance), 2); // Respuesta cuadrática para un efecto más natural
+          bar.targetHeight = Math.min(this.maxHeight, Math.max(5, Math.floor(factor * this.maxHeight)));
+        } else {
+          // Barras lejos del mouse tienen altura aleatoria mínima
+          bar.targetHeight = bar.baseHeight;
+        }
+      });
+    }
+
+    animate() {
+      // Uso de requestAnimationFrame para sincronizarnos con el refresco de pantalla
+      requestAnimationFrame(() => this.animate());
+      
+      // Limitar la actualización a cada 2 frames para mejorar rendimiento
+      this.frameCount++;
+      if (this.frameCount % 2 !== 0) return;
+      
+      // Si está inactivo, animar con patrón de onda suave
+      if (!this.active && this.isVisible) {
+        this.animateIdle();
+      } else {
+        // Suavizar la transición entre alturas con interpolación
+        this.bars.forEach(bar => {
+          if (Math.abs(bar.height - bar.targetHeight) > 0.5) {
+            // Aproximar gradualmente a la altura objetivo
+            bar.height += (bar.targetHeight - bar.height) * 0.2;
+            
+            // Aplicar directamente transform en lugar de height para mejor rendimiento
+            bar.element.style.transform = `scaleY(${bar.height / 5})`;
+            bar.element.style.height = '5px'; // Altura base
+            
+            // Ajustar intensidad del brillo según altura
+            const opacity = Math.min(1, bar.height / 50);
+            bar.element.style.opacity = 0.7 + (opacity * 0.3);
+          }
+        });
+      }
+    }
+    
+    animateIdle() {
+      const time = Date.now() / 1000;
+      
+      this.bars.forEach((bar, index) => {
+        // Animación sinusoidal para estado inactivo
+        const normalizedIndex = index / this.barCount;
+        const wave1 = Math.sin(time * 2 + bar.phase + normalizedIndex * Math.PI * 2) * 0.5 + 0.5;
+        const wave2 = Math.sin(time * 1.5 + bar.phase + normalizedIndex * Math.PI * 3) * 0.5 + 0.5;
+        const height = bar.baseHeight + (wave1 * wave2 * 15);
+        
+        bar.element.style.transform = `scaleY(${height / 5})`;
+        bar.element.style.opacity = 0.6 + (wave1 * 0.2);
       });
     }
   }
 
-  resize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = this.canvas.parentElement.offsetHeight;
-  }
-
-  bindEvents() {
-    window.addEventListener('resize', () => this.resize());
-    window.addEventListener('mousemove', (e) => {
-      this.mouse = {
-        x: e.clientX,
-        y: e.clientY
-      };
-    });
-  }
-
-  animate() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // Dibuja las ondas
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, this.canvas.height / 2);
-
-    for (let i = 0; i < this.points.length; i++) {
-      const point = this.points[i];
-      
-      // Calcula la distancia al mouse
-      const dx = this.mouse.x - point.x;
-      const dy = this.mouse.y - point.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
-      // Ajusta la amplitud basada en la distancia
-      if (distance < 100) {
-        point.amplitude = Math.max(point.amplitude, (100 - distance) / 10);
-      }
-      
-      // Actualiza la posición Y
-      point.y = point.originY + Math.sin(Date.now() * point.speed) * point.amplitude;
-      
-      // Reduce gradualmente la amplitud
-      point.amplitude *= 0.99;
-
-      // Dibuja la curva
-      if (i === 0) {
-        this.ctx.moveTo(point.x, point.y);
-      } else {
-        const xc = (point.x + this.points[i - 1].x) / 2;
-        const yc = (point.y + this.points[i - 1].y) / 2;
-        this.ctx.quadraticCurveTo(this.points[i - 1].x, this.points[i - 1].y, xc, yc);
-      }
+  // Inicializar el ecualizador cuando la página se carga
+  document.addEventListener('DOMContentLoaded', () => {
+    if ('requestAnimationFrame' in window) {
+      new AudioEqualizer();
+    } else {
+      // Fallback para navegadores que no soportan requestAnimationFrame
+      console.log('El navegador no soporta requestAnimationFrame');
     }
-
-    // Estilo de la onda
-    this.ctx.strokeStyle = '#00f3ff';
-    this.ctx.lineWidth = 2;
-    this.ctx.stroke();
-    
-    // Efecto de brillo
-    this.ctx.shadowColor = '#00f3ff';
-    this.ctx.shadowBlur = 10;
-    
-    requestAnimationFrame(() => this.animate());
-  }
-}
-
-// Inicializa las ondas cuando el documento esté listo
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('waveCanvas');
-  if (canvas) {
-    new Wave(canvas);
-  }
-});
+  });
 </script> 

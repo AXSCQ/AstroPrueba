@@ -1,0 +1,232 @@
+---
+// Props que recibe el componente
+interface Props {
+    id: string; // Id único para el modal
+    name: string; // Nombre completo
+    title: string; // Título profesional
+    photoSrc: any; // Imagen de perfil
+    cvPath: string; // Ruta al archivo PDF del CV
+}
+
+// Destructuramos las props
+const { id, name, title, photoSrc, cvPath } = Astro.props;
+
+// Secciones de la biografía
+const bioSections = [
+    {
+        title: "Sobre mí",
+        content:
+            "Soy un desarrollador Full Stack apasionado y músico con experiencia en la creación de soluciones web innovadoras. Combino mis habilidades técnicas con mi creatividad musical para ofrecer experiencias digitales únicas.",
+    },
+    {
+        title: "Experiencia",
+        content:
+            "Tengo 2 años de experiencia desarrollando aplicaciones web y bots con tecnologías como Node.js, React, PHP y bases de datos SQL/NoSQL. Actualmente me encuentro trabajando en proyectos personales y en la Camara de Dipuatados de Bolivia, estoy apasasionado por la tecnologia y la musica.",
+    },
+    {
+        title: "Educación",
+        content:
+            "Egresado en Ingeniería de Sistemas por la Universidad Tecnológica de Bolivia. Formación continua a través de cursos especializados en desarrollo web, UX/UI. Continúo mi educación en Música.",
+    },
+];
+
+// Lista de habilidades
+const skills = [
+    { name: "Frontend", level: 60, color: "neon-blue" },
+    { name: "Backend", level: 78, color: "neon-purple" },
+    { name: "Bases de Datos", level: 70, color: "neon-pink" },
+    { name: "Música", level: 75, color: "green-500" },
+];
+
+// Logros destacados
+const achievements = ["2° puesto en la competencia de gestión de IPMA en 2022"];
+---
+
+<!-- Modal del perfil biográfico -->
+<dialog
+    id={id}
+    class="fixed inset-0 bg-cyber-950/90 backdrop-blur-md z-50 w-full h-full p-0 m-0 overflow-auto"
+>
+    <!-- Contenedor principal -->
+    <div class="container mx-auto max-w-6xl h-full py-10 px-4 md:px-6">
+        <!-- Botón de cierre -->
+        <div class="flex justify-end mb-6">
+            <button
+                id={`close-${id}`}
+                class="text-white hover:text-neon-blue p-2 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    style="filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Encabezado del perfil -->
+        <div class="flex flex-col md:flex-row gap-8 mb-12 items-start">
+            <!-- Foto de perfil - lado izquierdo superior -->
+            <div class="w-full md:w-1/3 flex justify-center md:justify-start">
+                <div
+                    class="relative rounded-xl overflow-hidden border-2 border-neon-blue/30 shadow-lg shadow-neon-blue/20 w-48 h-48"
+                >
+                    <img
+                        src={photoSrc.src}
+                        alt={name}
+                        class="w-full h-full object-cover"
+                    />
+                    <!-- Efecto de brillo -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-tr from-neon-blue/10 to-neon-purple/10"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de perfil - lado derecho -->
+            <div class="w-full md:w-2/3 text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl font-bold mb-2">
+                    <span class="text-white">{name.split(" ")[0]} </span>
+                    <span class="text-neon-blue"
+                        >{name.split(" ").slice(1).join(" ")}</span
+                    >
+                </h1>
+                <h2 class="text-xl text-gray-400 mb-6">{title}</h2>
+
+                <!-- Habilidades -->
+                <div class="mb-8">
+                    <h3 class="text-neon-purple text-lg font-semibold mb-4">
+                        Habilidades
+                    </h3>
+                    <div class="space-y-3">
+                        {
+                            skills.map((skill) => (
+                                <div class="flex flex-col">
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-300">
+                                            {skill.name}
+                                        </span>
+                                        <span class={`text-${skill.color}`}>
+                                            {skill.level}%
+                                        </span>
+                                    </div>
+                                    <div class="h-2 bg-cyber-800 rounded-full overflow-hidden">
+                                        <div
+                                            class={`h-full bg-${skill.color}`}
+                                            style={`width: ${skill.level}%`}
+                                        />
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+
+                <!-- Botón de descarga de CV -->
+                <a
+                    href={cvPath}
+                    download
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-neon-blue text-cyber-950 rounded-lg font-semibold hover:bg-neon-purple transition-colors shadow-lg shadow-neon-blue/20"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Descargar CV
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenido principal - biografía -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {
+                bioSections.map((section) => (
+                    <div class="bg-cyber-800/50 border border-neon-blue/10 rounded-xl p-6 hover:border-neon-blue/30 transition-colors">
+                        <h3 class="text-neon-blue text-xl font-semibold mb-4">
+                            {section.title}
+                        </h3>
+                        <p class="text-gray-300">{section.content}</p>
+                    </div>
+                ))
+            }
+        </div>
+
+        <!-- Logros -->
+        <div
+            class="bg-cyber-800/30 border border-neon-purple/20 rounded-xl p-6 mb-8"
+        >
+            <h3 class="text-neon-purple text-xl font-semibold mb-4">
+                Logros destacados
+            </h3>
+            <ul class="space-y-2">
+                {
+                    achievements.map((achievement) => (
+                        <li class="flex items-start">
+                            <span class="text-neon-purple mr-2">•</span>
+                            <span class="text-gray-300">{achievement}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </div>
+</dialog>
+
+<script define:vars={{ id }}>
+    // Script para controlar la apertura y cierre del modal
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById(id);
+        const closeBtn = document.getElementById(`close-${id}`);
+
+        if (modal && closeBtn) {
+            // Cerrar al hacer clic en el botón de cierre
+            closeBtn.addEventListener("click", () => {
+                modal.close();
+                document.body.classList.remove("overflow-hidden");
+            });
+
+            // Cerrar al hacer clic fuera del contenido
+            modal.addEventListener("click", (e) => {
+                const dialogDimensions = modal.getBoundingClientRect();
+                if (
+                    e.clientX < dialogDimensions.left ||
+                    e.clientX > dialogDimensions.right ||
+                    e.clientY < dialogDimensions.top ||
+                    e.clientY > dialogDimensions.bottom
+                ) {
+                    modal.close();
+                    document.body.classList.remove("overflow-hidden");
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    dialog {
+        color: white;
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+
+    dialog::backdrop {
+        background: rgba(10, 10, 15, 0.8);
+        backdrop-filter: blur(8px);
+    }
+</style>

@@ -7,56 +7,59 @@ import bajistaImage from "../assets/images/bajista.jpg";
 import laptopImage from "../assets/images/laptop.jpg";
 import ProjectModal from "../components/ProjectModal.astro";
 import SoundWaves from "../components/SoundWaves.astro";
+import Contact from "../components/Contact.astro";
+import ProfileModal from "../components/ProfileModal.astro";
 
 // Definición de los proyectos
 const projects = [
   {
-    title: "Proyecto 1",
-    shortDescription: "Breve descripción del proyecto 1",
-    description: "Una descripción más detallada del proyecto 1 y sus características principales...",
+    title: "Bot WhatsApp (Baileys)",
+    shortDescription: "Chatbot funcional con múltiples opciones",
+    description: "Desarrollo de un chatbot para WhatsApp utilizando la librería Baileys. Este bot permite automatizar respuestas, gestionar grupos, enviar y recibir archivos multimedia, y ejecutar comandos personalizados.",
     image: laptopImage,
     features: [
-      "Característica 1",
-      "Característica 2",
-      "Característica 3"
+      "Respuestas automáticas configurables",
+      "Gestión de grupos y participantes",
+      "Envío y recepción de archivos multimedia",
+      "Sistema de comandos personalizados"
     ],
-    technologies: ["React", "Node.js", "MongoDB"]
+    technologies: ["Node.js", "JavaScript", "Baileys", "Express"]
   },
   {
-    title: "Proyecto 2",
-    shortDescription: "Breve descripción del proyecto 2",
-    description: "Una descripción más detallada del proyecto 2 y sus características principales...",
+    title: "En desarrollo",
+    shortDescription: "Proyecto actualmente en fase de desarrollo",
+    description: "Este proyecto está actualmente en fase de desarrollo y no puede ser compartido públicamente todavía. Pronto estará disponible para ser mostrado.",
     image: laptopImage,
     features: [
-      "Característica 1",
-      "Característica 2",
-      "Característica 3"
+      "Características por definir",
+      "Tecnologías en implementación",
+      "Diseño en proceso"
     ],
-    technologies: ["Vue", "Express", "PostgreSQL"]
+    technologies: ["En progreso"]
   },
   {
-    title: "Proyecto 3",
-    shortDescription: "Breve descripción del proyecto 3",
-    description: "Una descripción más detallada del proyecto 3 y sus características principales...",
+    title: "Proyecto privado",
+    shortDescription: "Proyecto desarrollado para cliente privado",
+    description: "Este proyecto fue desarrollado para un cliente privado y está bajo acuerdo de confidencialidad, por lo que no puede ser compartido públicamente.",
     image: laptopImage,
     features: [
-      "Característica 1",
-      "Característica 2",
-      "Característica 3"
+      "Características confidenciales",
+      "Desarrollo a medida",
+      "Implementación exitosa"
     ],
-    technologies: ["Angular", "Django", "MySQL"]
+    technologies: ["Confidencial"]
   },
   {
-    title: "Proyecto 4",
-    shortDescription: "Breve descripción del proyecto 4",
-    description: "Una descripción más detallada del proyecto 4 y sus características principales...",
+    title: "Próximamente",
+    shortDescription: "Nuevo proyecto en planificación",
+    description: "Próximo proyecto en fase de planificación y diseño. Estoy trabajando en conceptos innovadores que pronto se materializarán en esta sección.",
     image: laptopImage,
     features: [
-      "Característica 1",
-      "Característica 2",
-      "Característica 3"
+      "Planificación en curso",
+      "Investigación de tecnologías",
+      "Diseño preliminar"
     ],
-    technologies: ["Next.js", "FastAPI", "Redis"]
+    technologies: ["Por definir"]
   }
 ];
 ---
@@ -76,12 +79,24 @@ const projects = [
           />
           <div>
             <h1 class="text-3xl font-bold text-white mb-2">
-              Axel Simon <span class="text-neon-blue">Condori</span>
+              Axel Simon <span class="text-neon-blue">Condori Quispe</span>
             </h1>
             <p class="text-white/60">Desarrollador Full Stack & Músico</p>
+            
+            <!-- Botón para abrir el modal -->
+            <button 
+              id="profileModalBtn" 
+              class="mt-3 px-4 py-2 bg-cyber-800/70 border border-neon-blue/20 rounded-lg text-neon-blue hover:bg-cyber-700 hover:border-neon-blue/40 transition-all flex items-center gap-2 text-sm"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Ver biografía completa
+            </button>
           </div>
         </div>
       </DawPanel>
+    
 
       <!-- Music Projects -->
       <DawPanel title="MUSIC PROJECTS" variant="music">
@@ -95,7 +110,7 @@ const projects = [
           />
           <div class="mt-4 space-y-2">
             {
-              ['Bass', 'Production', 'Mixing'].map((skill, index) => (
+              ['Bajo', 'Creatividad', 'Pasion'].map((skill, index) => (
                 <div class="flex items-center gap-2" data-key={index}>
                   <div class="flex-1 h-1 bg-cyber-700 rounded-full overflow-hidden">
                     <div class="h-full bg-neon-purple w-4/5 animate-pulse-slow"></div>
@@ -113,9 +128,23 @@ const projects = [
         <div class="font-mono text-sm">
           <pre class="text-white/80">
             <code>{`class Developer {
-  name = "Axel"
-  skills = ["React", "Node", "Python"]
-  passions = ["Code", "Music"]
+  name = "Axel Simon Condori Quispe"
+  level = "junior" // 2 años de experiencia profesional
+  current_focus = "Full Stack Development"
+  
+  skills = {
+    frontend: ["React", "JavaScript", "HTML5", "CSS3"],
+    backend: ["Node.js", "PHP", "Python", "FastAPI"],
+    databases: ["PostgreSQL", "MySQL"],
+    tools: ["Git", "Docker"]
+  }
+  
+  learning = ["TypeScript", "Next.js", "AWS", "CI/CD"]
+  passions = ["Programación", "Música", "Aprendizaje continuo"]
+  
+  toString() {
+    return "Desarrollador apasionado con 2 años de experiencia profesional"
+  }
 }`}</code>
           </pre>
         </div>
@@ -143,6 +172,12 @@ const projects = [
                   <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/80 to-transparent p-4 flex flex-col justify-end">
                     <h3 class="text-neon-blue font-medium">{project.title}</h3>
                     <p class="text-sm text-white/60">{project.shortDescription}</p>
+                    <button 
+                      class="mt-2 px-3 py-1 bg-neon-blue/70 text-white text-xs rounded-lg hover:bg-neon-blue shadow-md shadow-neon-blue/20 transition-all"
+                      style="filter: drop-shadow(0 0 3px rgba(0, 200, 255, 0.5));"
+                    >
+                      Ver detalles
+                    </button>
                   </div>
                 </div>
               </div>
@@ -157,21 +192,45 @@ const projects = [
                     width={600}
                     height={300}
                   />
-                  <p>{project.description}</p>
-                  <h3>Características principales:</h3>
-                  <ul>
+                  <p class="text-white text-base leading-relaxed" style="text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);">{project.description}</p>
+                  <h3 class="text-neon-blue font-semibold mt-6 mb-3" style="text-shadow: 0 0 4px rgba(0, 200, 255, 0.4);">Características principales:</h3>
+                  <ul class="space-y-2">
                     {project.features.map(feature => (
-                      <li>{feature}</li>
+                      <li class="text-white flex items-start">
+                        <span class="text-neon-blue mr-2">•</span>
+                        <span>{feature}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
-                <div slot="technologies" class="flex flex-wrap gap-2">
+                <div slot="technologies" class="flex flex-wrap gap-2 mb-4">
                   {project.technologies.map(tech => (
-                    <span class="px-2 py-1 bg-cyber-700 text-neon-blue text-sm rounded-full">
+                    <span class="px-2 py-1 bg-cyber-700 text-neon-blue text-sm rounded-full shadow-sm shadow-neon-blue/30">
                       {tech}
                     </span>
                   ))}
                 </div>
+                {i === 0 && (
+                  <div class="mt-4 flex justify-center">
+                    <a 
+                      href="https://github.com/AXSCQ/bot-baileys" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="px-6 py-3 bg-gradient-to-r from-neon-blue to-neon-purple text-white font-medium rounded-lg hover:from-neon-purple hover:to-neon-blue transition-all duration-300 shadow-lg shadow-neon-blue/30 flex items-center gap-2 transform hover:scale-105"
+                      style="filter: drop-shadow(0 0 8px rgba(0, 200, 255, 0.7));"
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        class="h-5 w-5" 
+                        viewBox="0 0 24 24" 
+                        fill="currentColor"
+                      >
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                      </svg>
+                      Ver código en GitHub
+                    </a>
+                  </div>
+                )}
               </ProjectModal>
             ))
           }
@@ -179,24 +238,89 @@ const projects = [
       </DawPanel>
 
       <!-- Contact Panel -->
-      <DawPanel title="CONTACT" variant="contact">
-        <div class="space-y-4">
-          <a href="mailto:tu@email.com" class="block p-2 bg-cyber-800/50 rounded-lg hover:bg-cyber-700/50 transition-colors">
-            <span class="text-neon-pink">></span> tu@email.com
-          </a>
-          <div class="flex gap-2">
-            <a href="#" class="flex-1 p-2 bg-cyber-800/50 rounded-lg text-center hover:bg-cyber-700/50 transition-colors">
-              GitHub
-            </a>
-            <a href="#" class="flex-1 p-2 bg-cyber-800/50 rounded-lg text-center hover:bg-cyber-700/50 transition-colors">
-              LinkedIn
-            </a>
-          </div>
-        </div>
+      <DawPanel title="CONTACT" variant="contact" class="col-span-3">
+        <button 
+          id="contactModalBtn"
+          class="w-full py-3 bg-cyber-800/80 rounded-lg text-center hover:bg-cyber-700 transition-all text-neon-blue group"
+        >
+          <span class="text-neon-pink group-hover:text-neon-purple transition-colors mr-2">></span> 
+          Abrir formulario de contacto completo
+        </button>
       </DawPanel>
     </div>
   </div>
 
   <!-- Añade el componente de ondas al final del Layout -->
   <SoundWaves />
+  
+  <!-- Añade el modal de perfil -->
+  <ProfileModal 
+    id="profile-modal" 
+    name="Axel Simon Condori Quispe" 
+    title="Desarrollador Full Stack & Músico"
+    photoSrc={perfilImage}
+    cvPath="/files/currículum vitae.pdf"
+  />
+  
+  <!-- Modal de contacto completo que se mostrará al hacer clic en el botón -->
+  <dialog id="contactModal" class="fixed inset-0 bg-cyber-950/80 backdrop-blur-md z-50 w-full h-full p-0 m-0">
+    <div class="container mx-auto h-full overflow-auto py-10">
+      <div class="flex justify-end mb-4 px-4">
+        <button id="closeContactBtn" class="text-white hover:text-neon-blue p-2 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <Contact />
+    </div>
+  </dialog>
+
+  <script>
+    // Configurar todos los modales
+    document.addEventListener('DOMContentLoaded', () => {
+      // Modal de contacto
+      const contactModalBtn = document.getElementById('contactModalBtn');
+      const contactModal = document.getElementById('contactModal');
+      const closeContactBtn = document.getElementById('closeContactBtn');
+      
+      if (contactModalBtn && contactModal instanceof HTMLDialogElement && closeContactBtn) {
+        contactModalBtn.addEventListener('click', () => {
+          contactModal.showModal();
+          document.body.classList.add('overflow-hidden');
+        });
+        
+        closeContactBtn.addEventListener('click', () => {
+          contactModal.close();
+          document.body.classList.remove('overflow-hidden');
+        });
+        
+        // Cerrar al hacer clic fuera del contenido
+        contactModal.addEventListener('click', (e) => {
+          const dialogDimensions = contactModal.getBoundingClientRect();
+          if (
+            e.clientX < dialogDimensions.left ||
+            e.clientX > dialogDimensions.right ||
+            e.clientY < dialogDimensions.top ||
+            e.clientY > dialogDimensions.bottom
+          ) {
+            contactModal.close();
+            document.body.classList.remove('overflow-hidden');
+          }
+        });
+      }
+      
+      // Modal de perfil
+      const profileModalBtn = document.getElementById('profileModalBtn');
+      const profileModal = document.getElementById('profile-modal');
+      
+      if (profileModalBtn && profileModal instanceof HTMLDialogElement) {
+        profileModalBtn.addEventListener('click', () => {
+          profileModal.showModal();
+          document.body.classList.add('overflow-hidden');
+        });
+      }
+    });
+  </script>
 </Layout>

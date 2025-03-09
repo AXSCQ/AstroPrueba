@@ -7,31 +7,57 @@ const { id } = Astro.props;
 ---
 
 <dialog id={id} class="modal bg-transparent">
-  <div class="fixed inset-0 bg-cyber-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-cyber-800 border border-neon-blue/20 rounded-lg w-full max-w-2xl relative overflow-hidden">
+  <div
+    class="fixed inset-0 bg-cyber-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  >
+    <div
+      class="bg-cyber-800 border border-neon-blue/20 rounded-lg w-full max-w-2xl relative overflow-hidden shadow-xl shadow-neon-blue/10"
+    >
       <!-- Efecto de brillo en las esquinas -->
-      <div class="absolute -top-10 -left-10 w-20 h-20 bg-neon-blue/20 blur-xl"></div>
-      <div class="absolute -bottom-10 -right-10 w-20 h-20 bg-neon-purple/20 blur-xl"></div>
+      <div class="absolute -top-10 -left-10 w-20 h-20 bg-neon-blue/20 blur-xl">
+      </div>
+      <div
+        class="absolute -bottom-10 -right-10 w-20 h-20 bg-neon-purple/20 blur-xl"
+      >
+      </div>
 
       <!-- Header del modal -->
-      <div class="flex items-center justify-between p-4 border-b border-neon-blue/10">
-        <h3 class="text-xl font-semibold text-neon-blue">
+      <div
+        class="flex items-center justify-between p-4 border-b border-neon-blue/10 bg-cyber-900/50"
+      >
+        <h3
+          class="text-xl font-bold text-white"
+          style="text-shadow: 0 0 8px rgba(0, 200, 255, 0.7); letter-spacing: 0.5px;"
+        >
           <slot name="title" />
         </h3>
-        <button onclick="closeModal(this)" class="text-cyber-600 hover:text-neon-blue transition-colors">
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <button
+          onclick="closeModal(this)"
+          class="text-white hover:text-neon-blue transition-colors p-1 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            style="filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
 
       <!-- Contenido -->
-      <div class="p-6">
+      <div class="p-6 bg-cyber-800/95">
         <slot />
       </div>
 
       <!-- Footer con tecnologías -->
-      <div class="border-t border-neon-blue/10 p-4">
+      <div class="border-t border-neon-blue/10 p-4 bg-cyber-900/50">
         <slot name="technologies" />
       </div>
     </div>
@@ -40,7 +66,7 @@ const { id } = Astro.props;
 
 <script>
   function closeModal(button: HTMLButtonElement) {
-    const modal = button.closest('dialog');
+    const modal = button.closest("dialog");
     modal?.close();
   }
 </script>
@@ -49,4 +75,26 @@ const { id } = Astro.props;
   .modal::backdrop {
     background: transparent;
   }
-</style> 
+
+  :global(.prose) {
+    color: white;
+  }
+
+  :global(.prose h1, .prose h2, .prose h3, .prose h4) {
+    color: var(--color-neon-blue);
+    font-weight: 600;
+  }
+
+  :global(.prose p) {
+    color: white;
+  }
+
+  :global(.prose ul) {
+    list-style-type: none;
+    padding-left: 0.5rem;
+  }
+
+  :global(.prose li) {
+    color: white;
+  }
+</style>
