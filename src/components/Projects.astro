@@ -1,0 +1,119 @@
+<a
+    href={project.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="group relative overflow-hidden rounded-xl bg-gray-900 transition-transform duration-300 hover:scale-[1.01] sm:hover:scale-[1.02]"
+    data-modal-id={`modal-${i}`}
+    onclick="event.preventDefault(); document.getElementById(`modal-${i}`).classList.remove('hidden');"
+    aria-label={`Ver proyecto ${project.title}`}
+>
+    <div class="aspect-video w-full overflow-hidden">
+        <img
+            src={project.image}
+            alt={`Screenshot of ${project.title}`}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            width="640"
+            height="360"
+        />
+    </div>
+    <div
+        class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-90"
+    >
+    </div>
+    <div class="absolute bottom-0 flex w-full flex-col p-4 text-white">
+        <h3 class="text-base font-bold sm:text-lg">{project.title}</h3>
+        <p class="text-xs text-gray-300 sm:text-sm">{project.description}</p>
+        <div class="mt-2 flex flex-wrap gap-1">
+            {
+                project.tags.map((tag: string) => (
+                    <span class="inline-block rounded bg-gray-800 px-1.5 py-0.5 text-xs text-gray-300">
+                        {tag}
+                    </span>
+                ))
+            }
+        </div>
+    </div>
+</a>
+
+<!-- Estilos adicionales para optimizar el modal en móviles -->
+<style>
+    .project-modal {
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .project-modal.active {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    /* Optimizaciones para móviles */
+    @media (max-width: 767px) {
+        .project-modal {
+            padding: 1rem;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .project-modal img {
+            max-height: 40vh;
+            object-fit: contain;
+        }
+
+        .project-modal .modal-content {
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Optimizaciones para la carga de imágenes
+    document.addEventListener("DOMContentLoaded", () => {
+        // Función para cargar imágenes de forma progresiva
+        const lazyLoadImages = () => {
+            const imgObserver = new IntersectionObserver(
+                (entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target as HTMLImageElement;
+                            const src = img.getAttribute("data-src");
+                            if (src) {
+                                img.src = src;
+                                img.removeAttribute("data-src");
+                                observer.unobserve(img);
+                            }
+                        }
+                    });
+                },
+                { rootMargin: "100px" },
+            );
+
+            document.querySelectorAll("img[data-src]").forEach((img) => {
+                imgObserver.observe(img);
+            });
+        };
+
+        // Inicializar carga progresiva
+        lazyLoadImages();
+
+        // Optimizar modales en móviles
+        const modals = document.querySelectorAll(".project-modal");
+        modals.forEach((modal) => {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.classList.add("hidden");
+                }
+            });
+
+            // Animación de entrada
+            setTimeout(() => {
+                if (!modal.classList.contains("hidden")) {
+                    modal.classList.add("active");
+                }
+            }, 10);
+        });
+    });
+</script>
+

@@ -80,44 +80,52 @@ const contactInfo = {
       </p>
 
       <!-- Contenedor principal de contacto -->
-      <div class="grid gap-6 md:grid-cols-12 mb-12">
+      <div class="grid gap-4 sm:gap-6 md:grid-cols-12 mb-6 sm:mb-12">
         <!-- Tarjeta de correo electrónico (más grande) -->
         <div
-          class="md:col-span-8 contact-card-optimized group p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden relative
+          class="md:col-span-8 contact-card-optimized group p-4 sm:p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden relative
             ${contactInfo.email.bgColor} ${contactInfo.email.borderColor}"
           data-aos="fade-up"
           data-aos-delay="200"
           data-type="email"
         >
-          <div class="flex items-start gap-4">
-            <div class="text-neon-blue p-2 rounded-full bg-cyber-800/50">
+          <div class="flex flex-col sm:flex-row items-start gap-4">
+            <div
+              class="text-neon-blue p-2 rounded-full bg-cyber-800/50 self-center sm:self-start"
+            >
               <Fragment set:html={contactInfo.email.icon} />
             </div>
-            <div>
+            <div class="w-full">
               <h3
-                class="text-xl font-semibold text-neon-blue mb-2 flex items-center"
+                class="text-xl font-semibold text-neon-blue mb-2 flex flex-wrap items-center justify-center sm:justify-start gap-2"
               >
                 {contactInfo.email.title}
                 <span
-                  class="ml-2 text-xs px-2 py-1 bg-neon-blue/20 rounded-full text-neon-blue"
+                  class="text-xs px-2 py-1 bg-neon-blue/20 rounded-full text-neon-blue"
                   >Recomendado</span
                 >
               </h3>
-              <p class="text-gray-300 mb-3">{contactInfo.email.value}</p>
-              <p class="text-gray-400 mb-3 max-w-lg">
+              <p class="text-gray-300 mb-2 sm:mb-3 text-center sm:text-left">
+                {contactInfo.email.value}
+              </p>
+              <p
+                class="text-gray-400 mb-2 sm:mb-3 max-w-lg text-center sm:text-left"
+              >
                 {contactInfo.email.description}
               </p>
 
               <div
                 class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-96 opacity-0 group-hover:opacity-100"
               >
-                <p class="text-gray-400 mb-4 text-sm">
+                <p
+                  class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
+                >
                   Puedes contactarme directamente a través de correo electrónico
                   para cualquier consulta o proyecto.
                 </p>
                 <a
                   href="mailto:axelcondori78@gmail.com?subject=Contacto%20desde%20tu%20portafolio"
-                  class="w-full py-3 ${contactInfo.email.buttonBg} hover:bg-neon-blue/80 text-cyber-950 font-medium rounded-lg transition-colors flex justify-center items-center gap-2 px-4"
+                  class="w-full py-2 sm:py-3 ${contactInfo.email.buttonBg} hover:bg-neon-blue/80 text-cyber-950 font-medium rounded-lg transition-colors flex justify-center items-center gap-2 px-4"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +144,7 @@ const contactInfo = {
           </div>
 
           <div
-            class="absolute right-6 top-6 opacity-70 group-hover:opacity-0 transition-opacity"
+            class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -155,57 +163,67 @@ const contactInfo = {
         </div>
 
         <!-- Otras tarjetas de contacto -->
-        <div class="md:col-span-4 grid gap-6">
+        <div class="md:col-span-4 grid gap-4 sm:gap-6">
           <!-- WhatsApp -->
           <div
-            class="contact-card-optimized group p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden
+            class="contact-card-optimized group p-4 sm:p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden
               ${contactInfo.whatsapp.bgColor} ${contactInfo.whatsapp.borderColor}"
             data-aos="fade-up"
             data-aos-delay="300"
             data-type="whatsapp"
           >
-            <div class="flex items-start gap-4">
-              <div class="text-green-500 p-2 rounded-full bg-cyber-800/50">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
+              <div
+                class="text-green-500 p-2 rounded-full bg-cyber-800/50 self-center sm:self-start"
+              >
                 <Fragment set:html={contactInfo.whatsapp.icon} />
               </div>
-              <div>
-                <h3 class="text-xl font-semibold text-green-500 mb-2">
+              <div class="w-full">
+                <h3
+                  class="text-xl font-semibold text-green-500 mb-2 text-center sm:text-left"
+                >
                   {contactInfo.whatsapp.title}
                 </h3>
-                <p class="text-gray-300 mb-3">{contactInfo.whatsapp.value}</p>
+                <p class="text-gray-300 mb-2 sm:mb-3 text-center sm:text-left">
+                  {contactInfo.whatsapp.value}
+                </p>
 
                 <div
                   class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-32 opacity-0 group-hover:opacity-100"
                 >
-                  <p class="text-gray-400 mb-4 text-sm">
+                  <p
+                    class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
+                  >
                     {contactInfo.whatsapp.description}
                   </p>
-                  <a
-                    href={`https://web.whatsapp.com/send?phone=591${contactInfo.whatsapp.value.replace(/\D/g, "").replace(/^591/, "")}&text=Hola%20Axel%2C%20te%20contacto%20desde%20tu%20portafolio%20web.`}
-                    class="py-2 px-4 ${contactInfo.whatsapp.buttonBg} hover:bg-green-600/80 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onclick="if(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){this.href=this.href.replace('web.whatsapp.com','api.whatsapp.com')}"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
+                  <div class="flex justify-center sm:justify-start">
+                    <a
+                      href={`https://web.whatsapp.com/send?phone=591${contactInfo.whatsapp.value.replace(/\D/g, "").replace(/^591/, "")}&text=Hola%20Axel%2C%20te%20contacto%20desde%20tu%20portafolio%20web.`}
+                      class="py-2 px-4 ${contactInfo.whatsapp.buttonBg} hover:bg-green-600/80 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onclick="if(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){this.href=this.href.replace('web.whatsapp.com','api.whatsapp.com')}"
                     >
-                      <path
-                        fill-rule="evenodd"
-                        d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
-                        clip-rule="evenodd"></path>
-                    </svg>
-                    Iniciar chat
-                  </a>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      Iniciar chat
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div
-              class="absolute right-6 top-6 opacity-70 group-hover:opacity-0 transition-opacity"
+              class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -225,52 +243,62 @@ const contactInfo = {
 
           <!-- Ubicación -->
           <div
-            class="contact-card-optimized group p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden
+            class="contact-card-optimized group p-4 sm:p-6 rounded-xl border transition-all hover-shadow-card cursor-pointer overflow-hidden
               ${contactInfo.ubicacion.bgColor} ${contactInfo.ubicacion.borderColor}"
             data-aos="fade-up"
             data-aos-delay="400"
             data-type="ubicacion"
           >
-            <div class="flex items-start gap-4">
-              <div class="text-neon-pink p-2 rounded-full bg-cyber-800/50">
+            <div class="flex flex-col sm:flex-row items-start gap-4">
+              <div
+                class="text-neon-pink p-2 rounded-full bg-cyber-800/50 self-center sm:self-start"
+              >
                 <Fragment set:html={contactInfo.ubicacion.icon} />
               </div>
-              <div>
-                <h3 class="text-xl font-semibold text-neon-pink mb-2">
+              <div class="w-full">
+                <h3
+                  class="text-xl font-semibold text-neon-pink mb-2 text-center sm:text-left"
+                >
                   {contactInfo.ubicacion.title}
                 </h3>
-                <p class="text-gray-300 mb-3">{contactInfo.ubicacion.value}</p>
+                <p class="text-gray-300 mb-2 sm:mb-3 text-center sm:text-left">
+                  {contactInfo.ubicacion.value}
+                </p>
 
                 <div
                   class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-32 opacity-0 group-hover:opacity-100"
                 >
-                  <p class="text-gray-400 mb-4 text-sm">
+                  <p
+                    class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
+                  >
                     {contactInfo.ubicacion.description}
                   </p>
-                  <a
-                    href="https://maps.google.com/?q=La+Paz+Bolivia"
-                    class="py-2 px-4 ${contactInfo.ubicacion.buttonBg} hover:bg-neon-pink/80 text-cyber-950 font-medium rounded-lg transition-colors inline-flex items-center gap-2"
-                    target="_blank"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
+                  <div class="flex justify-center sm:justify-start">
+                    <a
+                      href="https://maps.google.com/?q=La+Paz+Bolivia"
+                      class="py-2 px-4 ${contactInfo.ubicacion.buttonBg} hover:bg-neon-pink/80 text-cyber-950 font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                      target="_blank"
                     >
-                      <path
-                        fill-rule="evenodd"
-                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                        clip-rule="evenodd"></path>
-                    </svg>
-                    Ver en mapa
-                  </a>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      Ver en mapa
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div
-              class="absolute right-6 top-6 opacity-70 group-hover:opacity-0 transition-opacity"
+              class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -332,11 +360,22 @@ const contactInfo = {
       background-color 0.3s;
   }
 
+  /* Deshabilitar transformaciones en dispositivos móviles para mejor rendimiento */
+  @media (min-width: 768px) {
+    .hover-shadow-card:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 15px -5px var(--shadow-color, rgba(0, 243, 255, 0.5));
+    }
+
+    .social-link-optimized:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* Mantener sombras más ligeras para todos los dispositivos */
   .hover-shadow-card:hover {
-    transform: translateY(-5px);
-    box-shadow:
-      0 10px 25px -5px rgba(0, 0, 0, 0.3),
-      0 0 15px -5px var(--shadow-color, rgba(0, 243, 255, 0.5));
     background-color: rgba(26, 26, 36, 0.7);
   }
 
@@ -357,8 +396,13 @@ const contactInfo = {
     transition: transform 0.3s;
   }
 
-  .social-link-optimized:hover {
-    transform: translateY(-5px);
+  /* Estilo para tarjetas expandidas en móvil */
+  .mobile-expanded .max-h-0 {
+    max-height: 500px !important;
+    opacity: 1 !important;
+    transition:
+      max-height 0.5s,
+      opacity 0.3s;
   }
 </style>
 
@@ -369,10 +413,13 @@ const contactInfo = {
       ".contact-card-optimized",
     );
 
+    // Detectar si estamos en un dispositivo móvil
+    const isMobile = window.innerWidth < 768;
+
     cards.forEach((card) => {
       // Expandir tarjeta al hacer clic para dispositivos móviles
       card.addEventListener("click", function (this: HTMLElement) {
-        if (window.innerWidth < 768) {
+        if (isMobile) {
           this.classList.toggle("mobile-expanded");
 
           if (this.classList.contains("mobile-expanded")) {
@@ -394,6 +441,15 @@ const contactInfo = {
           }
         }
       });
+
+      // Precarga de las secciones expandibles para móviles
+      if (isMobile && card.querySelector(".max-h-0")) {
+        const sections = card.querySelectorAll<HTMLElement>(".max-h-0");
+        sections.forEach((section) => {
+          // Almacena la altura pero mantiene oculto
+          section.dataset.height = section.scrollHeight + "px";
+        });
+      }
     });
   });
 </script>

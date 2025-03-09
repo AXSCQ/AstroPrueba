@@ -1,0 +1,76 @@
+import "aos/dist/aos.css";
+
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Portafolio de Axel Simon Condori Quispe, desarrollador web."
+        />
+        <title>Axel Simon Condori Quispe - Portafolio</title>
+
+        <!-- Precarga de recursos críticos -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+        <!-- Estilos principales con prioridad de carga -->
+        <link rel="stylesheet" href="/assets/styles/tailwind.css" />
+
+        <!-- AOS con carga diferida -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            media="print"
+            onload="this.media='all'"
+        />
+        <noscript
+            ><link
+                rel="stylesheet"
+                href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            /></noscript
+        >
+    </head>
+    <body class="bg-[#0f1014] text-slate-300">
+        <slot />
+
+        <!-- AOS Animation Init con carga optimizada -->
+        <script is:inline>
+            // Cargar AOS de forma diferida
+            document.addEventListener("DOMContentLoaded", () => {
+                // Detección de dispositivo para optimizar animaciones
+                const isMobile = window.innerWidth < 768;
+
+                // Cargar AOS solo si es necesario
+                if (typeof AOS === "undefined") {
+                    const script = document.createElement("script");
+                    script.src = "https://unpkg.com/aos@2.3.1/dist/aos.js";
+                    script.onload = () => {
+                        AOS.init({
+                            duration: isMobile ? 600 : 800, // Duración más corta en móviles
+                            once: true, // Las animaciones solo se reproducen una vez
+                            offset: 50, // Menor offset para iniciar antes
+                            delay: 0, // Sin retraso
+                            disable: isMobile, // Deshabilitar en teléfonos para mejor rendimiento
+                            throttleDelay: 99, // Mayor retraso entre cálculos
+                            mirror: false, // Sin efecto espejo
+                            anchorPlacement: "top-bottom", // Iniciar cuando el elemento entra en la parte inferior de la ventana
+                        });
+                    };
+                    document.body.appendChild(script);
+                } else {
+                    AOS.init({
+                        duration: isMobile ? 600 : 800,
+                        once: true,
+                        offset: 50,
+                        delay: 0,
+                        disable: isMobile,
+                        throttleDelay: 99,
+                        mirror: false,
+                        anchorPlacement: "top-bottom",
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

@@ -8,32 +8,34 @@ const { id } = Astro.props;
 
 <dialog id={id} class="modal bg-transparent">
   <div
-    class="fixed inset-0 bg-cyber-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-cyber-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
   >
     <div
-      class="bg-cyber-800 border border-neon-blue/20 rounded-lg w-full max-w-2xl relative overflow-hidden shadow-xl shadow-neon-blue/10"
+      class="bg-cyber-800 border border-neon-blue/20 rounded-lg w-full max-w-2xl relative overflow-hidden shadow-xl shadow-neon-blue/10 max-h-[95vh] md:max-h-[90vh] overflow-y-auto"
     >
       <!-- Efecto de brillo en las esquinas -->
-      <div class="absolute -top-10 -left-10 w-20 h-20 bg-neon-blue/20 blur-xl">
+      <div
+        class="absolute -top-10 -left-10 w-20 h-20 bg-neon-blue/20 blur-xl hidden sm:block"
+      >
       </div>
       <div
-        class="absolute -bottom-10 -right-10 w-20 h-20 bg-neon-purple/20 blur-xl"
+        class="absolute -bottom-10 -right-10 w-20 h-20 bg-neon-purple/20 blur-xl hidden sm:block"
       >
       </div>
 
       <!-- Header del modal -->
       <div
-        class="flex items-center justify-between p-4 border-b border-neon-blue/10 bg-cyber-900/50"
+        class="flex items-center justify-between p-3 sm:p-4 border-b border-neon-blue/10 bg-cyber-900/50 sticky top-0 z-10"
       >
         <h3
-          class="text-xl font-bold text-white"
+          class="text-lg sm:text-xl font-bold text-white line-clamp-1"
           style="text-shadow: 0 0 8px rgba(0, 200, 255, 0.7); letter-spacing: 0.5px;"
         >
           <slot name="title" />
         </h3>
         <button
           onclick="closeModal(this)"
-          class="text-white hover:text-neon-blue transition-colors p-1 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30"
+          class="text-white hover:text-neon-blue transition-colors p-1 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30 min-w-10 min-h-10 flex items-center justify-center touch-manipulation"
         >
           <svg
             class="w-6 h-6"
@@ -52,28 +54,90 @@ const { id } = Astro.props;
       </div>
 
       <!-- Contenido -->
-      <div class="p-6 bg-cyber-800/95">
+      <div class="p-3 sm:p-6 bg-cyber-800/95">
         <slot />
       </div>
 
       <!-- Footer con tecnologías -->
-      <div class="border-t border-neon-blue/10 p-4 bg-cyber-900/50">
+      <div class="border-t border-neon-blue/10 p-3 sm:p-4 bg-cyber-900/50">
         <slot name="technologies" />
       </div>
     </div>
   </div>
 </dialog>
 
-<script>
-  function closeModal(button: HTMLButtonElement) {
+<script define:vars={{ id }}>
+  // Función para cerrar el modal
+  function closeModal(button) {
     const modal = button.closest("dialog");
-    modal?.close();
+    if (modal) {
+      modal.close();
+      document.body.classList.remove("overflow-hidden");
+    }
   }
+
+  // Exponer la función al ámbito global para el botón
+  document.addEventListener("DOMContentLoaded", () => {
+    // Asignar la función al botón específicamente
+    const closeButton = document.querySelector(
+      `#${id} button[onclick="closeModal(this)"]`,
+    );
+    if (closeButton) {
+      closeButton.onclick = function () {
+        closeModal(this);
+        return false; // Prevenir cualquier acción predeterminada
+      };
+    }
+
+    // Cerrar al hacer clic fuera o con ESC
+    const modal = document.getElementById(id);
+    if (modal) {
+      // Cerrar al hacer clic fuera
+      modal.addEventListener("click", (e) => {
+        const dialogContent = modal.querySelector("div");
+        if (dialogContent && !dialogContent.contains(e.target)) {
+          modal.close();
+          document.body.classList.remove("overflow-hidden");
+        }
+      });
+
+      // Cerrar con ESC
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.open) {
+          modal.close();
+          document.body.classList.remove("overflow-hidden");
+        }
+      });
+
+      // Desplazarse al principio cuando se abre el modal
+      modal.addEventListener("open", () => {
+        setTimeout(() => {
+          const modalContent = modal.querySelector(".bg-cyber-800");
+          if (modalContent) modalContent.scrollTop = 0;
+        }, 10);
+      });
+    }
+  });
 </script>
 
 <style>
   .modal::backdrop {
     background: transparent;
+  }
+
+  /* Hacer que el modal sea más accesible en dispositivos móviles */
+  @media (max-width: 640px) {
+    dialog {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .modal img {
+      max-height: 40vh;
+      object-fit: contain;
+    }
   }
 
   :global(.prose) {
@@ -87,6 +151,8 @@ const { id } = Astro.props;
 
   :global(.prose p) {
     color: white;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   :global(.prose ul) {
@@ -96,5 +162,11 @@ const { id } = Astro.props;
 
   :global(.prose li) {
     color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.prose img) {
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
   }
 </style>
