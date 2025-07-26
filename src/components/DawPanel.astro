@@ -3,9 +3,10 @@ interface Props {
   title: string;
   variant?: 'default' | 'music' | 'code' | 'contact';
   class?: string;
+  'data-track'?: string;
 }
 
-const { title, variant = 'default', class: className = '' } = Astro.props;
+const { title, variant = 'default', class: className = '', ...props } = Astro.props;
 
 const variants = {
   default: 'from-cyber-800/50 to-cyber-700/30 border-neon-blue/20',
@@ -15,7 +16,7 @@ const variants = {
 };
 ---
 
-<div class={`panel bg-gradient-to-br ${variants[variant]} backdrop-blur-md rounded-xl border p-4 relative overflow-hidden ${className}`}>
+<div class={`panel bg-gradient-to-br ${variants[variant]} backdrop-blur-md rounded-xl border p-4 relative overflow-hidden ${className}`} {...props}>
   <!-- Panel Header -->
   <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-medium text-white/80 flex items-center gap-2">

@@ -1,0 +1,959 @@
+---
+
+---
+
+<div
+    id="multitrack-overlay"
+    class="fixed inset-0 bg-black opacity-0 z-40 pointer-events-none transition-opacity duration-1000"
+>
+</div>
+
+<div
+    id="audio-controls"
+    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-cyber-800/80 backdrop-blur-md p-3 rounded-lg border border-neon-blue/30 flex items-center gap-3"
+>
+    <button
+        id="play-button"
+        class="p-3 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-all duration-300 flex items-center justify-center shadow-lg shadow-neon-blue/30"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+        >
+            <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clip-rule="evenodd"></path>
+        </svg>
+    </button>
+
+    <div class="flex flex-col gap-1">
+        <div
+            id="waveform-container"
+            class="w-48 h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
+        >
+        </div>
+        <div class="text-neon-blue text-xs text-center">
+            <span id="current-time">0:00</span> / <span id="total-time"
+                >0:00</span
+            >
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+        <label class="text-neon-blue text-xs">Tracks:</label>
+        <div class="flex gap-1">
+            <button
+                id="btn-bass"
+                class="track-btn px-2 py-1 text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
+                data-track="bass">Bass</button
+            >
+            <button
+                id="btn-drums"
+                class="track-btn px-2 py-1 text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
+                data-track="drums">Drums</button
+            >
+            <button
+                id="btn-vocals"
+                class="track-btn px-2 py-1 text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
+                data-track="vocals">Vocals</button
+            >
+            <button
+                id="btn-other"
+                class="track-btn px-2 py-1 text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
+                data-track="other">Other</button
+            >
+        </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <label class="text-neon-blue text-xs">Volume:</label>
+        <input
+            type="range"
+            id="volume-slider"
+            min="0"
+            max="100"
+            value="70"
+            class="w-16 h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
+        />
+    </div>
+</div>
+
+<!-- Audio principal (audible) -->
+<audio
+    id="audio-main"
+    src="/music/demo.mp3"
+    preload="metadata"
+    crossorigin="anonymous"></audio>
+
+<!-- Audio elements para análisis visual (silenciosos) -->
+<audio id="audio-bass" preload="metadata" crossorigin="anonymous"></audio>
+<audio id="audio-drums" preload="metadata" crossorigin="anonymous"></audio>
+<audio id="audio-vocals" preload="metadata" crossorigin="anonymous"></audio>
+<audio id="audio-other" preload="metadata" crossorigin="anonymous"></audio>
+
+<script>
+    // @ts-ignore
+    import WaveSurfer from "wavesurfer.js";
+
+    interface Track {
+        name: string;
+        audio: HTMLAudioElement;
+        context: AudioContext;
+        analyser: AnalyserNode;
+        source: MediaElementAudioSourceNode | null;
+        dataArray: Uint8Array;
+        active: boolean;
+        color: string;
+        panelSelector: string;
+    }
+
+    interface PanelElement {
+        element: HTMLElement;
+        track: string;
+        originalBorderColor: string;
+        originalBackgroundColor: string;
+        originalBoxShadow: string;
+    }
+
+    class MultiTrackAudioVisualizer {
+        private tracks: Map<string, Track> = new Map();
+        private panels: PanelElement[] = [];
+        private playButton: HTMLButtonElement;
+        private volumeSlider: HTMLInputElement;
+        private currentTimeElement: HTMLElement;
+        private totalTimeElement: HTMLElement;
+        private waveSurfer: WaveSurfer | null = null;
+        private isPlaying: boolean = false;
+        private masterTime: number = 0;
+        private rafId: number | null = null;
+        private mainAudio: HTMLAudioElement | null = null; // Audio principal audible
+        private masterAudio: HTMLAudioElement | null = null; // Audio para sincronización
+
+        constructor() {
+            this.playButton = document.getElementById(
+                "play-button",
+            ) as HTMLButtonElement;
+            this.volumeSlider = document.getElementById(
+                "volume-slider",
+            ) as HTMLInputElement;
+            this.currentTimeElement = document.getElementById(
+                "current-time",
+            ) as HTMLElement;
+            this.totalTimeElement = document.getElementById(
+                "total-time",
+            ) as HTMLElement;
+
+            this.initializeMainAudio();
+            this.initializeTracks();
+            this.initializeWaveSurfer();
+            this.setupEventListeners();
+            this.findPanels();
+        }
+
+        private initializeMainAudio() {
+            // Configurar el audio principal (demo.mp3) que será audible
+            this.mainAudio = document.getElementById(
+                "audio-main",
+            ) as HTMLAudioElement;
+            this.mainAudio.volume = 0.7;
+
+            // Este será nuestro audio master para tiempo
+            this.masterAudio = this.mainAudio;
+        }
+
+        private initializeTracks() {
+            const trackConfigs = [
+                {
+                    name: "bass",
+                    file: "/music/bass.mp3",
+                    color: "#8B5CF6", // purple
+                    panelSelector:
+                        '[data-track="bass"], #contact-panel, .contact-panel',
+                },
+                {
+                    name: "drums",
+                    file: "/music/drums.mp3",
+                    color: "#EF4444", // red
+                    panelSelector:
+                        '[data-track="drums"], #projects-panel, .projects-panel',
+                },
+                {
+                    name: "vocals",
+                    file: "/music/vocals.mp3",
+                    color: "#3B82F6", // blue
+                    panelSelector:
+                        '[data-track="vocals"], #profile-panel, .profile-panel',
+                },
+                {
+                    name: "other",
+                    file: "/music/other.mp3",
+                    color: "#10B981", // green
+                    panelSelector:
+                        '[data-track="other"], #code-editor-panel, .code-editor-panel',
+                },
+            ];
+
+            trackConfigs.forEach(async (config) => {
+                const audio = document.getElementById(
+                    `audio-${config.name}`,
+                ) as HTMLAudioElement;
+
+                if (!audio) {
+                    console.error(
+                        `❌ Audio element no encontrado: audio-${config.name}`,
+                    );
+                    return;
+                }
+
+                console.log(`🎵 Configurando track: ${config.name}`);
+
+                // Configurar el audio
+                audio.src = config.file;
+                audio.volume = 0.01; // Volumen muy bajo para análisis (casi inaudible)
+                audio.crossOrigin = "anonymous";
+                audio.preload = "metadata";
+
+                const context = new (window.AudioContext ||
+                    (window as any).webkitAudioContext)();
+                const analyser = context.createAnalyser();
+                analyser.fftSize = 1024;
+                analyser.smoothingTimeConstant = 0.8;
+
+                const track: Track = {
+                    name: config.name,
+                    audio,
+                    context,
+                    analyser,
+                    source: null,
+                    dataArray: new Uint8Array(analyser.frequencyBinCount),
+                    active: true,
+                    color: config.color,
+                    panelSelector: config.panelSelector,
+                };
+
+                this.tracks.set(config.name, track);
+
+                // Manejar eventos de carga
+                audio.addEventListener("loadedmetadata", () => {
+                    console.log(`✅ Metadata cargada para ${config.name}`);
+                    if (!track.source && track.context.state !== "closed") {
+                        try {
+                            track.source =
+                                track.context.createMediaElementSource(audio);
+                            track.source.connect(track.analyser);
+                            // NO conectar al destination para que sea silencioso
+                            // track.source.connect(track.context.destination);
+                            console.log(
+                                `🔊 Contexto de audio conectado para ${config.name}`,
+                            );
+                        } catch (error) {
+                            console.error(
+                                `❌ Error conectando audio context para ${config.name}:`,
+                                error,
+                            );
+                        }
+                    }
+                });
+
+                audio.addEventListener("error", (e) => {
+                    console.error(`❌ Error cargando audio ${config.name}:`, e);
+                });
+
+                audio.addEventListener("canplaythrough", () => {
+                    console.log(
+                        `🎉 Audio listo para reproducir: ${config.name}`,
+                    );
+                });
+            });
+        }
+
+        private initializeWaveSurfer() {
+            const container = document.getElementById("waveform-container");
+            if (!container) return;
+
+            this.waveSurfer = WaveSurfer.create({
+                container: container,
+                waveColor: "#06B6D4",
+                progressColor: "#0891B2",
+                height: 48,
+                barWidth: 2,
+                barGap: 1,
+                normalize: true,
+            });
+
+            // Cargar el audio principal (demo.mp3) para la visualización de waveform
+            this.waveSurfer.load("/music/demo.mp3");
+
+            this.waveSurfer.on("ready", () => {
+                if (this.masterAudio) {
+                    const duration = this.masterAudio.duration;
+                    this.totalTimeElement.textContent =
+                        this.formatTime(duration);
+                }
+            });
+        }
+
+        private setupEventListeners() {
+            this.playButton.addEventListener("click", () => this.togglePlay());
+            this.volumeSlider.addEventListener("input", (e) =>
+                this.setMainVolume(
+                    parseInt((e.target as HTMLInputElement).value),
+                ),
+            );
+
+            // Botones de activación/desactivación de tracks (solo para visualización)
+            document.querySelectorAll(".track-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const trackName = (e.target as HTMLElement).dataset.track;
+                    if (trackName) {
+                        this.toggleTrackVisualization(trackName);
+                    }
+                });
+            });
+
+            // Sincronizar con el audio principal
+            if (this.mainAudio) {
+                this.mainAudio.addEventListener("timeupdate", () => {
+                    this.masterTime = this.mainAudio!.currentTime;
+                    this.currentTimeElement.textContent = this.formatTime(
+                        this.masterTime,
+                    );
+
+                    // Sincronizar todas las pistas de análisis con el tiempo principal
+                    this.tracks.forEach((track) => {
+                        if (
+                            Math.abs(
+                                track.audio.currentTime - this.masterTime,
+                            ) > 0.1
+                        ) {
+                            track.audio.currentTime = this.masterTime;
+                        }
+                    });
+
+                    if (this.waveSurfer) {
+                        this.waveSurfer.setTime(this.masterTime);
+                    }
+                });
+
+                this.mainAudio.addEventListener("ended", () => {
+                    this.stop();
+                });
+            }
+        }
+
+        private findPanels() {
+            console.log("🎵 Buscando paneles para efectos visuales...");
+
+            // Buscar paneles por data-track attribute primero
+            const trackConfigs = [
+                {
+                    name: "bass",
+                    file:
+                        "/music/" +
+                        encodeURIComponent(
+                            "El Cuarteto de Nos - Enamorado tuyo (LetraLyrics)-bass-C# minor-96bpm-441hz.mp3",
+                        ),
+                    color: "#8B5CF6",
+                    panelSelector: '[data-track="bass"]',
+                },
+                {
+                    name: "drums",
+                    file:
+                        "/music/" +
+                        encodeURIComponent(
+                            "El Cuarteto de Nos - Enamorado tuyo (LetraLyrics)-drums-C# minor-96bpm-441hz.mp3",
+                        ),
+                    color: "#EF4444",
+                    panelSelector: '[data-track="drums"]',
+                },
+                {
+                    name: "vocals",
+                    file:
+                        "/music/" +
+                        encodeURIComponent(
+                            "El Cuarteto de Nos - Enamorado tuyo (LetraLyrics)-vocals-C# minor-96bpm-441hz.mp3",
+                        ),
+                    color: "#3B82F6",
+                    panelSelector: '[data-track="vocals"]',
+                },
+                {
+                    name: "other",
+                    file:
+                        "/music/" +
+                        encodeURIComponent(
+                            "El Cuarteto de Nos - Enamorado tuyo (LetraLyrics)-other-C# minor-96bpm-441hz.mp3",
+                        ),
+                    color: "#22C55E",
+                    panelSelector: '[data-track="other"]',
+                },
+            ];
+
+            trackConfigs.forEach((config) => {
+                const elements = document.querySelectorAll(
+                    config.panelSelector,
+                );
+                elements.forEach((element) => {
+                    if (element instanceof HTMLElement) {
+                        const style = window.getComputedStyle(element);
+                        this.panels.push({
+                            element: element,
+                            track: config.name,
+                            originalBorderColor: style.borderColor,
+                            originalBackgroundColor: style.backgroundColor,
+                            originalBoxShadow: style.boxShadow,
+                        });
+                        console.log(
+                            `✅ Panel ${config.name} encontrado:`,
+                            element,
+                        );
+                    }
+                });
+            });
+
+            // Fallback si no encontramos paneles con data-track
+            if (this.panels.length === 0) {
+                console.log(
+                    "⚠️ No se encontraron paneles con data-track, usando fallback...",
+                );
+                const fallbackPanels = [
+                    {
+                        selector:
+                            '.panel:has([class*="PROFILE"]), .panel:has(h3:contains("PROFILE"))',
+                        track: "vocals",
+                    },
+                    {
+                        selector:
+                            '.panel:has([class*="CONTACT"]), .panel:has(h3:contains("CONTACT"))',
+                        track: "bass",
+                    },
+                    {
+                        selector:
+                            '.panel:has([class*="PROJECTS"]), .panel:has(h3:contains("PROJECTS"))',
+                        track: "drums",
+                    },
+                    {
+                        selector:
+                            '.panel:has([class*="CODE"]), .panel:has(h3:contains("CODE"))',
+                        track: "other",
+                    },
+                ];
+
+                // Si el fallback no funciona, buscar todos los .panel y asignar manualmente
+                const allPanels = document.querySelectorAll(".panel");
+                console.log(
+                    `🔍 Encontrados ${allPanels.length} paneles en total`,
+                );
+
+                allPanels.forEach((element, index) => {
+                    if (element instanceof HTMLElement) {
+                        const trackNames = ["vocals", "drums", "other", "bass"];
+                        const track = trackNames[index % trackNames.length];
+                        const style = window.getComputedStyle(element);
+                        this.panels.push({
+                            element: element,
+                            track: track,
+                            originalBorderColor: style.borderColor,
+                            originalBackgroundColor: style.backgroundColor,
+                            originalBoxShadow: style.boxShadow,
+                        });
+                        console.log(
+                            `🎯 Panel ${index} asignado a ${track}:`,
+                            element,
+                        );
+                    }
+                });
+            }
+
+            console.log(
+                `🎉 Total de paneles configurados: ${this.panels.length}`,
+            );
+        }
+
+        private togglePlay() {
+            if (this.isPlaying) {
+                this.pause();
+            } else {
+                this.play();
+            }
+        }
+
+        private async play() {
+            try {
+                console.log("🎵 Iniciando reproducción...");
+
+                // Reanudar todos los contextos de audio
+                for (const track of this.tracks.values()) {
+                    if (track.context.state === "suspended") {
+                        await track.context.resume();
+                        console.log(`🔊 Contexto reanudado para ${track.name}`);
+                    }
+                }
+
+                // Reproducir el audio principal (audible)
+                if (this.mainAudio) {
+                    this.mainAudio.currentTime = this.masterTime;
+                    await this.mainAudio.play();
+                    console.log("🎵 Audio principal reproduciendo");
+                }
+
+                // Reproducir todas las pistas de análisis (silenciosas) de forma sincronizada
+                const playPromises: Promise<void>[] = [];
+                console.log(`🎵 Intentando reproducir ${this.tracks.size} pistas de análisis...`);
+                
+                this.tracks.forEach((track) => {
+                    console.log(`🔍 Pista ${track.name}: active=${track.active}, readyState=${track.audio.readyState}, currentSrc=${track.audio.currentSrc}`);
+                    
+                    if (track.active && track.audio.readyState >= 2) {
+                        // HAVE_CURRENT_DATA
+                        console.log(`▶️ Reproduciendo pista ${track.name}...`);
+                        track.audio.currentTime = this.masterTime;
+                        playPromises.push(
+                            track.audio.play().then(() => {
+                                console.log(`✅ Pista ${track.name} reproduciéndose`);
+                            }).catch((e) => {
+                                console.warn(
+                                    `⚠️ No se pudo reproducir ${track.name}:`,
+                                    e,
+                                );
+                            }),
+                        );
+                    } else {
+                        console.warn(`❌ Pista ${track.name} no lista: active=${track.active}, readyState=${track.audio.readyState}`);
+                    }
+                });
+
+                await Promise.all(playPromises);
+
+                this.isPlaying = true;
+                this.updatePlayButton();
+                this.startVisualization();
+                console.log("🎉 Reproducción iniciada exitosamente");
+            } catch (error) {
+                console.error("❌ Error al reproducir:", error);
+                this.isPlaying = false;
+                this.updatePlayButton();
+            }
+        }
+
+        private pause() {
+            console.log("⏸️ Pausando reproducción...");
+
+            // Pausar audio principal
+            if (this.mainAudio) {
+                this.mainAudio.pause();
+            }
+
+            // Pausar pistas de análisis
+            this.tracks.forEach((track) => {
+                track.audio.pause();
+            });
+
+            this.isPlaying = false;
+            this.updatePlayButton();
+            this.stopVisualization();
+        }
+
+        private updatePlayButton() {
+            if (this.isPlaying) {
+                this.playButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        `;
+                this.playButton.classList.add("playing");
+            } else {
+                this.playButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+          </svg>
+        `;
+                this.playButton.classList.remove("playing");
+            }
+        }
+
+        private stop() {
+            this.pause();
+            this.masterTime = 0;
+
+            // Reiniciar audio principal
+            if (this.mainAudio) {
+                this.mainAudio.currentTime = 0;
+            }
+
+            // Reiniciar pistas de análisis
+            this.tracks.forEach((track) => {
+                track.audio.currentTime = 0;
+            });
+
+            if (this.waveSurfer) {
+                this.waveSurfer.setTime(0);
+            }
+        }
+
+        private setMainVolume(volume: number) {
+            const normalizedVolume = volume / 100;
+            // Solo cambiar el volumen del audio principal
+            if (this.mainAudio) {
+                this.mainAudio.volume = normalizedVolume;
+            }
+            // Las pistas de análisis siempre permanecen en silencio
+        }
+
+        private toggleTrackVisualization(trackName: string) {
+            const track = this.tracks.get(trackName);
+            if (!track) return;
+
+            track.active = !track.active;
+            const btn = document.getElementById(
+                `btn-${trackName}`,
+            ) as HTMLButtonElement;
+
+            if (track.active) {
+                btn.style.opacity = "1";
+                btn.classList.add("active");
+                if (this.isPlaying) {
+                    track.audio.currentTime = this.masterTime;
+                    track.audio.play();
+                }
+            } else {
+                btn.style.opacity = "0.5";
+                btn.classList.remove("active");
+                track.audio.pause();
+            }
+        }
+
+        private startVisualization() {
+            if (this.rafId) return;
+
+            const visualize = () => {
+                if (!this.isPlaying) return;
+
+                this.analyzeAudio();
+                this.rafId = requestAnimationFrame(visualize);
+            };
+
+            visualize();
+        }
+
+        private analyzeAudio() {
+            console.log(`🔍 Analizando ${this.tracks.size} pistas...`);
+            this.tracks.forEach((track) => {
+                console.log(
+                    `🎵 Pista ${track.name}: active=${track.active}, paused=${track.audio.paused}, source=${!!track.source}`,
+                );
+
+                if (!track.active || !track.source || track.audio.paused) {
+                    console.log(
+                        `⏸️ Saltando pista ${track.name} - no activa o pausada`,
+                    );
+                    return;
+                }
+
+                try {
+                    track.analyser.getByteFrequencyData(track.dataArray);
+
+                    // Verificar si hay datos de audio
+                    const sum = track.dataArray.reduce((a, b) => a + b, 0);
+
+                    if (sum === 0) {
+                        console.warn(`⚠️ Pista ${track.name} no tiene datos de audio - readyState: ${track.audio.readyState}, currentTime: ${track.audio.currentTime}, duration: ${track.audio.duration}`);
+                        
+                        // Reset sutil de efectos cuando no hay datos
+                        const relevantPanels = this.panels.filter((panel) => panel.track === track.name);
+                        relevantPanels.forEach((panel) => {
+                            panel.element.style.transform = "scale(1)"; // Volver a tamaño normal
+                            panel.element.style.borderColor = panel.originalBorderColor;
+                            panel.element.style.background = ""; // Limpiar gradiente
+                            panel.element.style.boxShadow = panel.originalBoxShadow;
+                            panel.element.style.borderWidth = ""; // Limpiar borde dinámico
+                            panel.element.style.filter = ""; // Limpiar filtros
+                        });
+                        return;
+                    }
+
+                    // Calcular diferentes bandas de frecuencia
+                    const dataLength = track.dataArray.length;
+                    const bassData = track.dataArray.slice(
+                        0,
+                        Math.floor(dataLength * 0.1),
+                    );
+                    const midData = track.dataArray.slice(
+                        Math.floor(dataLength * 0.1),
+                        Math.floor(dataLength * 0.5),
+                    );
+                    const trebleData = track.dataArray.slice(
+                        Math.floor(dataLength * 0.5),
+                    );
+
+                    const bassAvg =
+                        bassData.reduce((a, b) => a + b, 0) / bassData.length;
+                    const midAvg =
+                        midData.reduce((a, b) => a + b, 0) / midData.length;
+                    const trebleAvg =
+                        trebleData.reduce((a, b) => a + b, 0) /
+                        trebleData.length;
+                    const totalAvg =
+                        track.dataArray.reduce((a, b) => a + b, 0) /
+                        track.dataArray.length;
+
+                    // Normalizar valores (0-1) y amplificar para mayor sensibilidad
+                    const normalizedBass = Math.min((bassAvg / 255) * 10, 1); // 10x amplificación
+                    const normalizedMid = Math.min((midAvg / 255) * 10, 1);
+                    const normalizedTreble = Math.min((trebleAvg / 255) * 10, 1);
+                    const normalizedTotal = Math.min((totalAvg / 255) * 15, 1); // 15x amplificación para efectos más visibles
+
+                    // Aplicar efectos a paneles específicos para esta pista
+                    const relevantPanels = this.panels.filter((panel) => panel.track === track.name);
+                    
+                    relevantPanels.forEach((panel) => {
+                        this.applyTrackEffect(
+                            panel,
+                            track,
+                            normalizedTotal,
+                        );
+                    });
+                } catch (error) {
+                    console.warn(
+                        `⚠️ Error analizando audio para ${track.name}:`,
+                        error,
+                    );
+                }
+            });
+        }
+
+        private updatePanelsForTrack(track: Track) {
+            const relevantPanels = this.panels.filter(
+                (panel) => panel.track === track.name,
+            );
+
+            // Calcular intensidad promedio
+            const sum = track.dataArray.reduce((a, b) => a + b, 0);
+            const average = sum / track.dataArray.length;
+            const intensity = Math.min(average / 255, 1);
+
+            relevantPanels.forEach((panel) => {
+                this.applyTrackEffect(panel, track, intensity);
+            });
+        }
+
+        private applyTrackEffect(
+            panel: PanelElement,
+            track: Track,
+            intensity: number,
+        ) {
+            const element = panel.element;
+
+            switch (track.name) {
+                case "bass":
+                    // Pulso INTENSO con onda de color (CONTACT)
+                    const bassScale = 1 + intensity * 0.25; // Pulso mucho más grande
+                    const bassOpacity = 0.4 + intensity * 0.8; // Opacidad más dinámica
+                    element.style.transform = `scale(${bassScale})`;
+                    element.style.borderColor = `rgba(147, 51, 234, ${bassOpacity})`; // Púrpura intenso
+                    element.style.boxShadow = `
+                        0 0 ${intensity * 60}px rgba(147, 51, 234, ${intensity * 0.8}),
+                        0 0 ${intensity * 120}px rgba(147, 51, 234, ${intensity * 0.4}),
+                        inset 0 0 ${intensity * 40}px rgba(147, 51, 234, ${intensity * 0.3})`; // Triple glow
+                    break;
+
+                case "drums":
+                    // Pulso rítmico INTENSO (PROJECTS)
+                    const drumsScale = 1 + intensity * 0.3; // Pulso muy notable
+                    const drumsOpacity = 0.5 + intensity * 0.7;
+                    const drumsPulse = Math.sin(Date.now() / 100) * intensity * 0.1; // Pulso adicional
+                    element.style.transform = `scale(${drumsScale + drumsPulse})`;
+                    element.style.borderColor = `rgba(239, 68, 68, ${drumsOpacity})`; // Rojo intenso
+                    element.style.boxShadow = `
+                        inset 0 0 ${intensity * 50}px rgba(239, 68, 68, ${intensity * 0.6}),
+                        0 0 ${intensity * 80}px rgba(239, 68, 68, ${intensity * 0.5})`; // Doble glow
+                    element.style.borderWidth = `${Math.max(2, intensity * 8)}px`; // Borde más grueso
+                    break;
+
+                case "vocals":
+                    // Onda INTENSA que fluye de izquierda a derecha (PROFILE)
+                    const wavePosition = (Date.now() / 800) % 2; // Más rápido
+                    const waveOpacity = intensity * 0.7; // Más opaco
+                    const vocalsScale = 1 + intensity * 0.15; // Pulso combinado
+                    element.style.transform = `scale(${vocalsScale})`;
+                    element.style.background = `
+                        linear-gradient(90deg, 
+                            rgba(59, 130, 246, 0) 0%, 
+                            rgba(59, 130, 246, ${waveOpacity}) ${(wavePosition * 60)}%, 
+                            rgba(59, 130, 246, ${waveOpacity * 0.6}) ${(wavePosition * 80)}%,
+                            rgba(59, 130, 246, 0) 100%),
+                        linear-gradient(45deg, 
+                            rgba(59, 130, 246, ${intensity * 0.1}) 0%, 
+                            transparent 50%)`; // Gradiente diagonal adicional
+                    element.style.borderColor = `rgba(59, 130, 246, ${0.5 + intensity * 0.6})`;
+                    element.style.boxShadow = `0 0 ${intensity * 70}px rgba(59, 130, 246, ${intensity * 0.7})`;
+                    break;
+
+                case "other":
+                    // Onda INTENSA que fluye de arriba a abajo (MUSIC PROJECTS + CODE EDITOR)
+                    const verticalWave = (Date.now() / 1000) % 2; // Más rápido
+                    const verticalOpacity = intensity * 0.6; // Más opaco
+                    const otherScale = 1 + intensity * 0.2; // Pulso más notable
+                    const rotation = Math.sin(Date.now() / 500) * intensity * 3; // Rotación sutil
+                    element.style.transform = `scale(${otherScale}) rotate(${rotation}deg)`;
+                    element.style.background = `
+                        linear-gradient(180deg, 
+                            rgba(34, 197, 94, 0) 0%, 
+                            rgba(34, 197, 94, ${verticalOpacity}) ${(verticalWave * 60)}%, 
+                            rgba(34, 197, 94, ${verticalOpacity * 0.5}) ${(verticalWave * 85)}%,
+                            rgba(34, 197, 94, 0) 100%),
+                        linear-gradient(135deg, 
+                            rgba(34, 197, 94, ${intensity * 0.1}) 0%, 
+                            transparent 60%)`; // Gradiente diagonal
+                    element.style.borderColor = `rgba(34, 197, 94, ${0.5 + intensity * 0.5})`;
+                    element.style.boxShadow = `
+                        0 0 ${intensity * 50}px rgba(34, 197, 94, ${intensity * 0.6}),
+                        inset 0 0 ${intensity * 30}px rgba(34, 197, 94, ${intensity * 0.2})`;
+                    element.style.filter = `brightness(${1 + intensity * 0.4}) saturate(${1 + intensity * 0.8})`;
+                    break;
+            }
+        }
+
+        private stopVisualization() {
+            if (this.rafId) {
+                cancelAnimationFrame(this.rafId);
+                this.rafId = null;
+            }
+
+            // Restaurar estilos originales completamente
+            this.panels.forEach((panel) => {
+                panel.element.style.borderColor = panel.originalBorderColor;
+                panel.element.style.backgroundColor = panel.originalBackgroundColor;
+                panel.element.style.boxShadow = panel.originalBoxShadow;
+                panel.element.style.transform = "";
+                panel.element.style.background = ""; // Limpiar gradientes
+                panel.element.style.filter = ""; // Limpiar filtros
+                panel.element.style.borderWidth = ""; // Limpiar borde dinámico
+            });
+        }
+
+        private formatTime(seconds: number): string {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, "0")}`;
+        }
+
+        public getPanelCount(): number {
+            return this.panels.length;
+        }
+
+        public checkReady(): boolean {
+            return this.panels.length > 0 && this.tracks.size > 0;
+        }
+    }
+
+    // Inicializar cuando la página esté lista
+    window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const visualizer = new MultiTrackAudioVisualizer();
+            console.log("🚀 MultiTrack Audio Visualizer initialized");
+
+            // Auto-iniciar visualización después de cargar
+            setTimeout(() => {
+                const panelCount = visualizer.getPanelCount();
+                if (panelCount > 0) {
+                    console.log(
+                        `✅ ${panelCount} paneles detectados y listos para animación`,
+                    );
+                } else {
+                    console.warn("⚠️ No se detectaron paneles para animación");
+                }
+
+                // Hacer el visualizador accesible globalmente para debug
+                (window as any).audioVisualizer = visualizer;
+            }, 2000);
+        }, 500);
+    });
+</script>
+
+<style>
+    #audio-controls {
+        backdrop-filter: blur(12px);
+        border-image: linear-gradient(45deg, #06b6d4, #8b5cf6) 1;
+    }
+
+    .track-btn {
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .track-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .track-btn.active {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    #volume-slider {
+        background: linear-gradient(to right, #06b6d4 0%, #8b5cf6 100%);
+    }
+
+    #volume-slider::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #06b6d4;
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+    }
+
+    #volume-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #06b6d4;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+    }
+
+    #waveform-container {
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        background: linear-gradient(
+            45deg,
+            rgba(6, 182, 212, 0.1),
+            rgba(139, 92, 246, 0.1)
+        );
+    }
+
+    /* Efectos responsive */
+    @media (max-width: 768px) {
+        #audio-controls {
+            flex-direction: column;
+            gap: 2px;
+            padding: 2px;
+        }
+
+        #waveform-container {
+            width: 200px;
+            height: 32px;
+        }
+
+        .track-btn {
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+    }
+</style>

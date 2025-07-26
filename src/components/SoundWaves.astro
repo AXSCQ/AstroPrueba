@@ -5,7 +5,25 @@
 </div>
 
 <script>
+  interface EqualizerBar {
+    element: HTMLElement;
+    height: number;
+    targetHeight: number;
+    baseHeight: number;
+    phase: number;
+  }
+
   class AudioEqualizer {
+    container: HTMLElement | null;
+    barCount: number;
+    maxHeight: number;
+    bars: EqualizerBar[];
+    mousePosition: { x: number, y: number };
+    isVisible: boolean;
+    timeoutId: ReturnType<typeof setTimeout> | null;
+    active: boolean;
+    frameCount: number;
+
     constructor() {
       this.container = document.getElementById('equalizerContainer');
       this.barCount = 32; // Reducido para mejor rendimiento
@@ -142,7 +160,7 @@
             
             // Ajustar intensidad del brillo según altura
             const opacity = Math.min(1, bar.height / 50);
-            bar.element.style.opacity = 0.7 + (opacity * 0.3);
+            bar.element.style.opacity = (0.7 + (opacity * 0.3)).toString();
           }
         });
       }
@@ -159,7 +177,7 @@
         const height = bar.baseHeight + (wave1 * wave2 * 15);
         
         bar.element.style.transform = `scaleY(${height / 5})`;
-        bar.element.style.opacity = 0.6 + (wave1 * 0.2);
+        bar.element.style.opacity = (0.6 + (wave1 * 0.2)).toString();
       });
     }
   }

@@ -8,6 +8,7 @@ import laptopImage from "../assets/images/laptop.jpg";
 import ProjectModal from "../components/ProjectModal.astro";
 import Contact from "../components/Contact.astro";
 import ProfileModal from "../components/ProfileModal.astro";
+import MultiTrackAudioVisualizer from "../components/MultiTrackAudioVisualizer.astro";
 
 // Definición de los proyectos
 const projects = [
@@ -67,7 +68,7 @@ const projects = [
   <div class="min-h-screen bg-cyber-950 p-2 sm:p-4 md:p-8 overflow-x-hidden">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 max-w-7xl mx-auto px-1 sm:px-2 md:px-4">
       <!-- Profile Panel -->
-      <DawPanel title="PROFILE" variant="default" class="lg:col-span-2">
+      <DawPanel title="PROFILE" variant="default" class="lg:col-span-2" data-track="vocals">
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 w-full">
           <Image
             src={perfilImage}
@@ -98,7 +99,7 @@ const projects = [
     
 
       <!-- Music Projects -->
-      <DawPanel title="MUSIC PROJECTS" variant="music">
+      <DawPanel title="MUSIC PROJECTS" variant="music" data-track="other">
         <div class="relative">
           <Image
             src={bajistaImage}
@@ -123,7 +124,7 @@ const projects = [
       </DawPanel>
 
       <!-- Code Editor Panel -->
-      <DawPanel title="CODE EDITOR" variant="code" class="lg:col-span-2">
+      <DawPanel title="CODE EDITOR" variant="code" class="lg:col-span-2" data-track="other">
         <div class="font-mono text-xs sm:text-sm overflow-x-auto max-w-full">
           <pre class="text-white/80 p-2 overflow-x-auto text-[10px] xs:text-xs sm:text-sm">
             <code>{`class Developer {
@@ -150,7 +151,7 @@ const projects = [
       </DawPanel>
 
       <!-- Projects Grid -->
-      <DawPanel title="PROJECTS" variant="default">
+      <DawPanel title="PROJECTS" variant="default" data-track="drums">
         <div class="grid grid-cols-1 xs:grid-cols-2 gap-2">
           {
             projects.map((project, i) => (
@@ -238,7 +239,7 @@ const projects = [
       </DawPanel>
 
       <!-- Contact Panel -->
-      <DawPanel title="CONTACT" variant="contact" class="col-span-1 md:col-span-2 lg:col-span-3">
+      <DawPanel title="CONTACT" variant="contact" class="col-span-1 md:col-span-2 lg:col-span-3" data-track="bass">
         <button 
           id="contactModalBtn"
           class="w-full py-2 sm:py-3 bg-cyber-800/80 rounded-lg text-center hover:bg-cyber-700 transition-all text-neon-blue group text-sm sm:text-base"
@@ -320,4 +321,7 @@ const projects = [
       }
     });
   </script>
+  
+  <!-- Visualizador de audio multitrack -->
+  <MultiTrackAudioVisualizer />
 </Layout>

@@ -1,0 +1,623 @@
+---
+---
+
+<div id="visualizer-overlay" class="fixed inset-0 bg-black opacity-0 z-40 pointer-events-none transition-opacity duration-1000"></div>
+
+<div id="audio-controls" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-cyber-800/80 backdrop-blur-md p-2 rounded-lg border border-neon-blue/30 flex items-center gap-2">
+  <button id="play-button" class="p-2 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-colors flex items-center justify-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+    </svg>
+  </button>
+  <div id="waveform" class="w-40 h-10"></div>
+  <div class="text-neon-blue text-xs"><span id="current-time">0:00</span> / <span id="total-time">0:00</span></div>
+  <select id="track-selector" class="bg-cyber-700 text-neon-blue text-xs border border-neon-blue/30 rounded p-1">
+    <option value="/music/demo.mp3">Demo Track</option>
+  </select>
+</div>
+
+<!-- Audio para reproducción (sonido limpio) -->
+<audio id="audio-playback" src="/music/demo.mp3" preload="metadata"></audio>
+<!-- Audio para análisis (sin reproducción audible) -->
+<audio id="audio-analysis" src="/music/demo.mp3" preload="metadata"></audio>
+
+<script>
+  // @ts-ignore
+  import WaveSurfer from 'wavesurfer.js';
+
+  interface PanelElement {
+    element: HTMLElement;
+    type: 'drums' | 'vocals' | 'melody' | 'bass' | 'other';
+    frequencyRange: {min: number, max: number};
+    color: string;
+    originalBorderColor: string;
+    originalBackgroundColor: string;
+    intensity: number;
+  }
+
+  class AudioVisualizer {
+    private audioPlayback: HTMLAudioElement;
+    private audioAnalysis: HTMLAudioElement;
+    private playButton: HTMLButtonElement;
+    private trackSelector: HTMLSelectElement;
+    private visualizerOverlay: HTMLElement;
+    private audioContext: AudioContext | null = null;
+    private analyser: AnalyserNode | null = null;
+    private source: MediaElementAudioSourceNode | null = null;
+    private rafId: number | null = null;
+    private panels: PanelElement[] = [];
+    private dataArray: Uint8Array | null = null;
+    private currentTimeElement: HTMLElement;
+    private totalTimeElement: HTMLElement;
+    private wavesurfer: any;
+    private isPlaying: boolean = false;
+    
+    constructor() {
+      // Get DOM elements
+      this.audioPlayback = document.getElementById('audio-playback') as HTMLAudioElement;
+      this.audioAnalysis = document.getElementById('audio-analysis') as HTMLAudioElement;
+      this.playButton = document.getElementById('play-button') as HTMLButtonElement;
+      this.trackSelector = document.getElementById('track-selector') as HTMLSelectElement;
+      this.currentTimeElement = document.getElementById('current-time') as HTMLElement;
+      this.totalTimeElement = document.getElementById('total-time') as HTMLElement;
+      this.visualizerOverlay = document.getElementById('visualizer-overlay') as HTMLElement;
+      
+      // Initialize WaveSurfer
+      this.initWaveSurfer();
+      
+      // Set up event listeners
+      this.playButton.addEventListener('click', () => this.togglePlay());
+      this.trackSelector.addEventListener('change', () => this.handleTrackChange());
+      this.audioPlayback.addEventListener('timeupdate', () => this.updateTime());
+      this.audioPlayback.addEventListener('loadedmetadata', () => this.updateTotalTime());
+      this.audioPlayback.addEventListener('ended', () => this.handleAudioEnded());
+      
+      // Find and register panels for visualization
+      this.findPanels();
+    }
+    
+    private initWaveSurfer() {
+      this.wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: '#4fa4e0',
+        progressColor: '#0ec3f0',
+        height: 40,
+        cursorWidth: 1,
+        cursorColor: '#ffffff',
+        barWidth: 2,
+        barGap: 1,
+        barRadius: 2
+      });
+      
+      this.wavesurfer.load(this.audioPlayback.src);
+      
+      this.wavesurfer.on('ready', () => {
+        this.updateTotalTime();
+      });
+      
+      this.wavesurfer.on('play', () => {
+        this.updateButtonIcon(true);
+      });
+      
+      this.wavesurfer.on('pause', () => {
+        this.updateButtonIcon(false);
+      });
+    }
+    
+    private findPanels() {
+      console.log('Buscando paneles...');
+      
+      // Buscar los componentes por su clase CSS "panel" (según vimos en DawPanel.astro)
+      const allPanels = Array.from(document.querySelectorAll('div.panel'));
+      console.log(`Encontrados ${allPanels.length} paneles con clase 'panel'`);
+      
+      let profilePanel: HTMLElement | null = null;
+      let musicPanel: HTMLElement | null = null;
+      let codePanel: HTMLElement | null = null;
+      let projectsPanel: HTMLElement | null = null;
+      let contactPanel: HTMLElement | null = null;
+      
+      // Encontrar cada panel basándonos en su título
+      allPanels.forEach(panel => {
+        // Buscar el título dentro del panel (en los elementos h3)
+        const titleElem = panel.querySelector('h3');
+        const title = titleElem?.textContent?.trim() || '';
+        
+        if (title.includes('PROFILE')) {
+          profilePanel = panel as HTMLElement;
+        } else if (title.includes('MUSIC')) {
+          musicPanel = panel as HTMLElement;
+        } else if (title.includes('CODE')) {
+          codePanel = panel as HTMLElement;
+        } else if (title.includes('PROJECTS') && !title.includes('MUSIC')) {
+          projectsPanel = panel as HTMLElement;
+        } else if (title.includes('CONTACT')) {
+          contactPanel = panel as HTMLElement;
+        }
+      });
+      
+      // Si no encontramos los paneles por título, intentemos con otros selectores
+      if (!profilePanel && !musicPanel && !codePanel && !projectsPanel && !contactPanel) {
+        console.log('No se encontraron paneles por título, probando con selectores alternativos');
+        
+        // Buscar directamente los DawPanels por su clase y título
+        const dawPanels = document.querySelectorAll('.panel');
+        console.log(`Encontrados ${dawPanels.length} elementos .panel`);
+        
+        Array.from(dawPanels).forEach((panel, index) => {
+          // Extraer el título del panel
+          const titleElem = panel.querySelector('h3');
+          const titleText = titleElem?.textContent?.trim() || '';
+          console.log(`Panel ${index}: título = "${titleText}", HTML = ${panel.outerHTML.slice(0, 100)}`);
+          
+          if (titleText.includes('PROFILE')) {
+            profilePanel = panel as HTMLElement;
+            console.log('Panel PROFILE encontrado');
+          } else if (titleText.includes('MUSIC')) {
+            musicPanel = panel as HTMLElement;
+            console.log('Panel MUSIC PROJECTS encontrado');
+          } else if (titleText.includes('CODE')) {
+            codePanel = panel as HTMLElement;
+            console.log('Panel CODE EDITOR encontrado');
+          } else if (titleText.includes('PROJECTS') && !titleText.includes('MUSIC')) {
+            projectsPanel = panel as HTMLElement;
+            console.log('Panel PROJECTS encontrado');
+          } else if (titleText.includes('CONTACT')) {
+            contactPanel = panel as HTMLElement;
+            console.log('Panel CONTACT encontrado');
+          }
+        });
+      }
+      
+      // Add panels to visualization if they exist
+      if (profilePanel) {
+        const style = window.getComputedStyle(profilePanel);
+        this.panels.push({
+          element: profilePanel,
+          type: 'melody', // Para melodías e instrumentos agudos
+          frequencyRange: {min: 2000, max: 6000}, // Altas frecuencias para melodía
+          color: '#0ec3f0', // Neon blue 
+          originalBorderColor: style.borderColor || 'transparent',
+          originalBackgroundColor: style.backgroundColor || 'transparent',
+          intensity: 0
+        });
+      }
+      
+      if (musicPanel) {
+        const style = window.getComputedStyle(musicPanel);
+        this.panels.push({
+          element: musicPanel,
+          type: 'vocals', // Para voces
+          frequencyRange: {min: 300, max: 2000}, // Medios para voz
+          color: '#ff00ff', // Pink 
+          originalBorderColor: style.borderColor || 'transparent',
+          originalBackgroundColor: style.backgroundColor || 'transparent',
+          intensity: 0
+        });
+      }
+      
+      if (codePanel) {
+        const style = window.getComputedStyle(codePanel);
+        this.panels.push({
+          element: codePanel,
+          type: 'other', // Para otros elementos
+          frequencyRange: {min: 6000, max: 15000}, // Super agudos
+          color: '#00ff00', // Green 
+          originalBorderColor: style.borderColor || 'transparent',
+          originalBackgroundColor: style.backgroundColor || 'transparent',
+          intensity: 0
+        });
+      }
+      
+      if (projectsPanel) {
+        const style = window.getComputedStyle(projectsPanel);
+        this.panels.push({
+          element: projectsPanel,
+          type: 'drums', // Para batería y bombo
+          frequencyRange: {min: 20, max: 150}, // Bajas frecuencias para bombo
+          color: '#ff0000', // Red 
+          originalBorderColor: style.borderColor || 'transparent',
+          originalBackgroundColor: style.backgroundColor || 'transparent',
+          intensity: 0
+        });
+      }
+      
+      if (contactPanel) {
+        const style = window.getComputedStyle(contactPanel);
+        this.panels.push({
+          element: contactPanel,
+          type: 'bass', // Para bajos
+          frequencyRange: {min: 150, max: 300}, // Frecuencias medias-bajas para bajo
+          color: '#ffff00', // Yellow 
+          originalBorderColor: style.borderColor || 'transparent',
+          originalBackgroundColor: style.backgroundColor || 'transparent',
+          intensity: 0
+        });
+      }
+    }
+
+    public init() {
+      // Initialize Web Audio API
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.analyser = this.audioContext.createAnalyser();
+      
+      // Conectar el audio de análisis (no va al output, solo para análisis)
+      this.source = this.audioContext.createMediaElementSource(this.audioAnalysis);
+      this.analyser.fftSize = 2048;
+      this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+      
+      // Solo conectar al analizador, no al destino (silencioso)
+      this.source.connect(this.analyser);
+      
+      // Sincronizar los tiempos de reproducción
+      this.syncAudioElements();
+      
+      // Start animation
+      this.animate();
+    }
+    
+    private togglePlay() {
+      if (!this.audioContext) {
+        this.init();
+      }
+      
+      if (this.audioPlayback.paused) {
+        // Fade to black antes de empezar
+        this.fadeToBlack();
+        setTimeout(() => {
+          // Play logic
+          this.audioPlayback.play();
+          this.audioAnalysis.play();
+          this.wavesurfer.play();
+          this.playButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          `;
+          this.startAnalysis();
+          this.fadeFromBlack();
+        }, 300); // Pequeño retraso para el efecto de fade
+      } else {
+        // Pause logic
+        this.audioPlayback.pause();
+        this.audioAnalysis.pause();
+        this.wavesurfer.pause();
+        this.playButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+          </svg>
+        `;
+        this.stopAnalysis();
+      }
+    }
+    
+    private updateTime() {
+      const minutes = Math.floor(this.audioPlayback.currentTime / 60);
+      const seconds = Math.floor(this.audioPlayback.currentTime % 60).toString().padStart(2, '0');
+      this.currentTimeElement.textContent = `${minutes}:${seconds}`;
+    }
+    
+    private updateTotalTime() {
+      const minutes = Math.floor(this.audioPlayback.duration / 60);
+      const seconds = Math.floor(this.audioPlayback.duration % 60).toString().padStart(2, '0');
+      this.totalTimeElement.textContent = `${minutes}:${seconds}`;
+    }
+    
+    private animate() {
+      if (!this.analyser || !this.dataArray) return;
+      
+      // Get frequency data
+      this.analyser.getByteFrequencyData(this.dataArray);
+      
+      // Update panels based on frequency data
+      this.updatePanels();
+      
+      // Schedule next frame
+      this.rafId = requestAnimationFrame(() => this.animate());
+    }
+    
+    private updatePanels() {
+      if (!this.analyser || !this.dataArray) return;
+      
+      // Update each panel based on its frequency range and instrument type
+      this.panels.forEach(panel => {
+        // Calculate frequency range average amplitude
+        let total = 0;
+        let count = 0;
+        
+        // Map frequency bins to actual frequencies
+        const nyquist = this.audioContext!.sampleRate / 2;
+        const binFrequency = nyquist / this.dataArray!.length;
+        
+        const startBin = Math.floor(panel.frequencyRange.min / binFrequency);
+        const endBin = Math.ceil(panel.frequencyRange.max / binFrequency);
+        
+        for (let i = startBin; i <= endBin && i < this.dataArray!.length; i++) {
+          total += this.dataArray![i];
+          count++;
+        }
+        
+        const average = count > 0 ? total / count : 0;
+        const normalizedValue = average / 255;
+        
+        // Aplicar suavizado para efectos más fluidos
+        const smoothingFactor = 0.15;
+        panel.intensity = panel.intensity * (1 - smoothingFactor) + normalizedValue * smoothingFactor;
+        
+        // Amplificar la señal para mejor visualización
+        const amplifiedIntensity = Math.min(panel.intensity * 2, 1);
+        
+        // Apply different visual effects based on instrument type
+        switch (panel.type) {
+          case 'drums':
+            this.applyDrumEffect(panel, amplifiedIntensity);
+            break;
+          case 'bass':
+            this.applyBassEffect(panel, amplifiedIntensity);
+            break;
+          case 'vocals':
+            this.applyVocalEffect(panel, amplifiedIntensity);
+            break;
+          case 'melody':
+            this.applyMelodyEffect(panel, amplifiedIntensity);
+            break;
+          default:
+            this.applyGeneralEffect(panel, amplifiedIntensity);
+        }
+      });
+    }
+
+    private updateButtonIcon(isPlaying: boolean): void {
+      if (!this.playButton) return;
+      
+      if (isPlaying) {
+        this.playButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        `;
+      } else {
+        this.playButton.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+          </svg>
+        `;
+      }
+    }
+    
+    private handleTrackChange(): void {
+      const trackPath = this.trackSelector.value;
+      this.audioPlayback.src = trackPath;
+      this.audioAnalysis.src = trackPath;
+      this.wavesurfer.load(trackPath);
+      this.updateTotalTime();
+    }
+    
+    private handleAudioEnded(): void {
+      this.stopAnalysis();
+      this.updateButtonIcon(false);
+    }
+    
+    private syncAudioElements(): void {
+      // Mantener sincronizados el audio para reproducción y análisis
+      this.audioAnalysis.currentTime = this.audioPlayback.currentTime;
+    }
+    
+    private fadeToBlack(): void {
+      if (this.visualizerOverlay) {
+        this.visualizerOverlay.style.opacity = '0.7';
+        this.visualizerOverlay.style.pointerEvents = 'auto';
+      }
+    }
+    
+    private fadeFromBlack(): void {
+      if (this.visualizerOverlay) {
+        this.visualizerOverlay.style.opacity = '0';
+        this.visualizerOverlay.style.pointerEvents = 'none';
+      }
+    }
+    
+    private startAnalysis(): void {
+      // Iniciar loop de animación si no está ya corriendo
+      if (!this.rafId) {
+        this.animate();
+      }
+    }
+    
+    private stopAnalysis(): void {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+
+    private applyDrumEffect(panel: PanelElement, intensity: number): void {
+      // Efecto de escala para batería (PROJECTS)
+      const scale = 1 + intensity * 0.12;
+      const glowIntensity = Math.round(intensity * 30);
+      
+      panel.element.style.transform = `scale(${scale})`;
+      panel.element.style.borderColor = panel.color;
+      panel.element.style.boxShadow = `0 0 ${glowIntensity}px ${panel.color}, inset 0 0 ${glowIntensity/2}px ${panel.color}`;
+      panel.element.style.transition = 'all 0.05s ease-out';
+      
+      // Aplicar también a elementos internos
+      const innerElements = panel.element.querySelectorAll('div, img, p');
+      innerElements.forEach(el => {
+        (el as HTMLElement).style.transform = `scale(${1 + intensity * 0.05})`;
+        (el as HTMLElement).style.transition = 'all 0.05s ease-out';
+      });
+    }
+
+    private applyBassEffect(panel: PanelElement, intensity: number): void {
+      // Efecto de vibración horizontal para bajo (CONTACT)
+      const translateX = (Math.random() * 2 - 1) * intensity * 15;
+      const glowIntensity = Math.round(intensity * 35);
+      
+      panel.element.style.transform = `translateX(${translateX}px)`;
+      panel.element.style.borderColor = panel.color;
+      panel.element.style.boxShadow = `0 0 ${glowIntensity}px ${panel.color}, inset 0 0 ${glowIntensity/2}px ${panel.color}`;
+      panel.element.style.transition = 'all 0.05s ease-out';
+      
+      // Efecto de pulso en el fondo
+      panel.element.style.backgroundColor = `rgba(79, 164, 224, ${intensity * 0.1})`;
+    }
+
+    private applyVocalEffect(panel: PanelElement, intensity: number): void {
+      // Efecto de elevación para voces (MUSIC PROJECTS)
+      const translateY = intensity * 12;
+      const glowIntensity = Math.round(intensity * 40);
+      
+      panel.element.style.transform = `translateY(${-translateY}px)`;
+      panel.element.style.borderColor = panel.color;
+      panel.element.style.boxShadow = `0 0 ${glowIntensity}px ${panel.color}, inset 0 0 ${glowIntensity/2}px ${panel.color}`;
+      panel.element.style.transition = 'all 0.05s ease-out';
+      
+      // Efecto de brillo en texto
+      const textElements = panel.element.querySelectorAll('h3, p, span');
+      textElements.forEach(el => {
+        (el as HTMLElement).style.textShadow = `0 0 ${glowIntensity/2}px ${panel.color}`;
+      });
+    }
+
+    private applyMelodyEffect(panel: PanelElement, intensity: number): void {
+      // Efecto de rotación para melodía (PROFILE)
+      const rotate = intensity * 3;
+      const glowIntensity = Math.round(intensity * 60);
+      
+      panel.element.style.transform = `rotate(${rotate}deg) scale(${1 + intensity * 0.05})`;
+      panel.element.style.borderColor = panel.color;
+      panel.element.style.boxShadow = `0 0 ${glowIntensity}px ${panel.color}, inset 0 0 ${glowIntensity/2}px ${panel.color}`;
+      panel.element.style.transition = 'all 0.05s ease-out';
+      
+      // Efecto especial en la imagen de perfil
+      const profileImg = panel.element.querySelector('img');
+      if (profileImg) {
+        (profileImg as HTMLElement).style.filter = `brightness(${1 + intensity * 0.3}) contrast(${1 + intensity * 0.2})`;
+        (profileImg as HTMLElement).style.transform = `scale(${1 + intensity * 0.1})`;
+      }
+    }
+
+    private applyGeneralEffect(panel: PanelElement, intensity: number): void {
+      // Efecto general para otros elementos
+      const scale = 1 + intensity * 0.05;
+      const glowIntensity = Math.round(intensity * 25);
+      
+      panel.element.style.transform = `scale(${scale})`;
+      panel.element.style.borderColor = panel.color;
+      panel.element.style.boxShadow = `0 0 ${glowIntensity}px ${panel.color}, inset 0 0 ${glowIntensity/2}px ${panel.color}`;
+      panel.element.style.transition = 'all 0.05s ease-out';
+    }
+  }
+
+  // Iniciamos cuando la página esté completamente cargada para asegurar que todos los paneles estén disponibles
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const visualizer = new AudioVisualizer();
+      visualizer.init();
+      console.log('Visualizador de audio inicializado');
+    }, 500); // Retraso para asegurar que los paneles estén disponibles
+  });
+</script>
+
+<style>
+  #audio-controls {
+    backdrop-filter: blur(12px);
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translate(-50%, 100%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+  
+  #visualizer-overlay {
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  /* Estilos para mejorar la respuesta visual de los paneles */
+  :global(.panel) {
+    transition: all 0.05s ease-out !important;
+    will-change: transform, box-shadow;
+  }
+  
+  :global(.panel.audio-reactive) {
+    animation: pulse 0.1s ease-out;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* Efectos de hover mejorados cuando el audio está activo */
+  :global(.panel:hover) {
+    z-index: 10;
+  }
+  
+  /* Mejoras para el waveform */
+  #waveform {
+    filter: drop-shadow(0 0 4px rgba(79, 164, 224, 0.5));
+  }
+  
+  /* Botón de play con efecto de pulso cuando está reproduciendo */
+  #play-button {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  #play-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+  
+  #play-button:active::after {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #waveform {
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+  }
+  
+  .visualizer-container {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+  }
+  
+  /* Estilos adicionales para elementos reactivos al audio */
+  .audio-reactive {
+    animation: pulse 0.5s infinite alternate;
+  }
+  
+  @keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.8; }
+  }
+</style>
