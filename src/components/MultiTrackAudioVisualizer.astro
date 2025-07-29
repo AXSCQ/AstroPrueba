@@ -8,76 +8,123 @@
 >
 </div>
 
+<!-- Audio Player Accordion -->
 <div
-    id="audio-controls"
-    class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 bg-cyber-800/80 backdrop-blur-md p-3 rounded-lg border border-neon-blue/30 flex items-center gap-3"
+    id="audio-player-accordion"
+    class="fixed bottom-4 right-4 z-50 bg-cyber-800/95 backdrop-blur-md rounded-lg border border-neon-blue/30 shadow-xl transition-all duration-300 ease-in-out"
+    style="min-width: 280px; max-width: 420px;"
 >
+    <!-- Header del Acordeón -->
     <button
-        id="play-button"
-        class="p-3 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-all duration-300 flex items-center justify-center shadow-lg shadow-neon-blue/30"
+        id="accordion-toggle"
+        class="w-full p-4 flex items-center justify-between text-left hover:bg-neon-blue/10 rounded-t-lg transition-all duration-200"
+        aria-expanded="false"
+        aria-controls="accordion-content"
     >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-        >
-            <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                clip-rule="evenodd"></path>
-        </svg>
+        <div class="flex items-center gap-3">
+            <div>
+                <h3 class="text-sm font-medium text-white">Audio Visualizer</h3>
+                <p class="text-xs text-neon-blue/70" id="audio-status">
+                    Listo para reproducir
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <svg
+                id="chevron-icon"
+                class="w-5 h-5 text-neon-blue transform transition-transform duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </div>
     </button>
 
-    <div class="flex flex-col gap-1">
-        <div
-            id="waveform-container"
-            class="w-48 h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
-        >
-        </div>
-        <div class="text-neon-blue text-xs text-center">
-            <span id="current-time">0:00</span> / <span id="total-time"
-                >0:00</span
+    <!-- Contenido Colapsible -->
+    <div
+        id="accordion-content"
+        class="overflow-hidden transition-all duration-300 ease-in-out"
+        style="max-height: 0;"
+        aria-hidden="true"
+    >
+        <div class="p-4 pt-0 space-y-4">
+            <button
+                id="play-button"
+                class="p-3 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-all duration-300 flex items-center justify-center shadow-lg shadow-neon-blue/30"
             >
-        </div>
-    </div>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </button>
 
-    <div class="flex flex-col gap-1">
-        <label class="text-neon-blue text-xs">Tracks:</label>
-        <div class="flex gap-1">
-            <button
-                id="btn-bass"
-                class="track-btn px-2 py-1 text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
-                data-track="bass">Bass</button
-            >
-            <button
-                id="btn-drums"
-                class="track-btn px-2 py-1 text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
-                data-track="drums">Drums</button
-            >
-            <button
-                id="btn-vocals"
-                class="track-btn px-2 py-1 text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
-                data-track="vocals">Vocals</button
-            >
-            <button
-                id="btn-other"
-                class="track-btn px-2 py-1 text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
-                data-track="other">Other</button
-            >
-        </div>
-    </div>
+            <div class="flex flex-col gap-1">
+                <div
+                    id="waveform-container"
+                    class="w-48 h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
+                >
+                </div>
+                <div class="text-neon-blue text-xs text-center">
+                    <span id="current-time">0:00</span> / <span id="total-time"
+                        >0:00</span
+                    >
+                </div>
+            </div>
 
-    <div class="flex items-center gap-2">
-        <label class="text-neon-blue text-xs">Volume:</label>
-        <input
-            type="range"
-            id="volume-slider"
-            min="0"
-            max="100"
-            value="70"
-            class="w-16 h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
-        />
+            <div class="flex flex-col gap-1">
+                <label class="text-neon-blue text-xs">Tracks:</label>
+                <div class="flex gap-1">
+                    <button
+                        id="btn-bass"
+                        class="track-btn px-2 py-1 text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
+                        data-track="bass">Bass</button
+                    >
+                    <button
+                        id="btn-drums"
+                        class="track-btn px-2 py-1 text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
+                        data-track="drums">Drums</button
+                    >
+                    <button
+                        id="btn-vocals"
+                        class="track-btn px-2 py-1 text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
+                        data-track="vocals">Vocals</button
+                    >
+                    <button
+                        id="btn-other"
+                        class="track-btn px-2 py-1 text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
+                        data-track="other">Other</button
+                    >
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <label for="volume-slider" class="text-neon-blue text-xs"
+                    >Volume:</label
+                >
+                <input
+                    type="range"
+                    id="volume-slider"
+                    min="0"
+                    max="100"
+                    value="70"
+                    aria-label="Ajustar volumen del audio"
+                    class="w-16 h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
+                />
+            </div>
+        </div>
     </div>
 </div>
 
@@ -164,11 +211,36 @@
                 "total-time",
             ) as HTMLElement;
 
-            this.initializeMainAudio();
-            this.initializeTracks();
-            this.initializeWaveSurfer();
+            // Inicialización básica inmediata
             this.setupEventListeners();
             this.findPanels();
+
+            // Lazy initialization de recursos pesados
+            this.lazyInitializeAudio();
+        }
+
+        /**
+         * Lazy initialization de recursos de audio para mejorar performance inicial
+         * Los recursos pesados se cargan después del render inicial
+         */
+        private lazyInitializeAudio() {
+            // Usar setTimeout para no bloquear el render inicial
+            setTimeout(() => {
+                this.debug.log("🚀 Iniciando lazy loading de audio...");
+
+                // Cargar audio principal
+                this.initializeMainAudio();
+
+                // Cargar pistas después de un delay adicional
+                setTimeout(() => {
+                    this.initializeTracks();
+                }, 100);
+
+                // Cargar WaveSurfer al final
+                setTimeout(() => {
+                    this.initializeWaveSurfer();
+                }, 200);
+            }, 50); // Delay mínimo para no bloquear el render
         }
 
         private initializeMainAudio() {
@@ -315,7 +387,20 @@
         }
 
         private setupEventListeners() {
+            // Funcionalidad del acordeón
+            this.setupAccordion();
+
             this.playButton.addEventListener("click", () => this.togglePlay());
+
+            // Mini play button en el header del acordeón
+            const miniPlayButton = document.getElementById("mini-play-button");
+            if (miniPlayButton) {
+                miniPlayButton.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Evitar que se abra/cierre el acordeón
+                    this.togglePlay();
+                });
+            }
+
             this.volumeSlider.addEventListener("input", (e) =>
                 this.setMainVolume(
                     parseInt((e.target as HTMLInputElement).value),
@@ -361,6 +446,60 @@
                 });
             }
         }
+
+        /**
+         * Configura la funcionalidad del acordeón para colapsar/expandir el reproductor
+         */
+        private setupAccordion() {
+            const accordionToggle = document.getElementById("accordion-toggle");
+            const accordionContent =
+                document.getElementById("accordion-content");
+            const chevronIcon = document.getElementById("chevron-icon");
+            const audioStatus = document.getElementById("audio-status");
+
+            if (!accordionToggle || !accordionContent || !chevronIcon) {
+                this.debug.warn("⚠️ Elementos del acordeón no encontrados");
+                return;
+            }
+
+            let isExpanded = false;
+
+            accordionToggle.addEventListener("click", () => {
+                isExpanded = !isExpanded;
+
+                // Actualizar aria-expanded
+                accordionToggle.setAttribute(
+                    "aria-expanded",
+                    isExpanded.toString(),
+                );
+                accordionContent.setAttribute(
+                    "aria-hidden",
+                    (!isExpanded).toString(),
+                );
+
+                if (isExpanded) {
+                    // Expandir
+                    accordionContent.style.maxHeight =
+                        accordionContent.scrollHeight + "px";
+                    chevronIcon.style.transform = "rotate(180deg)";
+                    this.debug.log("🔊 Reproductor expandido");
+                } else {
+                    // Colapsar
+                    accordionContent.style.maxHeight = "0";
+                    chevronIcon.style.transform = "rotate(0deg)";
+                    this.debug.log("📌 Reproductor colapsado");
+                }
+            });
+
+            // Actualizar estado del audio en el header
+            this.updateAudioStatus = (status: string) => {
+                if (audioStatus) {
+                    audioStatus.textContent = status;
+                }
+            };
+        }
+
+        private updateAudioStatus?: (status: string) => void;
 
         private findPanels() {
             this.debug.log("🎵 Buscando paneles para efectos visuales...");
@@ -564,10 +703,14 @@
                 this.updatePlayButton();
                 this.startVisualization();
                 this.debug.log("🎉 Reproducción iniciada exitosamente");
+
+                // Actualizar estado en el header del acordeón
+                this.updateAudioStatus?.("Reproduciendo...");
             } catch (error) {
                 console.error("❌ Error al reproducir:", error);
                 this.isPlaying = false;
                 this.updatePlayButton();
+                this.updateAudioStatus?.("Error al reproducir");
             }
         }
 
@@ -587,23 +730,46 @@
             this.isPlaying = false;
             this.updatePlayButton();
             this.stopVisualization();
+
+            // Actualizar estado en el header del acordeón
+            this.updateAudioStatus?.("Pausado");
         }
 
         private updatePlayButton() {
+            const miniPlayButton = document.getElementById("mini-play-button");
+
             if (this.isPlaying) {
+                // Botón principal - icono de pausa
                 this.playButton.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
           </svg>
         `;
                 this.playButton.classList.add("playing");
+
+                // Mini botón - icono de pausa
+                if (miniPlayButton) {
+                    miniPlayButton.innerHTML = `
+                        <svg class="w-4 h-4 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>`;
+                }
             } else {
+                // Botón principal - icono de play
                 this.playButton.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
           </svg>
         `;
                 this.playButton.classList.remove("playing");
+
+                // Mini botón - icono de play
+                if (miniPlayButton) {
+                    miniPlayButton.innerHTML = `
+                        <svg class="w-4 h-4 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                        </svg>`;
+                }
             }
         }
 
@@ -658,132 +824,189 @@
             }
         }
 
+        // Usar requestIdleCallback cuando esté disponible para optimizar rendimiento
         private startVisualization() {
             if (this.rafId) return;
 
+            // Priorizar el renderizado de la UI sobre el análisis de audio
             const visualize = () => {
                 if (!this.isPlaying) return;
 
-                this.analyzeAudio();
+                // Usar requestIdleCallback si está disponible para no bloquear el hilo principal
+                if ("requestIdleCallback" in window) {
+                    // @ts-ignore - TypeScript no reconoce requestIdleCallback
+                    window.requestIdleCallback(
+                        () => {
+                            this.analyzeAudio();
+                        },
+                        { timeout: 1000 / 30 },
+                    ); // Garantizar que se ejecute al menos 30 veces por segundo
+                } else {
+                    this.analyzeAudio();
+                }
+
                 this.rafId = requestAnimationFrame(visualize);
             };
 
             visualize();
         }
 
+        // Contador para limitar la frecuencia de análisis
+        private analyzeCounter = 0;
+        private readonly ANALYZE_THROTTLE = 3; // Solo analizar 1 de cada 3 frames para reducir carga de CPU
+
         private analyzeAudio() {
+            // Limitar la frecuencia de análisis para reducir carga de CPU
+            this.analyzeCounter++;
+            if (this.analyzeCounter % this.ANALYZE_THROTTLE !== 0) return;
+
+            // Evitar logs excesivos en producción
             this.debug.log(`🔍 Analizando ${this.tracks.size} pistas...`);
-            this.tracks.forEach((track) => {
-                this.debug.log(
-                    `🎵 Pista ${track.name}: active=${track.active}, paused=${track.audio.paused}, source=${!!track.source}`,
-                );
 
-                if (!track.active || !track.source || track.audio.paused) {
+            // Usar una cola de microtareas para no bloquear el hilo principal
+            // y permitir que la UI se actualice primero
+            queueMicrotask(() => {
+                this.tracks.forEach((track) => {
                     this.debug.log(
-                        `⏸️ Saltando pista ${track.name} - no activa o pausada`,
+                        `🎵 Pista ${track.name}: active=${track.active}, paused=${track.audio.paused}, source=${!!track.source}`,
                     );
-                    return;
-                }
 
-                try {
-                    track.analyser.getByteFrequencyData(track.dataArray);
-
-                    // Verificar si hay datos de audio
-                    const sum = track.dataArray.reduce((a, b) => a + b, 0);
-
-                    if (sum === 0) {
-                        this.debug.warn(
-                            `⚠️ Pista ${track.name} no tiene datos de audio - readyState: ${track.audio.readyState}, currentTime: ${track.audio.currentTime}, duration: ${track.audio.duration}`,
+                    if (!track.active || !track.source || track.audio.paused) {
+                        this.debug.log(
+                            `⏸️ Saltando pista ${track.name} - no activa o pausada`,
                         );
-
-                        // Reset sutil de efectos cuando no hay datos
-                        const relevantPanels = this.panels.filter(
-                            (panel) => panel.track === track.name,
-                        );
-                        relevantPanels.forEach((panel) => {
-                            panel.element.style.transform = "scale(1)"; // Volver a tamaño normal
-                            panel.element.style.borderColor =
-                                panel.originalBorderColor;
-                            panel.element.style.background = ""; // Limpiar gradiente
-                            panel.element.style.boxShadow =
-                                panel.originalBoxShadow;
-                            panel.element.style.borderWidth = ""; // Limpiar borde dinámico
-                            panel.element.style.filter = ""; // Limpiar filtros
-                        });
                         return;
                     }
 
-                    // Calcular diferentes bandas de frecuencia
-                    const dataLength = track.dataArray.length;
-                    const bassData = track.dataArray.slice(
-                        0,
-                        Math.floor(dataLength * 0.1),
-                    );
-                    const midData = track.dataArray.slice(
-                        Math.floor(dataLength * 0.1),
-                        Math.floor(dataLength * 0.5),
-                    );
-                    const trebleData = track.dataArray.slice(
-                        Math.floor(dataLength * 0.5),
-                    );
+                    try {
+                        track.analyser.getByteFrequencyData(track.dataArray);
 
-                    const bassAvg =
-                        bassData.reduce((a, b) => a + b, 0) / bassData.length;
-                    const midAvg =
-                        midData.reduce((a, b) => a + b, 0) / midData.length;
-                    const trebleAvg =
-                        trebleData.reduce((a, b) => a + b, 0) /
-                        trebleData.length;
-                    const totalAvg =
-                        track.dataArray.reduce((a, b) => a + b, 0) /
-                        track.dataArray.length;
+                        // Verificar si hay datos de audio
+                        const sum = track.dataArray.reduce((a, b) => a + b, 0);
 
-                    // Normalizar valores (0-1) y amplificar para mayor sensibilidad
-                    const normalizedBass = Math.min((bassAvg / 255) * 10, 1); // 10x amplificación
-                    const normalizedMid = Math.min((midAvg / 255) * 10, 1);
-                    const normalizedTreble = Math.min(
-                        (trebleAvg / 255) * 10,
-                        1,
-                    );
-                    const normalizedTotal = Math.min((totalAvg / 255) * 15, 1); // 15x amplificación para efectos más visibles
+                        if (sum === 0) {
+                            this.debug.warn(
+                                `⚠️ Pista ${track.name} no tiene datos de audio - readyState: ${track.audio.readyState}, currentTime: ${track.audio.currentTime}, duration: ${track.audio.duration}`,
+                            );
 
-                    // Aplicar efectos a paneles específicos para esta pista
-                    const relevantPanels = this.panels.filter(
-                        (panel) => panel.track === track.name,
-                    );
+                            // Reset sutil de efectos cuando no hay datos
+                            const relevantPanels = this.panels.filter(
+                                (panel) => panel.track === track.name,
+                            );
+                            relevantPanels.forEach((panel) => {
+                                panel.element.style.transform = "scale(1)"; // Volver a tamaño normal
+                                panel.element.style.borderColor =
+                                    panel.originalBorderColor;
+                                panel.element.style.background = ""; // Limpiar gradiente
+                                panel.element.style.boxShadow =
+                                    panel.originalBoxShadow;
+                                panel.element.style.borderWidth = ""; // Limpiar borde dinámico
+                                panel.element.style.filter = ""; // Limpiar filtros
+                            });
+                            return;
+                        }
 
-                    relevantPanels.forEach((panel) => {
-                        this.applyTrackEffect(panel, track, normalizedTotal);
-                    });
-                } catch (error) {
-                    this.debug.warn(
-                        `⚠️ Error analizando audio para ${track.name}:`,
-                        error,
-                    );
-                }
+                        // Calcular diferentes bandas de frecuencia
+                        const dataLength = track.dataArray.length;
+                        const bassData = track.dataArray.slice(
+                            0,
+                            Math.floor(dataLength * 0.1),
+                        );
+                        const midData = track.dataArray.slice(
+                            Math.floor(dataLength * 0.1),
+                            Math.floor(dataLength * 0.5),
+                        );
+                        const trebleData = track.dataArray.slice(
+                            Math.floor(dataLength * 0.5),
+                        );
+
+                        const bassAvg =
+                            bassData.reduce((a, b) => a + b, 0) /
+                            bassData.length;
+                        const midAvg =
+                            midData.reduce((a, b) => a + b, 0) / midData.length;
+                        const trebleAvg =
+                            trebleData.reduce((a, b) => a + b, 0) /
+                            trebleData.length;
+                        const totalAvg =
+                            track.dataArray.reduce((a, b) => a + b, 0) /
+                            track.dataArray.length;
+
+                        // Normalizar valores (0-1) y amplificar para mayor sensibilidad
+                        const normalizedBass = Math.min(
+                            (bassAvg / 255) * 10,
+                            1,
+                        ); // 10x amplificación
+                        const normalizedMid = Math.min((midAvg / 255) * 10, 1);
+                        const normalizedTreble = Math.min(
+                            (trebleAvg / 255) * 10,
+                            1,
+                        );
+                        const normalizedTotal = Math.min(
+                            (totalAvg / 255) * 15,
+                            1,
+                        ); // 15x amplificación para efectos más visibles
+
+                        // Aplicar efectos a paneles específicos para esta pista
+                        const relevantPanels = this.panels.filter(
+                            (panel) => panel.track === track.name,
+                        );
+
+                        // Verificar si hay paneles para aplicar efectos
+                        if (relevantPanels.length > 0) {
+                            this.debug.log(
+                                `🎨 Aplicando efectos a ${relevantPanels.length} paneles para ${track.name}`,
+                            );
+
+                            // Aplicar efectos a cada panel encontrado
+                            relevantPanels.forEach((panel) => {
+                                // Aplicar efectos visuales basados en las diferentes bandas de frecuencia
+                                this.applyTrackEffect(
+                                    panel,
+                                    track,
+                                    normalizedBass,
+                                    normalizedMid,
+                                    normalizedTreble,
+                                    normalizedTotal,
+                                );
+                            });
+                        }
+                    } catch (error) {
+                        this.debug.warn(
+                            `⚠️ Error analizando audio para ${track.name}:`,
+                            error,
+                        );
+                    }
+                });
             });
         }
 
+        // Método obsoleto - usar analyzeAudio en su lugar
         private updatePanelsForTrack(track: Track) {
-            const relevantPanels = this.panels.filter(
-                (panel) => panel.track === track.name,
-            );
-
-            // Calcular intensidad promedio
-            const sum = track.dataArray.reduce((a, b) => a + b, 0);
-            const average = sum / track.dataArray.length;
-            const intensity = Math.min(average / 255, 1);
-
-            relevantPanels.forEach((panel) => {
-                this.applyTrackEffect(panel, track, intensity);
-            });
+            // Este método ya no se usa, pero lo mantenemos para compatibilidad
+            // Todo el procesamiento se hace ahora en analyzeAudio
+            return;
         }
 
+        /**
+         * Aplica efectos visuales a un panel basado en los datos de frecuencia de audio
+         * @param panel - El panel HTML al que aplicar efectos
+         * @param track - La pista de audio asociada
+         * @param normalizedBass - Valor normalizado de frecuencias bajas (0-1)
+         * @param normalizedMid - Valor normalizado de frecuencias medias (0-1)
+         * @param normalizedTreble - Valor normalizado de frecuencias altas (0-1)
+         * @param normalizedTotal - Valor normalizado de todas las frecuencias (0-1)
+         */
         private applyTrackEffect(
             panel: PanelElement,
             track: Track,
-            intensity: number,
-        ) {
+            normalizedBass: number,
+            normalizedMid: number,
+            normalizedTreble: number,
+            normalizedTotal: number,
+        ): void {
+            // Usar normalizedTotal como intensidad principal para compatibilidad
+            const intensity = normalizedTotal;
             const element = panel.element;
 
             switch (track.name) {

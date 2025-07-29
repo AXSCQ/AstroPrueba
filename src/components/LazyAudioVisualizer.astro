@@ -1,0 +1,94 @@
+---
+// Componente para lazy loading del Audio Visualizer
+// Mejora el First Contentful Paint al cargar el visualizer solo cuando es necesario
+---
+
+<div id="lazy-audio-container" class="audio-visualizer-lazy">
+  <!-- Placeholder mientras carga -->
+  <div id="audio-loading-placeholder" class="flex items-center justify-center p-4">
+    <div class="text-cyber-300 text-sm">
+      🎵 Audio Visualizer cargando...
+    </div>
+  </div>
+</div>
+
+<script>
+  // Lazy loading del Audio Visualizer
+  let audioVisualizerLoaded = false;
+
+  function loadAudioVisualizer() {
+    if (audioVisualizerLoaded) return;
+    
+    console.log('🔄 Cargando Audio Visualizer...');
+    audioVisualizerLoaded = true;
+
+    // Crear el script para cargar el componente dinámicamente
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.innerHTML = `
+      import('/src/components/MultiTrackAudioVisualizer.astro').then(module => {
+        const container = document.getElementById('lazy-audio-container');
+        const placeholder = document.getElementById('audio-loading-placeholder');
+        
+        if (container && placeholder) {
+          // Reemplazar el placeholder con el componente real
+          placeholder.style.display = 'none';
+          
+          // Crear y agregar el componente
+          const audioComponent = document.createElement('div');
+          audioComponent.innerHTML = '<multi-track-audio-visualizer></multi-track-audio-visualizer>';
+          container.appendChild(audioComponent);
+          
+          console.log('✅ Audio Visualizer cargado');
+        }
+      }).catch(error => {
+        console.warn('⚠️ Error cargando Audio Visualizer:', error);
+        const placeholder = document.getElementById('audio-loading-placeholder');
+        if (placeholder) {
+          placeholder.textContent = '❌ Error cargando visualizer';
+        }
+      });
+    `;
+    
+    document.head.appendChild(script);
+  }
+
+  // Cargar cuando el usuario interactúe o después de un delay
+  document.addEventListener('DOMContentLoaded', () => {
+    // Opción 1: Cargar después de 2 segundos (no bloquea el initial render)
+    setTimeout(loadAudioVisualizer, 2000);
+    
+    // Opción 2: Cargar al hacer hover en cualquier panel (más interactivo)
+    const panels = document.querySelectorAll('[data-track]');
+    panels.forEach(panel => {
+      panel.addEventListener('mouseenter', loadAudioVisualizer, { once: true });
+    });
+    
+    // Opción 3: Cargar al hacer scroll down
+    let hasTriggered = false;
+    window.addEventListener('scroll', () => {
+      if (!hasTriggered && window.scrollY > 100) {
+        hasTriggered = true;
+        loadAudioVisualizer();
+      }
+    }, { passive: true });
+  });
+</script>
+
+<style>
+  .audio-visualizer-lazy {
+    min-height: 100px;
+    transition: opacity 0.3s ease;
+  }
+  
+  #audio-loading-placeholder {
+    opacity: 0.7;
+    font-family: 'JetBrains Mono', monospace;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+</style>
