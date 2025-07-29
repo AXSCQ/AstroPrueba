@@ -121,6 +121,24 @@
     class MultiTrackAudioVisualizer {
         private tracks: Map<string, Track> = new Map();
         private panels: PanelElement[] = [];
+
+        // 🔧 Sistema de debug condicional - solo visible en desarrollo
+        public debug = {
+            log: (message: string, ...args: any[]) => {
+                if (import.meta.env.DEV) {
+                    console.log(message, ...args);
+                }
+            },
+            warn: (message: string, ...args: any[]) => {
+                if (import.meta.env.DEV) {
+                    console.warn(message, ...args);
+                }
+            },
+            error: (message: string, ...args: any[]) => {
+                // Los errores SIEMPRE se muestran (importante para debugging en producción)
+                console.error(message, ...args);
+            },
+        };
         private playButton: HTMLButtonElement;
         private volumeSlider: HTMLInputElement;
         private currentTimeElement: HTMLElement;
@@ -208,7 +226,7 @@
                     return;
                 }
 
-                console.log(`🎵 Configurando track: ${config.name}`);
+                this.debug.log(`🎵 Configurando track: ${config.name}`);
 
                 // Configurar el audio
                 audio.src = config.file;
@@ -238,7 +256,7 @@
 
                 // Manejar eventos de carga
                 audio.addEventListener("loadedmetadata", () => {
-                    console.log(`✅ Metadata cargada para ${config.name}`);
+                    this.debug.log(`✅ Metadata cargada para ${config.name}`);
                     if (!track.source && track.context.state !== "closed") {
                         try {
                             track.source =
@@ -246,7 +264,7 @@
                             track.source.connect(track.analyser);
                             // NO conectar al destination para que sea silencioso
                             // track.source.connect(track.context.destination);
-                            console.log(
+                            this.debug.log(
                                 `🔊 Contexto de audio conectado para ${config.name}`,
                             );
                         } catch (error) {
@@ -345,7 +363,7 @@
         }
 
         private findPanels() {
-            console.log("🎵 Buscando paneles para efectos visuales...");
+            this.debug.log("🎵 Buscando paneles para efectos visuales...");
 
             // Buscar paneles por data-track attribute primero
             const trackConfigs = [
@@ -482,13 +500,15 @@
 
         private async play() {
             try {
-                console.log("🎵 Iniciando reproducción...");
+                this.debug.log("🎵 Iniciando reproducción...");
 
                 // Reanudar todos los contextos de audio
                 for (const track of this.tracks.values()) {
                     if (track.context.state === "suspended") {
                         await track.context.resume();
-                        console.log(`🔊 Contexto reanudado para ${track.name}`);
+                        this.debug.log(
+                            `🔊 Contexto reanudado para ${track.name}`,
+                        );
                     }
                 }
 
@@ -496,32 +516,45 @@
                 if (this.mainAudio) {
                     this.mainAudio.currentTime = this.masterTime;
                     await this.mainAudio.play();
-                    console.log("🎵 Audio principal reproduciendo");
+                    this.debug.log("🎵 Audio principal reproduciendo");
                 }
 
                 // Reproducir todas las pistas de análisis (silenciosas) de forma sincronizada
                 const playPromises: Promise<void>[] = [];
-                console.log(`🎵 Intentando reproducir ${this.tracks.size} pistas de análisis...`);
-                
+                this.debug.log(
+                    `🎵 Intentando reproducir ${this.tracks.size} pistas de análisis...`,
+                );
+
                 this.tracks.forEach((track) => {
-                    console.log(`🔍 Pista ${track.name}: active=${track.active}, readyState=${track.audio.readyState}, currentSrc=${track.audio.currentSrc}`);
-                    
+                    this.debug.log(
+                        `🔍 Pista ${track.name}: active=${track.active}, readyState=${track.audio.readyState}, currentSrc=${track.audio.currentSrc}`,
+                    );
+
                     if (track.active && track.audio.readyState >= 2) {
                         // HAVE_CURRENT_DATA
-                        console.log(`▶️ Reproduciendo pista ${track.name}...`);
+                        this.debug.log(
+                            `▶️ Reproduciendo pista ${track.name}...`,
+                        );
                         track.audio.currentTime = this.masterTime;
                         playPromises.push(
-                            track.audio.play().then(() => {
-                                console.log(`✅ Pista ${track.name} reproduciéndose`);
-                            }).catch((e) => {
-                                console.warn(
-                                    `⚠️ No se pudo reproducir ${track.name}:`,
-                                    e,
-                                );
-                            }),
+                            track.audio
+                                .play()
+                                .then(() => {
+                                    this.debug.log(
+                                        `✅ Pista ${track.name} reproduciéndose`,
+                                    );
+                                })
+                                .catch((e) => {
+                                    this.debug.warn(
+                                        `⚠️ No se pudo reproducir ${track.name}:`,
+                                        e,
+                                    );
+                                }),
                         );
                     } else {
-                        console.warn(`❌ Pista ${track.name} no lista: active=${track.active}, readyState=${track.audio.readyState}`);
+                        this.debug.warn(
+                            `❌ Pista ${track.name} no lista: active=${track.active}, readyState=${track.audio.readyState}`,
+                        );
                     }
                 });
 
@@ -530,7 +563,7 @@
                 this.isPlaying = true;
                 this.updatePlayButton();
                 this.startVisualization();
-                console.log("🎉 Reproducción iniciada exitosamente");
+                this.debug.log("🎉 Reproducción iniciada exitosamente");
             } catch (error) {
                 console.error("❌ Error al reproducir:", error);
                 this.isPlaying = false;
@@ -539,7 +572,7 @@
         }
 
         private pause() {
-            console.log("⏸️ Pausando reproducción...");
+            this.debug.log("⏸️ Pausando reproducción...");
 
             // Pausar audio principal
             if (this.mainAudio) {
@@ -639,14 +672,14 @@
         }
 
         private analyzeAudio() {
-            console.log(`🔍 Analizando ${this.tracks.size} pistas...`);
+            this.debug.log(`🔍 Analizando ${this.tracks.size} pistas...`);
             this.tracks.forEach((track) => {
-                console.log(
+                this.debug.log(
                     `🎵 Pista ${track.name}: active=${track.active}, paused=${track.audio.paused}, source=${!!track.source}`,
                 );
 
                 if (!track.active || !track.source || track.audio.paused) {
-                    console.log(
+                    this.debug.log(
                         `⏸️ Saltando pista ${track.name} - no activa o pausada`,
                     );
                     return;
@@ -659,15 +692,21 @@
                     const sum = track.dataArray.reduce((a, b) => a + b, 0);
 
                     if (sum === 0) {
-                        console.warn(`⚠️ Pista ${track.name} no tiene datos de audio - readyState: ${track.audio.readyState}, currentTime: ${track.audio.currentTime}, duration: ${track.audio.duration}`);
-                        
+                        this.debug.warn(
+                            `⚠️ Pista ${track.name} no tiene datos de audio - readyState: ${track.audio.readyState}, currentTime: ${track.audio.currentTime}, duration: ${track.audio.duration}`,
+                        );
+
                         // Reset sutil de efectos cuando no hay datos
-                        const relevantPanels = this.panels.filter((panel) => panel.track === track.name);
+                        const relevantPanels = this.panels.filter(
+                            (panel) => panel.track === track.name,
+                        );
                         relevantPanels.forEach((panel) => {
                             panel.element.style.transform = "scale(1)"; // Volver a tamaño normal
-                            panel.element.style.borderColor = panel.originalBorderColor;
+                            panel.element.style.borderColor =
+                                panel.originalBorderColor;
                             panel.element.style.background = ""; // Limpiar gradiente
-                            panel.element.style.boxShadow = panel.originalBoxShadow;
+                            panel.element.style.boxShadow =
+                                panel.originalBoxShadow;
                             panel.element.style.borderWidth = ""; // Limpiar borde dinámico
                             panel.element.style.filter = ""; // Limpiar filtros
                         });
@@ -702,21 +741,22 @@
                     // Normalizar valores (0-1) y amplificar para mayor sensibilidad
                     const normalizedBass = Math.min((bassAvg / 255) * 10, 1); // 10x amplificación
                     const normalizedMid = Math.min((midAvg / 255) * 10, 1);
-                    const normalizedTreble = Math.min((trebleAvg / 255) * 10, 1);
+                    const normalizedTreble = Math.min(
+                        (trebleAvg / 255) * 10,
+                        1,
+                    );
                     const normalizedTotal = Math.min((totalAvg / 255) * 15, 1); // 15x amplificación para efectos más visibles
 
                     // Aplicar efectos a paneles específicos para esta pista
-                    const relevantPanels = this.panels.filter((panel) => panel.track === track.name);
-                    
+                    const relevantPanels = this.panels.filter(
+                        (panel) => panel.track === track.name,
+                    );
+
                     relevantPanels.forEach((panel) => {
-                        this.applyTrackEffect(
-                            panel,
-                            track,
-                            normalizedTotal,
-                        );
+                        this.applyTrackEffect(panel, track, normalizedTotal);
                     });
                 } catch (error) {
-                    console.warn(
+                    this.debug.warn(
                         `⚠️ Error analizando audio para ${track.name}:`,
                         error,
                     );
@@ -763,7 +803,8 @@
                     // Pulso rítmico INTENSO (PROJECTS)
                     const drumsScale = 1 + intensity * 0.3; // Pulso muy notable
                     const drumsOpacity = 0.5 + intensity * 0.7;
-                    const drumsPulse = Math.sin(Date.now() / 100) * intensity * 0.1; // Pulso adicional
+                    const drumsPulse =
+                        Math.sin(Date.now() / 100) * intensity * 0.1; // Pulso adicional
                     element.style.transform = `scale(${drumsScale + drumsPulse})`;
                     element.style.borderColor = `rgba(239, 68, 68, ${drumsOpacity})`; // Rojo intenso
                     element.style.boxShadow = `
@@ -781,8 +822,8 @@
                     element.style.background = `
                         linear-gradient(90deg, 
                             rgba(59, 130, 246, 0) 0%, 
-                            rgba(59, 130, 246, ${waveOpacity}) ${(wavePosition * 60)}%, 
-                            rgba(59, 130, 246, ${waveOpacity * 0.6}) ${(wavePosition * 80)}%,
+                            rgba(59, 130, 246, ${waveOpacity}) ${wavePosition * 60}%, 
+                            rgba(59, 130, 246, ${waveOpacity * 0.6}) ${wavePosition * 80}%,
                             rgba(59, 130, 246, 0) 100%),
                         linear-gradient(45deg, 
                             rgba(59, 130, 246, ${intensity * 0.1}) 0%, 
@@ -801,8 +842,8 @@
                     element.style.background = `
                         linear-gradient(180deg, 
                             rgba(34, 197, 94, 0) 0%, 
-                            rgba(34, 197, 94, ${verticalOpacity}) ${(verticalWave * 60)}%, 
-                            rgba(34, 197, 94, ${verticalOpacity * 0.5}) ${(verticalWave * 85)}%,
+                            rgba(34, 197, 94, ${verticalOpacity}) ${verticalWave * 60}%, 
+                            rgba(34, 197, 94, ${verticalOpacity * 0.5}) ${verticalWave * 85}%,
                             rgba(34, 197, 94, 0) 100%),
                         linear-gradient(135deg, 
                             rgba(34, 197, 94, ${intensity * 0.1}) 0%, 
@@ -825,7 +866,8 @@
             // Restaurar estilos originales completamente
             this.panels.forEach((panel) => {
                 panel.element.style.borderColor = panel.originalBorderColor;
-                panel.element.style.backgroundColor = panel.originalBackgroundColor;
+                panel.element.style.backgroundColor =
+                    panel.originalBackgroundColor;
                 panel.element.style.boxShadow = panel.originalBoxShadow;
                 panel.element.style.transform = "";
                 panel.element.style.background = ""; // Limpiar gradientes
@@ -853,7 +895,7 @@
     window.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             const visualizer = new MultiTrackAudioVisualizer();
-            console.log("🚀 MultiTrack Audio Visualizer initialized");
+            visualizer.debug.log("🚀 MultiTrack Audio Visualizer initialized");
 
             // Auto-iniciar visualización después de cargar
             setTimeout(() => {
@@ -863,7 +905,9 @@
                         `✅ ${panelCount} paneles detectados y listos para animación`,
                     );
                 } else {
-                    console.warn("⚠️ No se detectaron paneles para animación");
+                    visualizer.debug.warn(
+                        "⚠️ No se detectaron paneles para animación",
+                    );
                 }
 
                 // Hacer el visualizador accesible globalmente para debug
