@@ -115,7 +115,7 @@ const contactInfo = {
               </p>
 
               <div
-                class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-96 opacity-0 group-hover:opacity-100"
+                class="transition-all duration-300"
               >
                 <p
                   class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
@@ -125,7 +125,7 @@ const contactInfo = {
                 </p>
                 <a
                   href="mailto:axelcondori78@gmail.com?subject=Contacto%20desde%20tu%20portafolio"
-                  class="w-full py-2 sm:py-3 ${contactInfo.email.buttonBg} hover:bg-neon-blue/80 text-cyber-950 font-medium rounded-lg transition-colors flex justify-center items-center gap-2 px-4"
+                  class="w-full py-2 sm:py-3 bg-neon-blue hover:bg-neon-blue/80 text-cyber-950 font-medium rounded-lg transition-colors flex justify-center items-center gap-2 px-4"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -141,24 +141,6 @@ const contactInfo = {
                 </a>
               </div>
             </div>
-          </div>
-
-          <div
-            class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-neon-blue animate-pulse"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"></path>
-            </svg>
           </div>
         </div>
 
@@ -189,7 +171,7 @@ const contactInfo = {
                 </p>
 
                 <div
-                  class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-32 opacity-0 group-hover:opacity-100"
+                  class="transition-all duration-300"
                 >
                   <p
                     class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
@@ -199,7 +181,7 @@ const contactInfo = {
                   <div class="flex justify-center sm:justify-start">
                     <a
                       href={`https://web.whatsapp.com/send?phone=591${contactInfo.whatsapp.value.replace(/\D/g, "").replace(/^591/, "")}&text=Hola%20Axel%2C%20te%20contacto%20desde%20tu%20portafolio%20web.`}
-                      class="py-2 px-4 ${contactInfo.whatsapp.buttonBg} hover:bg-green-600/80 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                      class="py-2 px-4 bg-green-600 hover:bg-green-600/80 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2"
                       target="_blank"
                       rel="noopener noreferrer"
                       onclick="if(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){this.href=this.href.replace('web.whatsapp.com','api.whatsapp.com')}"
@@ -220,24 +202,6 @@ const contactInfo = {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div
-              class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 text-green-500 animate-pulse"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"></path>
-              </svg>
             </div>
           </div>
 
@@ -266,7 +230,7 @@ const contactInfo = {
                 </p>
 
                 <div
-                  class="transition-all duration-300 max-h-0 overflow-hidden group-hover:max-h-32 opacity-0 group-hover:opacity-100"
+                  class="transition-all duration-300"
                 >
                   <p
                     class="text-gray-400 mb-3 sm:mb-4 text-sm text-center sm:text-left"
@@ -276,7 +240,7 @@ const contactInfo = {
                   <div class="flex justify-center sm:justify-start">
                     <a
                       href="https://maps.google.com/?q=La+Paz+Bolivia"
-                      class="py-2 px-4 ${contactInfo.ubicacion.buttonBg} hover:bg-neon-pink/80 text-cyber-950 font-medium rounded-lg transition-colors inline-flex items-center gap-2"
+                      class="py-2 px-4 bg-neon-pink hover:bg-neon-pink/80 text-cyber-950 font-medium rounded-lg transition-colors inline-flex items-center gap-2"
                       target="_blank"
                     >
                       <svg
@@ -295,24 +259,6 @@ const contactInfo = {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div
-              class="absolute right-4 top-4 opacity-70 group-hover:opacity-0 transition-opacity"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 text-neon-pink animate-pulse"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"></path>
-              </svg>
             </div>
           </div>
         </div>
@@ -407,49 +353,8 @@ const contactInfo = {
 </style>
 
 <script>
-  // Optimizar el comportamiento de las tarjetas de contacto
+  // Los botones ahora están siempre visibles, no se necesita lógica de expansión
   document.addEventListener("DOMContentLoaded", () => {
-    const cards = document.querySelectorAll<HTMLElement>(
-      ".contact-card-optimized",
-    );
-
-    // Detectar si estamos en un dispositivo móvil
-    const isMobile = window.innerWidth < 768;
-
-    cards.forEach((card) => {
-      // Expandir tarjeta al hacer clic para dispositivos móviles
-      card.addEventListener("click", function (this: HTMLElement) {
-        if (isMobile) {
-          this.classList.toggle("mobile-expanded");
-
-          if (this.classList.contains("mobile-expanded")) {
-            const allSections = this.querySelectorAll<HTMLElement>(".max-h-0");
-            allSections.forEach((section: HTMLElement) => {
-              if (section.scrollHeight) {
-                section.style.maxHeight = `${section.scrollHeight}px`;
-                section.style.opacity = "1";
-              }
-            });
-          } else {
-            const allSections = this.querySelectorAll<HTMLElement>(
-              ".group-hover\\:max-h-32, .group-hover\\:max-h-96",
-            );
-            allSections.forEach((section: HTMLElement) => {
-              section.style.maxHeight = "0";
-              section.style.opacity = "0";
-            });
-          }
-        }
-      });
-
-      // Precarga de las secciones expandibles para móviles
-      if (isMobile && card.querySelector(".max-h-0")) {
-        const sections = card.querySelectorAll<HTMLElement>(".max-h-0");
-        sections.forEach((section) => {
-          // Almacena la altura pero mantiene oculto
-          section.dataset.height = section.scrollHeight + "px";
-        });
-      }
-    });
+    console.log("Tarjetas de contacto cargadas con botones siempre visibles");
   });
 </script>

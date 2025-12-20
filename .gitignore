@@ -1,6 +1,6 @@
 # build output
 dist/
-
+CLAUDE.md
 # generated types
 .astro/
 
@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# CI/CD files
+.github/
+CI_CD_SETUP.md
+GITHUB_SECRETS_SETUP.md
+deployment*.tar.gz
+portfolio-build.tar.gz
