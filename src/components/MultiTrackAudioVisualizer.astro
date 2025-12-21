@@ -11,39 +11,40 @@
 <!-- Audio Player Accordion -->
 <div
     id="audio-player-accordion"
-    class="fixed bottom-4 right-4 z-50 bg-cyber-800/95 backdrop-blur-md rounded-lg border border-neon-blue/30 shadow-xl transition-all duration-300 ease-in-out"
-    style="min-width: 280px; max-width: 420px;"
+    class="fixed bottom-4 left-4 z-50 bg-cyber-800/95 backdrop-blur-md rounded-lg border border-neon-blue/30 shadow-xl transition-all duration-300 ease-in-out"
+    style="width: auto; max-width: 95vw;"
 >
     <!-- Header del Acordeón -->
     <button
         id="accordion-toggle"
-        class="w-full p-4 flex items-center justify-between text-left hover:bg-neon-blue/10 rounded-t-lg transition-all duration-200"
+        class="w-full p-2 sm:p-3 flex items-center justify-between text-left hover:bg-neon-blue/10 rounded-lg transition-all duration-200"
         aria-expanded="false"
         aria-controls="accordion-content"
     >
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
+            </svg>
             <div>
-                <h3 class="text-sm font-medium text-white">Audio Visualizer</h3>
-                <p class="text-xs text-neon-blue/70" id="audio-status">
+                <h3 class="text-xs sm:text-sm font-medium text-white">Audio Visualizer</h3>
+                <p class="text-[10px] sm:text-xs text-neon-blue/70 hidden sm:block" id="audio-status">
                     Listo para reproducir
                 </p>
             </div>
         </div>
-        <div class="flex items-center gap-2">
-            <svg
-                id="chevron-icon"
-                class="w-5 h-5 text-neon-blue transform transition-transform duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"></path>
-            </svg>
-        </div>
+        <svg
+            id="chevron-icon"
+            class="w-4 h-4 sm:w-5 sm:h-5 text-neon-blue transform transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
+        </svg>
     </button>
 
     <!-- Contenido Colapsible -->
@@ -53,7 +54,7 @@
         style="max-height: 0;"
         aria-hidden="true"
     >
-        <div class="p-4 pt-0 space-y-4">
+        <div class="p-2 sm:p-3 pt-0 space-y-2 sm:space-y-3">
             <button
                 id="play-button"
                 class="p-3 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-all duration-300 flex items-center justify-center shadow-lg shadow-neon-blue/30"
@@ -74,10 +75,10 @@
             <div class="flex flex-col gap-1">
                 <div
                     id="waveform-container"
-                    class="w-48 h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
+                    class="w-full max-w-xs h-10 sm:h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
                 >
                 </div>
-                <div class="text-neon-blue text-xs text-center">
+                <div class="text-neon-blue text-[10px] sm:text-xs text-center">
                     <span id="current-time">0:00</span> / <span id="total-time"
                         >0:00</span
                     >
@@ -85,33 +86,33 @@
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-neon-blue text-xs">Tracks:</label>
-                <div class="flex gap-1">
+                <label class="text-neon-blue text-[10px] sm:text-xs">Tracks:</label>
+                <div class="flex flex-wrap gap-1">
                     <button
                         id="btn-bass"
-                        class="track-btn px-2 py-1 text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
+                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
                         data-track="bass">Bass</button
                     >
                     <button
                         id="btn-drums"
-                        class="track-btn px-2 py-1 text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
+                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
                         data-track="drums">Drums</button
                     >
                     <button
                         id="btn-vocals"
-                        class="track-btn px-2 py-1 text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
+                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
                         data-track="vocals">Vocals</button
                     >
                     <button
                         id="btn-other"
-                        class="track-btn px-2 py-1 text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
+                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
                         data-track="other">Other</button
                     >
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <label for="volume-slider" class="text-neon-blue text-xs"
+                <label for="volume-slider" class="text-neon-blue text-[10px] sm:text-xs whitespace-nowrap"
                     >Volume:</label
                 >
                 <input
@@ -121,7 +122,7 @@
                     max="100"
                     value="70"
                     aria-label="Ajustar volumen del audio"
-                    class="w-16 h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
+                    class="flex-1 max-w-[100px] h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
                 />
             </div>
         </div>
