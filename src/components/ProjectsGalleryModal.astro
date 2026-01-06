@@ -1,0 +1,192 @@
+---
+interface Project {
+  id: string;
+  title: string;
+  shortDescription: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  features: string[];
+  category: string;
+  client: string | null;
+  event: string | null;
+  links: {
+    demo: string | null;
+    github: string | null;
+  };
+}
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+
+// Helper para obtener el badge de categoría
+function getCategoryBadge(category: string) {
+  switch (category) {
+    case 'professional':
+      return { text: 'Profesional', class: 'bg-neon-blue/20 text-neon-blue border-neon-blue/30' };
+    case 'personal':
+      return { text: 'Personal', class: 'bg-neon-purple/20 text-neon-purple border-neon-purple/30' };
+    case 'development':
+      return { text: 'En desarrollo', class: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' };
+    case 'private':
+      return { text: 'Privado', class: 'bg-neon-pink/20 text-neon-pink border-neon-pink/30' };
+    default:
+      return { text: 'Proyecto', class: 'bg-white/10 text-white border-white/20' };
+  }
+}
+---
+
+<dialog id="projects-gallery-modal" class="modal bg-transparent">
+  <div
+    class="fixed inset-0 bg-cyber-950/90 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6"
+  >
+    <div
+      class="bg-cyber-900 border border-neon-blue/20 rounded-xl w-full max-w-5xl relative overflow-hidden shadow-2xl shadow-neon-blue/10 max-h-[95vh] md:max-h-[90vh] overflow-y-auto"
+    >
+      <!-- Header -->
+      <div class="sticky top-0 z-20 bg-cyber-950/95 backdrop-blur-sm border-b border-neon-blue/20 p-4 sm:p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">
+              <span class="text-neon-blue">Mis</span> Proyectos
+            </h2>
+            <p class="text-white/60 text-sm mt-1">Explora mi trabajo y experiencia</p>
+          </div>
+          <button
+            id="close-gallery-btn"
+            class="text-white/70 hover:text-white transition-colors p-2 rounded-full bg-cyber-800/50 hover:bg-cyber-700 min-w-10 min-h-10 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid de Proyectos -->
+      <div class="p-4 sm:p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+          {projects.map((project, index) => {
+            const badge = getCategoryBadge(project.category);
+            return (
+              <div
+                class="group bg-cyber-800/50 rounded-xl border border-neon-blue/10 hover:border-neon-blue/30 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-neon-blue/10"
+              >
+                <!-- Imagen -->
+                <div class="relative aspect-video overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/90 via-transparent to-transparent" />
+                  
+                  <!-- Badge de categoría -->
+                  <span class={`absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full border ${badge.class}`}>
+                    {badge.text}
+                  </span>
+                  
+                  <!-- Evento/Cliente si existe -->
+                  {(project.event || project.client) && (
+                    <span class="absolute top-3 right-3 px-2 py-1 text-xs bg-cyber-950/80 text-white/80 rounded-full">
+                      {project.event || project.client}
+                    </span>
+                  )}
+                </div>
+
+                <!-- Contenido -->
+                <div class="p-4">
+                  <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-neon-blue transition-colors">
+                    {project.title}
+                  </h3>
+                  <p class="text-white/60 text-sm mb-4 line-clamp-2">
+                    {project.shortDescription}
+                  </p>
+
+                  <!-- Tecnologías -->
+                  <div class="flex flex-wrap gap-1.5 mb-4">
+                    {project.technologies.slice(0, 4).map((tech) => (
+                      <span class="px-2 py-0.5 text-xs bg-cyber-700/50 text-neon-blue/80 rounded-md border border-neon-blue/10">
+                        {tech}
+                      </span>
+                    ))}
+                    {project.technologies.length > 4 && (
+                      <span class="px-2 py-0.5 text-xs bg-cyber-700/50 text-white/60 rounded-md">
+                        +{project.technologies.length - 4}
+                      </span>
+                    )}
+                  </div>
+
+                  <!-- Botón Ver Detalles -->
+                  <button
+                    class="project-detail-btn w-full py-2.5 bg-cyber-700/50 hover:bg-neon-blue/20 border border-neon-blue/20 hover:border-neon-blue/40 rounded-lg text-neon-blue text-sm font-medium transition-all flex items-center justify-center gap-2"
+                    data-project-index={index}
+                  >
+                    <span>Ver detalles</span>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const galleryModal = document.getElementById('projects-gallery-modal') as HTMLDialogElement;
+    const closeBtn = document.getElementById('close-gallery-btn');
+
+    if (closeBtn && galleryModal) {
+      closeBtn.addEventListener('click', () => {
+        galleryModal.close();
+        document.body.classList.remove('overflow-hidden');
+      });
+    }
+
+    // Cerrar al hacer clic fuera
+    galleryModal?.addEventListener('click', (e) => {
+      if (e.target === galleryModal) {
+        galleryModal.close();
+        document.body.classList.remove('overflow-hidden');
+      }
+    });
+
+    // Botones de detalle de proyecto
+    document.querySelectorAll('.project-detail-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const index = target.dataset.projectIndex;
+        const projectModal = document.getElementById(`project-detail-${index}`) as HTMLDialogElement;
+        
+        if (projectModal) {
+          // Cerrar galería y abrir detalle
+          galleryModal?.close();
+          projectModal.showModal();
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .modal::backdrop {
+    background: transparent;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

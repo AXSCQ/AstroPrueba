@@ -4,65 +4,16 @@ import DawPanel from "../components/DawPanel.astro";
 import { Image } from 'astro:assets';
 import perfilImage from "../assets/images/perfil.jpg";
 import bajistaImage from "../assets/images/bajista.jpg";
-import laptopImage from "../assets/images/laptop.jpg";
-import ProjectModal from "../components/ProjectModal.astro";
 import Contact from "../components/Contact.astro";
 import ProfileModal from "../components/ProfileModal.astro";
 // Audio visualizer optimizado con lazy loading inteligente
 import MultiTrackAudioVisualizer from "../components/MultiTrackAudioVisualizer.astro";
+// Nuevos componentes de proyectos
+import ProjectsGalleryModal from "../components/ProjectsGalleryModal.astro";
+import ProjectDetailModal from "../components/ProjectDetailModal.astro";
+import projectsData from "../data/projects.json";
 
-// Definición de los proyectos
-const projects = [
-  {
-    title: "Bot WhatsApp (Baileys)",
-    shortDescription: "Chatbot funcional con múltiples opciones",
-    description: "Desarrollo de un chatbot para WhatsApp utilizando la librería Baileys. Este bot permite automatizar respuestas, gestionar grupos, enviar y recibir archivos multimedia, y ejecutar comandos personalizados.",
-    image: laptopImage,
-    features: [
-      "Respuestas automáticas configurables", 
-      "Gestión de grupos y participantes",
-      "Envío y recepción de archivos multimedia",
-      "Sistema de comandos personalizados"
-    ],
-    technologies: ["Node.js", "JavaScript", "Baileys", "Express"]
-  },
-  {
-    title: "En desarrollo",
-    shortDescription: "Proyecto actualmente en fase de desarrollo",
-    description: "Este proyecto está actualmente en fase de desarrollo y no puede ser compartido públicamente todavía. Pronto estará disponible para ser mostrado.",
-    image: laptopImage,
-    features: [
-      "Características por definir",
-      "Tecnologías en implementación",
-      "Diseño en proceso"
-    ],
-    technologies: ["En progreso"]
-  },
-  {
-    title: "Proyecto privado",
-    shortDescription: "Proyecto desarrollado para cliente privado",
-    description: "Este proyecto fue desarrollado para un cliente privado y está bajo acuerdo de confidencialidad, por lo que no puede ser compartido públicamente.",
-    image: laptopImage,
-    features: [
-      "Características confidenciales",
-      "Desarrollo a medida",
-      "Implementación exitosa"
-    ],
-    technologies: ["Confidencial"]
-  },
-  {
-    title: "Próximamente",
-    shortDescription: "Nuevo proyecto en planificación",
-    description: "Próximo proyecto en fase de planificación y diseño. Estoy trabajando en conceptos innovadores que pronto se materializarán en esta sección.",
-    image: laptopImage,
-    features: [
-      "Planificación en curso",
-      "Investigación de tecnologías",
-      "Diseño preliminar"
-    ],
-    technologies: ["Por definir"]
-  }
-];
+const { projects } = projectsData;
 ---
 
 <Layout title="Axel Simon Condori - Portfolio">
@@ -161,93 +112,46 @@ const projects = [
 
       <!-- Projects Grid -->
       <DawPanel title="PROJECTS" variant="default" data-track="drums">
-        <div class="grid grid-cols-1 xs:grid-cols-2 gap-2">
-          {
-            projects.map((project, i) => (
-              <div 
-                class="aspect-square bg-cyber-800 rounded-lg p-1 xs:p-2 hover:bg-cyber-700 transition-all cursor-pointer border border-neon-blue/10 hover:border-neon-blue/30 group"
-                onclick={`document.getElementById('project-${i}').showModal()`}
-              >
-                <div class="w-full h-full rounded bg-cyber-700/50 group-hover:bg-cyber-600/50 transition-all relative overflow-hidden">
-                  {project.image && (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all"
-                      width={300}
-                      height={300}
-                      loading="lazy"
-                    />
-                  )}
-                  <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/80 to-transparent p-2 xs:p-3 sm:p-4 flex flex-col justify-end">
-                    <h3 class="text-neon-blue font-medium text-sm xs:text-base">{project.title}</h3>
-                    <p class="text-xs xs:text-sm text-white/60">{project.shortDescription}</p>
-                    <button 
-                      class="mt-1 xs:mt-2 px-2 xs:px-3 py-1 bg-neon-blue/70 text-white text-[10px] xs:text-xs rounded-lg hover:bg-neon-blue shadow-md shadow-neon-blue/20 transition-all"
-                      style="filter: drop-shadow(0 0 3px rgba(0, 200, 255, 0.5));"
-                    >
-                      Ver detalles
-                    </button>
-                  </div>
+        <div class="space-y-4">
+          <!-- Preview de proyectos destacados -->
+          <div class="grid grid-cols-2 gap-2">
+            {projects.slice(0, 2).map((project) => (
+              <div class="relative aspect-video rounded-lg overflow-hidden">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  class="w-full h-full object-cover opacity-70"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/90 to-transparent flex items-end p-2">
+                  <span class="text-xs text-neon-blue font-medium truncate">{project.title}</span>
                 </div>
               </div>
-
-              <ProjectModal id={`project-${i}`}>
-                <h2 slot="title">{project.title}</h2>
-                <div class="prose prose-invert max-w-none">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    class="w-full h-48 sm:h-56 md:h-64 object-cover rounded-lg mb-4"
-                    width={600}
-                    height={300}
-                    loading="lazy"
-                    decoding="async"
-                    format="webp"
-                    quality={75}
-                  />
-                  <p class="text-white text-base leading-relaxed" style="text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);">{project.description}</p>
-                  <h3 class="text-neon-blue font-semibold mt-6 mb-3" style="text-shadow: 0 0 4px rgba(0, 200, 255, 0.4);">Características principales:</h3>
-                  <ul class="space-y-2">
-                    {project.features.map(feature => (
-                      <li class="text-white flex items-start">
-                        <span class="text-neon-blue mr-2">•</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div slot="technologies" class="flex flex-wrap gap-1 sm:gap-2 mb-4">
-                  {project.technologies.map(tech => (
-                    <span class="px-2 py-1 bg-cyber-700 text-neon-blue text-xs sm:text-sm rounded-full shadow-sm shadow-neon-blue/30">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-                {i === 0 && (
-                  <div class="mt-4 flex justify-center">
-                    <a 
-                      href="https://github.com/AXSCQ/Bot-promocional" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      class="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-neon-blue to-neon-purple text-white font-medium rounded-lg hover:from-neon-purple hover:to-neon-blue transition-all duration-300 shadow-lg shadow-neon-blue/30 flex items-center gap-2 transform hover:scale-105"
-                      style="filter: drop-shadow(0 0 8px rgba(0, 200, 255, 0.7));"
-                    >
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        class="h-4 w-4 sm:h-5 sm:w-5" 
-                        viewBox="0 0 24 24" 
-                        fill="currentColor"
-                      >
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                      </svg>
-                      Ver código en GitHub
-                    </a>
-                  </div>
-                )}
-              </ProjectModal>
-            ))
-          }
+            ))}
+          </div>
+          
+          <!-- Estadísticas rápidas -->
+          <div class="flex justify-around text-center">
+            <div>
+              <p class="text-xl font-bold text-neon-blue">{projects.filter(p => p.category === 'professional').length}</p>
+              <p class="text-xs text-white/60">Profesionales</p>
+            </div>
+            <div>
+              <p class="text-xl font-bold text-neon-purple">{projects.length}</p>
+              <p class="text-xs text-white/60">Total</p>
+            </div>
+          </div>
+          
+          <!-- Botón para abrir galería -->
+          <button
+            id="openProjectsGalleryBtn"
+            class="w-full py-2.5 bg-cyber-700/50 hover:bg-neon-blue/20 border border-neon-blue/20 hover:border-neon-blue/40 rounded-lg text-neon-blue text-sm font-medium transition-all flex items-center justify-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Ver todos los proyectos
+          </button>
         </div>
       </DawPanel>
 
@@ -332,8 +236,27 @@ const projects = [
           document.body.classList.add('overflow-hidden');
         });
       }
+      
+      // Modal de galería de proyectos
+      const openGalleryBtn = document.getElementById('openProjectsGalleryBtn');
+      const galleryModal = document.getElementById('projects-gallery-modal');
+      
+      if (openGalleryBtn && galleryModal instanceof HTMLDialogElement) {
+        openGalleryBtn.addEventListener('click', () => {
+          galleryModal.showModal();
+          document.body.classList.add('overflow-hidden');
+        });
+      }
     });
   </script>
+  
+  <!-- Modal de galería de proyectos -->
+  <ProjectsGalleryModal projects={projects} />
+  
+  <!-- Modales de detalle para cada proyecto -->
+  {projects.map((project, index) => (
+    <ProjectDetailModal project={project} index={index} />
+  ))}
   
   <!-- Visualizador de audio multitrack con carga diferida -->
   <div id="visualizer-container" class="hidden">

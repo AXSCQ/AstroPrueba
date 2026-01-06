@@ -1,0 +1,151 @@
+{
+    "projects": [
+        {
+            "id": "ruleta-turismo",
+            "title": "Ruleta Interactiva de Turismo Regional",
+            "shortDescription": "Rueda de la fortuna para promover turismo",
+            "description": "Aplicación web interactiva tipo 'rueda de la fortuna' desarrollada para promover destinos turísticos de la región de Arica y Parinacota, Chile. La ruleta presenta 12 destinos emblemáticos con imágenes, preguntas de trivia y efectos visuales inmersivos.",
+            "image": "/images/ruleta.png",
+            "technologies": [
+                "Astro",
+                "JavaScript",
+                "HTML5",
+                "CSS3",
+                "Canvas API"
+            ],
+            "features": [
+                "Animación fluida de ruleta con física realista",
+                "12 destinos turísticos con imágenes HD",
+                "Sistema de trivia interactivo",
+                "Efectos visuales y sonoros inmersivos",
+                "Diseño responsivo para eventos presenciales"
+            ],
+            "category": "professional",
+            "client": "Arica y Parinacota",
+            "event": "FIPAZ 2025",
+            "links": {
+                "demo": "https://ruleta-arina-paranicota.netlify.app/",
+                "github": null
+            }
+        },
+        {
+            "id": "urban-craft-burger",
+            "title": "Urban Craft Burger",
+            "shortDescription": "Sitio web de restaurante con sistema de pedidos",
+            "description": "Sitio web moderno para restaurante de hamburguesas artesanales en La Paz, Bolivia. Incluye catálogo interactivo de productos, carrito de compras funcional, sistema de pedidos por WhatsApp/Facebook y animaciones inmersivas que muestran el ensamblaje de cada hamburguesa.",
+            "image": "/images/UCBinicio.png",
+            "gallery": [
+                "/images/UCBinicio.png",
+                "/images/UCBmenu.png",
+                "/images/UCBcarrito.png",
+                "/images/UCBmensaje.png"
+            ],
+            "technologies": [
+                "Astro",
+                "HTML5",
+                "CSS3",
+                "JavaScript",
+                "Responsive Design"
+            ],
+            "features": [
+                "Animación interactiva de ensamblaje de hamburguesa",
+                "Catálogo de productos con precios y combos",
+                "Carrito de compras funcional",
+                "Integración con WhatsApp y Facebook para pedidos",
+                "Diseño responsive y moderno",
+                "Mapa de ubicación integrado"
+            ],
+            "category": "professional",
+            "client": "Urban Craft Burger",
+            "event": null,
+            "links": {
+                "demo": "https://urbancraftburger.netlify.app/",
+                "facebook": "https://www.facebook.com/profile.php?id=61583002880439",
+                "github": null
+            }
+        },
+        {
+            "id": "bot-whatsapp",
+            "title": "Bot WhatsApp (Baileys)",
+            "shortDescription": "Chatbot funcional con múltiples opciones",
+            "description": "Desarrollo de un chatbot para WhatsApp utilizando la librería Baileys. Este bot permite automatizar respuestas, gestionar grupos, enviar y recibir archivos multimedia, y ejecutar comandos personalizados.",
+            "image": "/images/BOTbaileys.png",
+            "technologies": [
+                "Node.js",
+                "JavaScript",
+                "Baileys",
+                "Express"
+            ],
+            "features": [
+                "Respuestas automáticas configurables",
+                "Gestión de grupos y participantes",
+                "Envío y recepción de archivos multimedia",
+                "Sistema de comandos personalizados"
+            ],
+            "category": "personal",
+            "client": null,
+            "event": null,
+            "links": {
+                "demo": null,
+                "github": "https://github.com/AXSCQ/Bot-promocional"
+            }
+        },
+        {
+            "id": "en-desarrollo",
+            "title": "En desarrollo",
+            "shortDescription": "Proyecto actualmente en fase de desarrollo",
+            "description": "Este proyecto está actualmente en fase de desarrollo y no puede ser compartido públicamente todavía. Pronto estará disponible para ser mostrado.",
+            "image": "/images/Eventos.png",
+            "technologies": [
+                "En progreso"
+            ],
+            "features": [
+                "Características por definir",
+                "Tecnologías en implementación",
+                "Diseño en proceso"
+            ],
+            "category": "development",
+            "client": null,
+            "event": null,
+            "links": {
+                "demo": null,
+                "github": null
+            }
+        },
+        {
+            "id": "erp-camara-diputados",
+            "title": "Sistema ERP Institucional",
+            "shortDescription": "Sistema de gestión empresarial para institución gubernamental",
+            "description": "Sistema de gestión empresarial (ERP) desarrollado para la Cámara de Diputados. Plataforma integral que centraliza y automatiza procesos administrativos y operativos, optimizando la eficiencia institucional mediante módulos interconectados. Participación en módulos de Almacenes, Notifile y Transporte.",
+            "image": "/images/Cadimodulos.png",
+            "technologies": [
+                "Laravel",
+                "React",
+                "TypeScript",
+                "Inertia.js",
+                "Tailwind CSS",
+                "MySQL",
+                "Docker",
+                "Firebase",
+                "OpenAI",
+                "Spatie Permissions"
+            ],
+            "features": [
+                "Arquitectura Full-Stack moderna con Laravel 11 + React 19 + TypeScript",
+                "Sistema de roles y permisos granular para control de acceso",
+                "Infraestructura containerizada con Docker para despliegue escalable",
+                "Interfaz responsive con componentes modernos (Tailwind CSS + Radix UI)",
+                "Integración con servicios de IA (OpenAI)",
+                "Módulos Participados: Almacenes, Notifile, Transporte"
+            ],
+            "category": "professional",
+            "client": "Cámara de Diputados",
+            "event": null,
+            "role": "Desarrollador Full-Stack responsable del diseño, desarrollo e implementación de múltiples módulos del sistema, integración de servicios externos y optimización del rendimiento general de la plataforma.",
+            "links": {
+                "demo": null,
+                "github": null
+            }
+        }
+    ]
+}
