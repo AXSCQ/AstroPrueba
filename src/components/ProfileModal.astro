@@ -14,192 +14,197 @@ const { id, name, title, photoSrc, cvPath } = Astro.props;
 // Secciones de la biografía
 const bioSections = [
     {
+        module: "MOD-01",
         title: "Sobre mí",
+        tag: "DEVELOPER & BASSIST",
         content:
-            "Soy un desarrollador apasionado y músico con experiencia en la creación de soluciones web innovadoras. Combino mis habilidades técnicas con mi creatividad musical para ofrecer experiencias digitales únicas.",
+            "Desarrollador Full Stack y músico bajista con experiencia en la creación de aplicaciones web innovadoras. Fusiono disciplina analítica, buenas prácticas de ingeniería y sensibilidad rítmica para construir arquitecturas digitales eficientes y experiencias memorables.",
     },
     {
-        title: "Experiencia",
+        module: "MOD-02",
+        title: "Experiencia Profesional",
+        tag: "2+ YRS ENTERPRISE",
         content:
-            "Tengo 2 años de experiencia desarrollando aplicaciones web y bots con tecnologías como Node.js, React, PHP y bases de datos SQL. Actualmente me encuentro trabajando en proyectos personales y en la Camara de Dipuatados de Bolivia, estoy apasasionado por la tecnologia y la musica.",
+            "Más de 2 años de experiencia desarrollando aplicaciones web, sistemas de gestión institucional (ERP en la Cámara de Diputados de Bolivia) y automatizaciones con Node.js, React, PHP/Laravel, Docker y bases de datos relacionales SQL.",
     },
     {
-        title: "Educación",
+        module: "MOD-03",
+        title: "Educación & Formación",
+        tag: "SYS ENG & MUSIC",
         content:
-            "Egresado en Ingeniería de Sistemas por la Universidad Tecnológica de Bolivia. Formación continua a través de cursos especializados en desarrollo web, UX/UI. Continúo mi educación en Música.",
+            "Egresado en Ingeniería de Sistemas por la Universidad Tecnológica de Bolivia (UTB). Especialización continua en arquitecturas cloud, interfaces de usuario de alta fidelidad y formación permanente en teoría y ejecución musical.",
     },
 ];
 
-// Lista de habilidades
+// Lista de habilidades presentadas como bandas de ecualizador de hardware
 const skills = [
-    { name: "Frontend", level: 60, color: "neon-blue" },
-    { name: "Backend", level: 78, color: "neon-purple" },
-    { name: "Bases de Datos", level: 70, color: "neon-pink" },
-    { name: "Música", level: 75, color: "green-500" },
+    { name: "Frontend Architecture", level: 65, band: "10 kHz // HI-MID", db: "+3 dB", color: "bg-studio-slate", text: "text-studio-slate" },
+    { name: "Backend & APIs", level: 82, band: "2.5 kHz // MID", db: "+7 dB", color: "bg-studio-amber", text: "text-studio-amber" },
+    { name: "Databases & DevOps", level: 75, band: "500 Hz // LO-MID", db: "+5 dB", color: "bg-studio-red", text: "text-studio-red" },
+    { name: "Music Theory & Bass", level: 80, band: "80 Hz // SUB-BASS", db: "+6 dB", color: "bg-studio-green", text: "text-studio-green" },
 ];
 
 // Logros destacados
-const achievements = ["2° puesto en la competencia de gestión de IPMA en 2022"];
+const achievements = [
+    "2° Puesto en la Competencia Internacional de Gestión de Proyectos IPMA (2022)",
+    "Desarrollo e integración de módulos clave (Almacenes, Notifile, Transporte) para el Sistema ERP de la Cámara de Diputados",
+    "Despliegue de aplicaciones interactivas para eventos internacionales (FIPAZ 2025)",
+];
 ---
 
-<!-- Modal del perfil biográfico -->
+<!-- Modal del perfil biográfico estilo Master Control Room -->
 <dialog
     id={id}
-    class="fixed inset-0 bg-cyber-950/90 backdrop-blur-md z-50 w-full h-full p-0 m-0 overflow-auto"
+    class="fixed inset-0 bg-studio-chassis-950/90 backdrop-blur-md z-50 w-full h-full p-0 m-0 overflow-auto"
 >
     <!-- Contenedor principal -->
-    <div
-        class="container mx-auto max-w-6xl py-4 sm:py-10 px-3 sm:px-6 min-h-full"
-    >
-        <!-- Botón de cierre -->
-        <div class="flex justify-end mb-4">
-            <button
-                id={`close-${id}`}
-                class="text-white hover:text-neon-blue p-2 rounded-full bg-cyber-800/70 shadow-lg shadow-white/10 hover:shadow-white/30 transition-colors min-w-10 min-h-10 flex items-center justify-center touch-manipulation"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 sm:h-8 sm:w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    style="filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
+    <div class="container mx-auto max-w-5xl py-4 sm:py-8 px-3 sm:px-6 min-h-full">
+        
+        <!-- Chasis de rack principal -->
+        <div class="rack-chassis p-4 sm:p-7 relative overflow-hidden">
+            <!-- Tornillería de rack en las 4 esquinas del chasis -->
+            <div class="absolute top-3 left-3 rack-screw"></div>
+            <div class="absolute top-3 right-3 rack-screw"></div>
+            <div class="absolute bottom-3 left-3 rack-screw"></div>
+            <div class="absolute bottom-3 right-3 rack-screw"></div>
 
-        <!-- Encabezado del perfil -->
-        <div
-            class="flex flex-col md:flex-row gap-6 sm:gap-8 mb-6 sm:mb-12 items-center md:items-start"
-        >
-            <!-- Foto de perfil - lado izquierdo superior -->
-            <div class="w-full md:w-1/3 flex justify-center md:justify-start">
-                <div
-                    class="relative rounded-xl overflow-hidden border-2 border-neon-blue/30 shadow-lg shadow-neon-blue/20 w-36 h-36 sm:w-48 sm:h-48"
-                >
-                    <img
-                        src={photoSrc.src}
-                        alt={name}
-                        class="w-full h-full object-cover"
-                    />
-                    <!-- Efecto de brillo -->
-                    <div
-                        class="absolute inset-0 bg-gradient-to-tr from-neon-blue/10 to-neon-purple/10"
-                    >
-                    </div>
+            <!-- Barra de estado superior del chasis -->
+            <div class="flex items-center justify-between border-b border-studio-chassis-700/80 pb-3 mb-6 select-none pl-4 pr-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-studio-green shadow-led-green"></span>
+                    <span class="silk-label text-[10px] text-studio-cream/80">MASTER CONTROL ROOM // SPECIFICATION SHEET</span>
                 </div>
-            </div>
-
-            <!-- Información de perfil - lado derecho -->
-            <div class="w-full md:w-2/3 text-center md:text-left">
-                <h1 class="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">
-                    <span class="text-white">{name.split(" ")[0]} </span>
-                    <span class="text-neon-blue"
-                        >{name.split(" ").slice(1).join(" ")}</span
-                    >
-                </h1>
-                <h2 class="text-lg sm:text-xl text-gray-400 mb-4 sm:mb-6">
-                    {title}
-                </h2>
-
-                <!-- Habilidades -->
-                <div class="mb-6 sm:mb-8">
-                    <h3
-                        class="text-neon-purple text-lg font-semibold mb-3 sm:mb-4"
-                    >
-                        Habilidades
-                    </h3>
-                    <div class="space-y-2 sm:space-y-3">
-                        {
-                            skills.map((skill) => (
-                                <div class="flex flex-col">
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-gray-300">
-                                            {skill.name}
-                                        </span>
-                                        <span class={`text-${skill.color}`}>
-                                            {skill.level}%
-                                        </span>
-                                    </div>
-                                    <div class="h-1.5 sm:h-2 bg-cyber-800 rounded-full overflow-hidden">
-                                        <div
-                                            class={`h-full bg-${skill.color}`}
-                                            style={`width: ${skill.level}%`}
-                                        />
-                                    </div>
-                                </div>
-                            ))
-                        }
-                    </div>
-                </div>
-
-                <!-- Botón de descarga de CV -->
-                <a
-                    href={cvPath}
-                    download
-                    class="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-neon-blue text-cyber-950 rounded-lg font-semibold hover:bg-neon-purple transition-colors shadow-lg shadow-neon-blue/20 text-sm sm:text-base"
+                <button
+                    id={`close-${id}`}
+                    class="p-1.5 rounded-lg bg-studio-chassis-800 border border-studio-chassis-600 text-studio-cream/70 hover:text-white hover:bg-studio-chassis-700 transition-all shadow-bezel-out active:shadow-bezel-in"
+                    aria-label="Cerrar modal"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4 sm:h-5 sm:w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fill-rule="evenodd"
-                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    Descargar CV
-                </a>
+                </button>
             </div>
-        </div>
 
-        <!-- Contenido principal - biografía -->
-        <div
-            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-12"
-        >
-            {
-                bioSections.map((section) => (
-                    <div class="bg-cyber-800/50 border border-neon-blue/10 rounded-xl p-4 sm:p-6 hover:border-neon-blue/30 transition-colors">
-                        <h3 class="text-neon-blue text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-                            {section.title}
-                        </h3>
-                        <p class="text-gray-300 text-sm sm:text-base">
-                            {section.content}
-                        </p>
+            <!-- Encabezado del perfil: Foto y Datos Principales -->
+            <div class="flex flex-col md:flex-row gap-6 sm:gap-8 mb-8 items-center md:items-start">
+                <!-- Foto de perfil con marco mecanizado -->
+                <div class="w-full md:w-auto flex justify-center">
+                    <div class="relative rounded-xl overflow-hidden border border-studio-chassis-600 bg-studio-chassis-950 shadow-bezel-out w-36 h-36 sm:w-44 sm:h-44">
+                        <img
+                            src={photoSrc.src}
+                            alt={name}
+                            class="w-full h-full object-cover grayscale-[15%] contrast-[1.05]"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-studio-chassis-950/70 via-transparent to-transparent pointer-events-none"></div>
+                        <div class="absolute bottom-2 left-2 bg-studio-chassis-900/90 px-1.5 py-0.5 rounded border border-studio-chassis-700">
+                            <span class="text-[8px] font-mono text-studio-slate font-bold">CALIBRATED</span>
+                        </div>
                     </div>
-                ))
-            }
-        </div>
+                </div>
 
-        <!-- Logros -->
-        <div
-            class="bg-cyber-800/30 border border-neon-purple/20 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8"
-        >
-            <h3
-                class="text-neon-purple text-lg sm:text-xl font-semibold mb-3 sm:mb-4"
-            >
-                Logros destacados
-            </h3>
-            <ul class="space-y-2">
-                {
-                    achievements.map((achievement) => (
-                        <li class="flex items-start">
-                            <span class="text-neon-purple mr-2">•</span>
-                            <span class="text-gray-300 text-sm sm:text-base">
-                                {achievement}
-                            </span>
+                <!-- Información de perfil y título -->
+                <div class="flex-1 text-center md:text-left">
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-1.5">
+                        <span class="silk-label text-[9px] bg-studio-chassis-950 text-studio-amber border border-studio-amber/30 px-2 py-0.5 rounded">UNIT ID: 01-AXS</span>
+                        <span class="silk-label text-[9px] bg-studio-chassis-950 text-studio-slate border border-studio-slate/30 px-2 py-0.5 rounded">SYSTEMS ENGINEER</span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-4xl font-bold font-mono tracking-tight text-studio-cream mb-1">
+                        {name.split(" ")[0]} {name.split(" ")[1]} <span class="text-studio-slate">{name.split(" ").slice(2).join(" ")}</span>
+                    </h2>
+                    <p class="text-sm sm:text-base font-mono text-studio-cream/60 mb-5">
+                        {title}
+                    </p>
+
+                    <!-- Botón de descarga de CV estilo cinta de calibración -->
+                    <a
+                        href={cvPath}
+                        download
+                        class="btn btn-studio-cream text-xs sm:text-sm px-5 py-2.5 shadow-bezel-out inline-flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <span>Descargar Currículum Vitae (PDF)</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ecualizador Gráfico de Habilidades (4-Band Graphic EQ) -->
+            <div class="rack-slot p-4 sm:p-5 mb-8">
+                <div class="flex items-center justify-between mb-4 border-b border-studio-chassis-700/60 pb-2 select-none">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-studio-amber shadow-led-amber"></span>
+                        <h4 class="silk-label text-xs text-studio-amber">4-BAND GRAPHIC EQUALIZER // CORE SKILLS</h4>
+                    </div>
+                    <span class="text-[9px] font-mono text-studio-cream/40">CALIBRATION SCALE: -12dB to +12dB</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    {skills.map((skill) => (
+                        <div class="bg-studio-chassis-900/90 p-3 rounded-lg border border-studio-chassis-700 flex flex-col justify-between space-y-2">
+                            <div>
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="text-xs font-mono font-semibold text-studio-cream">{skill.name}</span>
+                                    <span class={`text-xs font-mono font-bold ${skill.text}`}>{skill.db}</span>
+                                </div>
+                                <span class="silk-label text-[8px] text-studio-cream/50">{skill.band}</span>
+                            </div>
+
+                            <!-- Fader slider visual de hardware -->
+                            <div class="pt-2">
+                                <div class="h-2 bg-studio-chassis-950 rounded-full border border-studio-chassis-700 p-[1px] relative overflow-hidden">
+                                    <div
+                                        class={`h-full ${skill.color} rounded-full transition-all duration-500`}
+                                        style={`width: ${skill.level}%`}
+                                    ></div>
+                                </div>
+                                <div class="flex justify-between text-[8px] font-mono text-studio-cream/40 mt-1">
+                                    <span>-12dB</span>
+                                    <span>0dB</span>
+                                    <span>+12dB</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <!-- Contenido Principal: Módulos de Biografía -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {bioSections.map((section) => (
+                    <div class="rack-slot p-4 sm:p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2 select-none border-b border-studio-chassis-700/60 pb-1.5">
+                                <span class="silk-label text-[9px] text-studio-slate font-bold">{section.module}</span>
+                                <span class="silk-label text-[8px] text-studio-cream/40">{section.tag}</span>
+                            </div>
+                            <h4 class="font-mono text-sm font-bold text-studio-cream mb-2.5">
+                                {section.title}
+                            </h4>
+                            <p class="text-studio-cream/70 text-xs sm:text-sm leading-relaxed font-sans">
+                                {section.content}
+                            </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <!-- Módulo de Logros y Reconocimientos -->
+            <div class="rack-slot p-4 sm:p-5">
+                <div class="flex items-center gap-2 mb-3 border-b border-studio-chassis-700/60 pb-2 select-none">
+                    <span class="w-1.5 h-1.5 rounded-full bg-studio-green shadow-led-green"></span>
+                    <h4 class="silk-label text-xs text-studio-green">VERIFIED BENCHMARKS // LOGROS</h4>
+                </div>
+                <ul class="space-y-2 font-mono text-xs sm:text-sm text-studio-cream/80">
+                    {achievements.map((achievement) => (
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-studio-amber mt-0.5">►</span>
+                            <span>{achievement}</span>
                         </li>
-                    ))
-                }
-            </ul>
+                    ))}
+                </ul>
+            </div>
         </div>
     </div>
 </dialog>
@@ -249,15 +254,7 @@ const achievements = ["2° puesto en la competencia de gestión de IPMA en 2022"
     }
 
     dialog::backdrop {
-        background: rgba(10, 10, 15, 0.8);
+        background: rgba(17, 18, 21, 0.85);
         backdrop-filter: blur(8px);
-    }
-
-    /* Estilos móviles */
-    @media (max-width: 640px) {
-        dialog {
-            padding: 0;
-            margin: 0;
-        }
     }
 </style>

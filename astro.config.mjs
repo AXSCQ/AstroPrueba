@@ -39,7 +39,6 @@ export default defineConfig({
           manualChunks: {
             // Separar librerías pesadas
             'vendor-audio': ['wavesurfer.js'],
-            'vendor-animation': ['aos'],
           },
         },
       },
@@ -47,9 +46,10 @@ export default defineConfig({
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true, // Remover console.log en producción
-          drop_debugger: true,
+          // Eliminar console.log/warn en producción (manteniendo console.error a propósito,
+          // MultiTrackAudioVisualizer.astro depende de ellos para debugging en prod)
           pure_funcs: ['console.log', 'console.warn'],
+          drop_debugger: true,
         },
       },
     },
@@ -61,16 +61,5 @@ export default defineConfig({
         brotliSize: true,
       }),
     ],
-    build: {
-      // Optimizaciones para producción
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          // Eliminar console.logs en producción (manteniendo console.error)
-          pure_funcs: ['console.log', 'console.warn'],
-          drop_debugger: true,
-        },
-      },
-    },
   },
 });

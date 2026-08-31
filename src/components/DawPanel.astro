@@ -2,50 +2,112 @@
 interface Props {
   title: string;
   variant?: 'default' | 'music' | 'code' | 'contact';
+  channel?: string;
   class?: string;
   'data-track'?: string;
 }
 
-const { title, variant = 'default', class: className = '', ...props } = Astro.props;
+const { title, variant = 'default', channel, class: className = '', ...props } = Astro.props;
 
+// Configuración de módulos según su función en la consola
 const variants = {
-  default: 'from-cyber-800/50 to-cyber-700/30 border-neon-blue/20',
-  music: 'from-neon-purple/10 to-cyber-700/30 border-neon-purple/20',
-  code: 'from-neon-green/10 to-cyber-700/30 border-neon-green/20',
-  contact: 'from-neon-pink/10 to-cyber-700/30 border-neon-pink/20'
+  default: { 
+    border: 'border-studio-chassis-700/80 hover:border-studio-slate/40', 
+    led: 'bg-studio-green shadow-led-green', 
+    tag: 'VOCALS // PREAMP',
+    labelColor: 'text-studio-cream'
+  },
+  music: { 
+    border: 'border-studio-chassis-700/80 hover:border-studio-amber/40', 
+    led: 'bg-studio-amber shadow-led-amber', 
+    tag: 'ANALOG TONE // BASS',
+    labelColor: 'text-studio-amber'
+  },
+  code: { 
+    border: 'border-studio-chassis-700/80 hover:border-studio-slate/40', 
+    led: 'bg-studio-slate shadow-led-slate', 
+    tag: 'LOGIC ENGINE // SYNTH',
+    labelColor: 'text-studio-slate'
+  },
+  contact: { 
+    border: 'border-studio-chassis-700/80 hover:border-studio-red/40', 
+    led: 'bg-studio-red shadow-led-red', 
+    tag: 'I/O MASTER // PATCH BAY',
+    labelColor: 'text-studio-cream'
+  },
 };
+
+const current = variants[variant] || variants.default;
+const channelLabel = channel || (
+  variant === 'default' ? 'CH 01' :
+  variant === 'music' ? 'CH 02' :
+  variant === 'code' ? 'CH 03' : 'MASTER'
+);
 ---
 
-<div class={`panel bg-gradient-to-br ${variants[variant]} backdrop-blur-md rounded-xl border p-4 relative overflow-hidden ${className}`} {...props}>
-  <!-- Panel Header -->
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-sm font-medium text-white/80 flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></span>
-      {title}
-    </h3>
-    <div class="flex gap-1">
-      <div class="w-1 h-4 bg-neon-blue/30 animate-wave"></div>
-      <div class="w-1 h-4 bg-neon-blue/30 animate-wave" style="animation-delay: 0.1s"></div>
-      <div class="w-1 h-4 bg-neon-blue/30 animate-wave" style="animation-delay: 0.2s"></div>
+<div class={`panel bg-gradient-to-b from-studio-chassis-850 to-studio-chassis-900 rounded-xl border ${current.border} p-3.5 sm:p-5 relative overflow-hidden transition-all duration-200 ${className}`} {...props}>
+  <!-- Lienzo de partículas audio-reactivas: lo rellena MultiTrackAudioVisualizer
+       según la pista (data-track) asignada a este panel. Va detrás del
+       contenido (que tiene z-10) para no tapar texto ni botones. -->
+  <canvas class="fx-particles absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"></canvas>
+
+  <!-- Tornillos de montaje en rack en las 4 esquinas -->
+  <div class="absolute top-2 left-2 rack-screw opacity-70"></div>
+  <div class="absolute top-2 right-2 rack-screw opacity-70"></div>
+  <div class="absolute bottom-2 left-2 rack-screw opacity-70"></div>
+  <div class="absolute bottom-2 right-2 rack-screw opacity-70"></div>
+
+  <!-- Panel Header: Serigrafía técnica de canal y medidores -->
+  <div class="flex items-center justify-between mb-4 px-1 pl-4 pr-4 select-none">
+    <div class="flex items-center gap-2.5">
+      <!-- LED indicador de alimentación/señal -->
+      <span class={`w-2 h-2 rounded-full ${current.led}`}></span>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="silk-label text-[9px] bg-studio-chassis-950 px-1.5 py-0.5 rounded border border-studio-chassis-700 text-studio-cream/80">{channelLabel}</span>
+          <h2 class={`font-mono text-xs sm:text-sm font-bold tracking-wide ${current.labelColor}`}>
+            {title}
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- VU meter analógico segmentado -->
+    <div class="flex items-center gap-1.5 bg-studio-chassis-950/80 px-2 py-1 rounded border border-studio-chassis-700/60">
+      <span class="text-[8px] font-mono text-studio-cream/40 mr-1 hidden xs:inline">SIG</span>
+      <div class="flex items-end gap-[2px] h-3.5">
+        <div class="w-1 h-1.5 rounded-[1px] bg-studio-green/80 animate-wave" style="animation-delay: 0.05s"></div>
+        <div class="w-1 h-2 rounded-[1px] bg-studio-green/80 animate-wave" style="animation-delay: 0.15s"></div>
+        <div class="w-1 h-2.5 rounded-[1px] bg-studio-green/80 animate-wave" style="animation-delay: 0.25s"></div>
+        <div class="w-1 h-3 rounded-[1px] bg-studio-amber/80 animate-wave" style="animation-delay: 0.35s"></div>
+        <div class="w-1 h-3.5 rounded-[1px] bg-studio-red/90 animate-wave" style="animation-delay: 0.45s"></div>
+      </div>
     </div>
   </div>
-  
-  <!-- Panel Content -->
-  <div class="relative z-10">
+
+  <!-- Panel Content con marco interior -->
+  <div class="relative z-10 px-0.5 sm:px-1">
     <slot />
   </div>
 
-  <!-- Decorative Elements -->
-  <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-br from-neon-blue/10 to-transparent rounded-full blur-xl"></div>
+  <!-- Borde metálico inferior sutil -->
+  <div class="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none"></div>
 </div>
 
 <style>
   .panel {
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.8);
   }
 
   .animate-wave {
-    animation: wave 1.5s ease-in-out infinite;
+    animation: wave 1.4s ease-in-out infinite;
     transform-origin: bottom;
   }
-</style> 
+
+  /* screen: las partículas se suman a la luz del fondo en vez de taparlo,
+     así se leen como chispas/energía y no como una capa plana encima */
+  .fx-particles {
+    mix-blend-mode: screen;
+  }
+</style>
+

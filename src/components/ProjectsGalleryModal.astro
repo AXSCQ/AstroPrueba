@@ -22,112 +22,156 @@ interface Props {
 
 const { projects } = Astro.props;
 
-// Helper para obtener el badge de categoría
+// Helper para obtener la insignia de categoría de hardware
 function getCategoryBadge(category: string) {
   switch (category) {
     case 'professional':
-      return { text: 'Profesional', class: 'bg-neon-blue/20 text-neon-blue border-neon-blue/30' };
+      return { 
+        text: 'PRO MASTER', 
+        badgeClass: 'bg-studio-slate/15 text-studio-slate border-studio-slate/40',
+        ledClass: 'bg-studio-slate shadow-led-slate'
+      };
     case 'personal':
-      return { text: 'Personal', class: 'bg-neon-purple/20 text-neon-purple border-neon-purple/30' };
+      return { 
+        text: 'LAB / PERSONAL', 
+        badgeClass: 'bg-studio-amber/15 text-studio-amber border-studio-amber/40',
+        ledClass: 'bg-studio-amber shadow-led-amber'
+      };
     case 'development':
-      return { text: 'En desarrollo', class: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' };
+      return { 
+        text: 'IN PROGRESS', 
+        badgeClass: 'bg-studio-gold/15 text-studio-gold border-studio-gold/40',
+        ledClass: 'bg-studio-gold'
+      };
     case 'private':
-      return { text: 'Privado', class: 'bg-neon-pink/20 text-neon-pink border-neon-pink/30' };
+      return { 
+        text: 'PRIVATE SYSTEM', 
+        badgeClass: 'bg-studio-red/15 text-studio-red border-studio-red/40',
+        ledClass: 'bg-studio-red shadow-led-red'
+      };
     default:
-      return { text: 'Proyecto', class: 'bg-white/10 text-white border-white/20' };
+      return { 
+        text: 'PROJECT STEM', 
+        badgeClass: 'bg-studio-chassis-700 text-studio-cream border-studio-chassis-600',
+        ledClass: 'bg-studio-green'
+      };
   }
 }
 ---
 
 <dialog id="projects-gallery-modal" class="modal bg-transparent">
   <div
-    class="fixed inset-0 bg-cyber-950/90 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6"
+    class="fixed inset-0 bg-studio-chassis-950/90 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 md:p-6"
   >
     <div
-      class="bg-cyber-900 border border-neon-blue/20 rounded-xl w-full max-w-5xl relative overflow-hidden shadow-2xl shadow-neon-blue/10 max-h-[95vh] md:max-h-[90vh] overflow-y-auto"
+      class="rack-chassis w-full max-w-5xl relative overflow-hidden max-h-[95vh] md:max-h-[90vh] overflow-y-auto"
     >
-      <!-- Header -->
-      <div class="sticky top-0 z-20 bg-cyber-950/95 backdrop-blur-sm border-b border-neon-blue/20 p-4 sm:p-6">
+      <!-- Tornillería de rack en las 4 esquinas del chasis -->
+      <div class="absolute top-3 left-3 rack-screw"></div>
+      <div class="absolute top-3 right-3 rack-screw"></div>
+      <div class="absolute bottom-3 left-3 rack-screw"></div>
+      <div class="absolute bottom-3 right-3 rack-screw"></div>
+
+      <!-- Header del Rack -->
+      <div class="sticky top-0 z-20 bg-studio-chassis-950/95 backdrop-blur-sm border-b border-studio-chassis-700/80 p-4 sm:p-5 pl-8 pr-8">
         <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-white">
-              <span class="text-neon-blue">Mis</span> Proyectos
-            </h2>
-            <p class="text-white/60 text-sm mt-1">Explora mi trabajo y experiencia</p>
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-studio-amber shadow-led-amber"></span>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="silk-label text-[9px] bg-studio-chassis-900 px-1.5 py-0.5 rounded border border-studio-chassis-700 text-studio-amber">RACK UNIT: PRJ-MATRIX</span>
+                <h3 class="font-mono text-lg sm:text-xl font-bold text-studio-cream">
+                  PROJECT MASTERS & STEMS
+                </h3>
+              </div>
+              <p class="text-studio-cream/60 text-xs font-mono mt-0.5">Catálogo completo de ingeniería web y aplicaciones desarrolladas</p>
+            </div>
           </div>
+
           <button
             id="close-gallery-btn"
-            class="text-white/70 hover:text-white transition-colors p-2 rounded-full bg-cyber-800/50 hover:bg-cyber-700 min-w-10 min-h-10 flex items-center justify-center"
+            class="p-1.5 rounded-lg bg-studio-chassis-800 border border-studio-chassis-600 text-studio-cream/70 hover:text-white hover:bg-studio-chassis-700 transition-all shadow-bezel-out active:shadow-bezel-in"
+            aria-label="Cerrar galería"
           >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
       </div>
 
-      <!-- Grid de Proyectos -->
+      <!-- Grid de Proyectos / Cartuchos de Rack -->
       <div class="p-4 sm:p-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {projects.map((project, index) => {
             const badge = getCategoryBadge(project.category);
             return (
               <div
-                class="group bg-cyber-800/50 rounded-xl border border-neon-blue/10 hover:border-neon-blue/30 transition-all duration-300 overflow-hidden hover:shadow-lg hover:shadow-neon-blue/10"
+                class="rack-slot group transition-all duration-200 overflow-hidden flex flex-col justify-between hover:border-studio-amber/40 hover:shadow-lg"
               >
-                <!-- Imagen -->
-                <div class="relative aspect-video overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-cyber-900/90 via-transparent to-transparent" />
-                  
-                  <!-- Badge de categoría -->
-                  <span class={`absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full border ${badge.class}`}>
-                    {badge.text}
-                  </span>
-                  
-                  <!-- Evento/Cliente si existe -->
-                  {(project.event || project.client) && (
-                    <span class="absolute top-3 right-3 px-2 py-1 text-xs bg-cyber-950/80 text-white/80 rounded-full">
-                      {project.event || project.client}
-                    </span>
-                  )}
-                </div>
-
-                <!-- Contenido -->
-                <div class="p-4">
-                  <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-neon-blue transition-colors">
-                    {project.title}
-                  </h3>
-                  <p class="text-white/60 text-sm mb-4 line-clamp-2">
-                    {project.shortDescription}
-                  </p>
-
-                  <!-- Tecnologías -->
-                  <div class="flex flex-wrap gap-1.5 mb-4">
-                    {project.technologies.slice(0, 4).map((tech) => (
-                      <span class="px-2 py-0.5 text-xs bg-cyber-700/50 text-neon-blue/80 rounded-md border border-neon-blue/10">
-                        {tech}
-                      </span>
-                    ))}
-                    {project.technologies.length > 4 && (
-                      <span class="px-2 py-0.5 text-xs bg-cyber-700/50 text-white/60 rounded-md">
-                        +{project.technologies.length - 4}
+                <!-- Imagen / Cartucho -->
+                <div>
+                  <div class="relative aspect-video overflow-hidden bg-studio-chassis-950 border-b border-studio-chassis-700">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      class="w-full h-full object-cover opacity-75 group-hover:opacity-90 group-hover:scale-[1.02] transition-all duration-300"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-studio-chassis-950 via-transparent to-transparent" />
+                    
+                    <!-- Badge de categoría estilo hardware -->
+                    <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 bg-studio-chassis-950/90 backdrop-blur-sm px-2 py-0.5 rounded border border-studio-chassis-700">
+                      <span class={`w-1.5 h-1.5 rounded-full ${badge.ledClass}`}></span>
+                      <span class="font-mono text-[9px] font-semibold text-studio-cream/90">{badge.text}</span>
+                    </div>
+                    
+                    <!-- Evento o Cliente -->
+                    {(project.event || project.client) && (
+                      <span class="absolute top-2.5 right-2.5 font-mono text-[9px] bg-studio-chassis-950/90 text-studio-cream/80 px-2 py-0.5 rounded border border-studio-chassis-700">
+                        {project.event || project.client}
                       </span>
                     )}
+
+                    <!-- Indicador de pista -->
+                    <div class="absolute bottom-2 left-2.5 select-none">
+                      <span class="silk-label text-[8px] bg-studio-chassis-900/80 px-1.5 py-0.5 rounded text-studio-amber">TAPE // 0{index + 1}</span>
+                    </div>
                   </div>
 
-                  <!-- Botón Ver Detalles -->
+                  <!-- Contenido del módulo -->
+                  <div class="p-4">
+                    <h4 class="font-mono text-base font-bold text-studio-cream mb-1.5 group-hover:text-studio-amber transition-colors">
+                      {project.title}
+                    </h4>
+                    <p class="text-studio-cream/65 text-xs font-sans mb-3 line-clamp-2 leading-relaxed">
+                      {project.shortDescription}
+                    </p>
+
+                    <!-- Tecnologías / Componentes -->
+                    <div class="flex flex-wrap gap-1.5 mb-4">
+                      {project.technologies.slice(0, 4).map((tech) => (
+                        <span class="px-2 py-0.5 font-mono text-[10px] bg-studio-chassis-950 text-studio-slate rounded border border-studio-chassis-700/80">
+                          {tech}
+                        </span>
+                      ))}
+                      {project.technologies.length > 4 && (
+                        <span class="px-1.5 py-0.5 font-mono text-[10px] bg-studio-chassis-950 text-studio-cream/40 rounded border border-studio-chassis-700">
+                          +{project.technologies.length - 4}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botón Ver Detalles / Inspect -->
+                <div class="p-4 pt-0">
                   <button
-                    class="project-detail-btn w-full py-2.5 bg-cyber-700/50 hover:bg-neon-blue/20 border border-neon-blue/20 hover:border-neon-blue/40 rounded-lg text-neon-blue text-sm font-medium transition-all flex items-center justify-center gap-2"
+                    class="project-detail-btn btn btn-studio-amber w-full py-2 text-xs font-mono shadow-bezel-out"
                     data-project-index={index}
                   >
-                    <span>Ver detalles</span>
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span>INSPECCIONAR PARÁMETROS</span>
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -190,3 +234,4 @@ function getCategoryBadge(category: string) {
     overflow: hidden;
   }
 </style>
+

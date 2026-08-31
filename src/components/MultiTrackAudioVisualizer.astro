@@ -2,39 +2,34 @@
 
 ---
 
-<div
-    id="multitrack-overlay"
-    class="fixed inset-0 bg-black opacity-0 z-40 pointer-events-none transition-opacity duration-1000"
->
-</div>
-
-<!-- Audio Player Accordion -->
+<!-- Audio Player Accordion: módulo de consola de audio atornillado al chasis -->
 <div
     id="audio-player-accordion"
-    class="fixed bottom-4 left-4 z-50 bg-cyber-800/95 backdrop-blur-md rounded-lg border border-neon-blue/30 shadow-xl transition-all duration-300 ease-in-out"
+    class="fixed bottom-4 left-4 z-50 bg-studio-chassis-900 rounded-xl border border-studio-chassis-700 shadow-rack-panel transition-all duration-300 ease-in-out"
     style="width: auto; max-width: 95vw;"
 >
     <!-- Header del Acordeón -->
     <button
         id="accordion-toggle"
-        class="w-full p-2 sm:p-3 flex items-center justify-between text-left hover:bg-neon-blue/10 rounded-lg transition-all duration-200"
+        class="w-full p-2.5 sm:p-3.5 flex items-center justify-between text-left hover:bg-white/5 rounded-xl transition-all duration-200 select-none"
         aria-expanded="false"
         aria-controls="accordion-content"
     >
-        <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/>
-            </svg>
+        <div class="flex items-center gap-2.5">
+            <div class="w-2 h-2 rounded-full bg-studio-green shadow-led-green"></div>
             <div>
-                <h3 class="text-xs sm:text-sm font-medium text-white">Audio Visualizer</h3>
-                <p class="text-[10px] sm:text-xs text-neon-blue/70 hidden sm:block" id="audio-status">
+                <div class="flex items-center gap-1.5">
+                    <span class="silk-label text-[8px] bg-studio-chassis-950 px-1 py-0.5 rounded border border-studio-chassis-700 text-studio-amber">AUDIO RACK</span>
+                    <h3 class="text-xs sm:text-sm font-mono font-bold text-studio-cream">MultiTrack Engine</h3>
+                </div>
+                <p class="text-[10px] font-mono text-studio-cream/60 hidden sm:block" id="audio-status">
                     Listo para reproducir
                 </p>
             </div>
         </div>
         <svg
             id="chevron-icon"
-            class="w-4 h-4 sm:w-5 sm:h-5 text-neon-blue transform transition-transform duration-200"
+            class="w-4 h-4 sm:w-5 sm:h-5 text-studio-slate transform transition-transform duration-200 ml-3"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -54,66 +49,72 @@
         style="max-height: 0;"
         aria-hidden="true"
     >
-        <div class="p-2 sm:p-3 pt-0 space-y-2 sm:space-y-3">
-            <button
-                id="play-button"
-                class="p-3 rounded-full bg-neon-blue text-white hover:bg-neon-blue/80 transition-all duration-300 flex items-center justify-center shadow-lg shadow-neon-blue/30"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+        <div class="p-3 pt-0 space-y-3">
+            <div class="flex items-center gap-3">
+                <button
+                    id="play-button"
+                    class="play-btn-physical p-3 rounded-xl bg-studio-chassis-800 text-studio-amber hover:bg-studio-chassis-700 transition-all duration-150 flex items-center justify-center shadow-bezel-out border border-studio-chassis-600"
+                    aria-label="Reproducir audio"
                 >
-                    <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                        clip-rule="evenodd"></path>
-                </svg>
-            </button>
-
-            <div class="flex flex-col gap-1">
-                <div
-                    id="waveform-container"
-                    class="w-full max-w-xs h-10 sm:h-12 bg-cyber-900/50 rounded border border-neon-blue/20"
-                >
-                </div>
-                <div class="text-neon-blue text-[10px] sm:text-xs text-center">
-                    <span id="current-time">0:00</span> / <span id="total-time"
-                        >0:00</span
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
                     >
+                        <path
+                            fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+
+                <div class="flex-1 flex flex-col gap-1">
+                    <!-- Pantalla LCD: waveform -->
+                    <div
+                        id="waveform-container"
+                        class="w-full max-w-xs h-10 bg-studio-chassis-950 rounded-lg border border-studio-chassis-700 shadow-bezel-in"
+                    >
+                    </div>
+                    <div class="text-studio-cream/70 text-[10px] font-mono text-center">
+                        <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-1">
-                <label class="text-neon-blue text-[10px] sm:text-xs">Tracks:</label>
-                <div class="flex flex-wrap gap-1">
+            <div class="flex flex-col gap-1.5 border-t border-studio-chassis-800 pt-2">
+                <label class="silk-label text-[9px] text-studio-cream/60">STEM TRACKS MONITOR:</label>
+                <div class="flex flex-wrap gap-1.5">
                     <button
                         id="btn-bass"
-                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-purple-500/50 bg-purple-900/30 text-purple-300 hover:bg-purple-700/50"
-                        data-track="bass">Bass</button
+                        class="track-btn active px-2 py-1 text-[10px] font-mono rounded border border-studio-red/50 bg-studio-red/20 text-studio-cream hover:bg-studio-red/30 shadow-sm"
+                        data-track="bass"
+                        ><span class="track-led bg-studio-red"></span>Bass</button
                     >
                     <button
                         id="btn-drums"
-                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-red-500/50 bg-red-900/30 text-red-300 hover:bg-red-700/50"
-                        data-track="drums">Drums</button
+                        class="track-btn active px-2 py-1 text-[10px] font-mono rounded border border-studio-amber/50 bg-studio-amber/20 text-studio-cream hover:bg-studio-amber/30 shadow-sm"
+                        data-track="drums"
+                        ><span class="track-led bg-studio-amber"></span>Drums</button
                     >
                     <button
                         id="btn-vocals"
-                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-blue-500/50 bg-blue-900/30 text-blue-300 hover:bg-blue-700/50"
-                        data-track="vocals">Vocals</button
+                        class="track-btn active px-2 py-1 text-[10px] font-mono rounded border border-studio-slate/50 bg-studio-slate/20 text-studio-cream hover:bg-studio-slate/30 shadow-sm"
+                        data-track="vocals"
+                        ><span class="track-led bg-studio-slate"></span>Vocals</button
                     >
                     <button
                         id="btn-other"
-                        class="track-btn px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded border border-green-500/50 bg-green-900/30 text-green-300 hover:bg-green-700/50"
-                        data-track="other">Other</button
+                        class="track-btn active px-2 py-1 text-[10px] font-mono rounded border border-studio-green/50 bg-studio-green/20 text-studio-cream hover:bg-studio-green/30 shadow-sm"
+                        data-track="other"
+                        ><span class="track-led bg-studio-green"></span>Other</button
                     >
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <label for="volume-slider" class="text-neon-blue text-[10px] sm:text-xs whitespace-nowrap"
-                    >Volume:</label
+            <div class="flex items-center gap-2 border-t border-studio-chassis-800 pt-2">
+                <label for="volume-slider" class="silk-label text-[9px] text-studio-cream/60 whitespace-nowrap"
+                    >MASTER GAIN:</label
                 >
                 <input
                     type="range"
@@ -122,12 +123,22 @@
                     max="100"
                     value="70"
                     aria-label="Ajustar volumen del audio"
-                    class="flex-1 max-w-[100px] h-1 bg-cyber-700 rounded-lg appearance-none cursor-pointer"
+                    class="fader-physical flex-1 max-w-[120px] h-1.5 rounded-lg appearance-none cursor-pointer"
                 />
             </div>
         </div>
     </div>
 </div>
+
+<!-- Lienzo de partículas "de escape": a pantalla completa, solo se usa en
+     picos altos de bass/drums (los golpes físicos de la consola). El resto
+     de las pistas se queda con sus partículas contenidas dentro del panel. -->
+<canvas
+    id="fx-particles-overlay"
+    class="fixed inset-0 z-40 pointer-events-none"
+    style="mix-blend-mode: screen;"
+    aria-hidden="true"
+></canvas>
 
 <!-- Audio principal (audible) -->
 <audio
@@ -156,6 +167,19 @@
         active: boolean;
         color: string;
         panelSelector: string;
+        prevIntensity: number; // valor del frame anterior, para detectar "punch"/golpes
+    }
+
+    interface Particle {
+        x: number;
+        y: number;
+        vx: number;
+        vy: number;
+        life: number; // 1 → 0
+        decay: number; // cuánto baja `life` por frame
+        size: number;
+        color: string; // "r, g, b" sin rgba()
+        maxOpacity?: number; // tope de opacidad (por defecto 0.85-0.9 según el caso)
     }
 
     interface PanelElement {
@@ -164,6 +188,9 @@
         originalBorderColor: string;
         originalBackgroundColor: string;
         originalBoxShadow: string;
+        canvas: HTMLCanvasElement | null;
+        ctx: CanvasRenderingContext2D | null;
+        particles: Particle[];
     }
 
     class MultiTrackAudioVisualizer {
@@ -198,6 +225,21 @@
         private mainAudio: HTMLAudioElement | null = null; // Audio principal audible
         private masterAudio: HTMLAudioElement | null = null; // Audio para sincronización
 
+        // Partículas "de escape": viven a pantalla completa, no dentro de un panel
+        private overlayCanvas: HTMLCanvasElement | null = null;
+        private overlayCtx: CanvasRenderingContext2D | null = null;
+        private overlayParticles: Particle[] = [];
+        // Solo estas pistas pueden disparar una ráfaga de escape (elegidas a propósito,
+        // no todas: son los golpes físicos de la consola, no los sonidos sostenidos).
+        // drums (bombo/PROJECTS) se sacó: saturaba la pantalla al salir del panel.
+        // Se queda solo con sus partículas contenidas dentro de la tarjeta.
+        private readonly ESCAPE_TRACKS = new Set(["bass"]);
+        private readonly ESCAPE_PUNCH_THRESHOLD: Record<string, number> = {
+            bass: 0.55,
+        };
+        private readonly ESCAPE_COOLDOWN_MS = 220; // evita ráfagas pegadas una a otra
+        private lastEscapeBurst: Record<string, number> = {};
+
         constructor() {
             this.playButton = document.getElementById(
                 "play-button",
@@ -215,9 +257,37 @@
             // Inicialización básica inmediata
             this.setupEventListeners();
             this.findPanels();
+            this.setupOverlayCanvas();
 
             // Lazy initialization de recursos pesados
             this.lazyInitializeAudio();
+        }
+
+        /**
+         * Prepara el canvas de partículas de escape (a pantalla completa,
+         * fuera de cualquier panel).
+         */
+        private setupOverlayCanvas() {
+            this.overlayCanvas = document.getElementById(
+                "fx-particles-overlay",
+            ) as HTMLCanvasElement | null;
+            if (!this.overlayCanvas) return;
+
+            this.resizeOverlayCanvas();
+            this.overlayCtx = this.overlayCanvas.getContext("2d");
+        }
+
+        private resizeOverlayCanvas() {
+            if (!this.overlayCanvas) return;
+            const dpr = window.devicePixelRatio || 1;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            this.overlayCanvas.width = Math.max(1, Math.round(width * dpr));
+            this.overlayCanvas.height = Math.max(1, Math.round(height * dpr));
+
+            const ctx = this.overlayCanvas.getContext("2d");
+            if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
         /**
@@ -311,7 +381,9 @@
                     (window as any).webkitAudioContext)();
                 const analyser = context.createAnalyser();
                 analyser.fftSize = 1024;
-                analyser.smoothingTimeConstant = 0.8;
+                // Menos suavizado = reacciona más rápido a los golpes reales
+                // en vez de promediarlos hasta que casi no se noten
+                analyser.smoothingTimeConstant = 0.62;
 
                 const track: Track = {
                     name: config.name,
@@ -323,6 +395,7 @@
                     active: true,
                     color: config.color,
                     panelSelector: config.panelSelector,
+                    prevIntensity: 0,
                 };
 
                 this.tracks.set(config.name, track);
@@ -392,15 +465,6 @@
             this.setupAccordion();
 
             this.playButton.addEventListener("click", () => this.togglePlay());
-
-            // Mini play button en el header del acordeón
-            const miniPlayButton = document.getElementById("mini-play-button");
-            if (miniPlayButton) {
-                miniPlayButton.addEventListener("click", (e) => {
-                    e.stopPropagation(); // Evitar que se abra/cierre el acordeón
-                    this.togglePlay();
-                });
-            }
 
             this.volumeSlider.addEventListener("input", (e) =>
                 this.setMainVolume(
@@ -556,12 +620,16 @@
                 elements.forEach((element) => {
                     if (element instanceof HTMLElement) {
                         const style = window.getComputedStyle(element);
+                        const { canvas, ctx } = this.setupParticleCanvas(element);
                         this.panels.push({
                             element: element,
                             track: config.name,
                             originalBorderColor: style.borderColor,
                             originalBackgroundColor: style.backgroundColor,
                             originalBoxShadow: style.boxShadow,
+                            canvas,
+                            ctx,
+                            particles: [],
                         });
                         console.log(
                             `✅ Panel ${config.name} encontrado:`,
@@ -610,12 +678,16 @@
                         const trackNames = ["vocals", "drums", "other", "bass"];
                         const track = trackNames[index % trackNames.length];
                         const style = window.getComputedStyle(element);
+                        const { canvas, ctx } = this.setupParticleCanvas(element);
                         this.panels.push({
                             element: element,
                             track: track,
                             originalBorderColor: style.borderColor,
                             originalBackgroundColor: style.backgroundColor,
                             originalBoxShadow: style.boxShadow,
+                            canvas,
+                            ctx,
+                            particles: [],
                         });
                         console.log(
                             `🎯 Panel ${index} asignado a ${track}:`,
@@ -628,6 +700,281 @@
             console.log(
                 `🎉 Total de paneles configurados: ${this.panels.length}`,
             );
+
+            // Redimensionar los canvases de partículas si la ventana cambia
+            // (evita que queden desalineados o borrosos tras un resize)
+            window.addEventListener("resize", () => {
+                this.panels.forEach((panel) => {
+                    if (panel.canvas) this.resizeParticleCanvas(panel.canvas);
+                });
+                this.resizeOverlayCanvas();
+            });
+        }
+
+        /**
+         * Crea (o localiza) el <canvas class="fx-particles"> dentro de un panel
+         * y lo deja dimensionado y listo para dibujar partículas sobre él.
+         */
+        private setupParticleCanvas(panelElement: HTMLElement): {
+            canvas: HTMLCanvasElement | null;
+            ctx: CanvasRenderingContext2D | null;
+        } {
+            const canvas = panelElement.querySelector(
+                ".fx-particles",
+            ) as HTMLCanvasElement | null;
+
+            if (!canvas) {
+                return { canvas: null, ctx: null };
+            }
+
+            this.resizeParticleCanvas(canvas);
+            const ctx = canvas.getContext("2d");
+            return { canvas, ctx };
+        }
+
+        /**
+         * Ajusta el tamaño real (en píxeles de dispositivo) del canvas al
+         * tamaño visual de su panel contenedor, para que las partículas se
+         * vean nítidas también en pantallas de alta densidad (retina).
+         */
+        private resizeParticleCanvas(canvas: HTMLCanvasElement) {
+            const parent = canvas.parentElement;
+            const width = parent?.clientWidth || canvas.clientWidth || 100;
+            const height = parent?.clientHeight || canvas.clientHeight || 100;
+            const dpr = window.devicePixelRatio || 1;
+
+            canvas.width = Math.max(1, Math.round(width * dpr));
+            canvas.height = Math.max(1, Math.round(height * dpr));
+
+            const ctx = canvas.getContext("2d");
+            if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        // Color base (formato "r, g, b") de la partícula de cada instrumento,
+        // alineado con los LEDs/acentos que ya usa cada panel
+        private readonly PARTICLE_COLORS: Record<string, string> = {
+            bass: "220, 38, 38", // studio-red   (CONTACT / MASTER OUTPUT)
+            drums: "245, 158, 11", // studio-amber (PROJECTS)
+            vocals: "56, 189, 248", // studio-slate (PROFILE)
+            other: "22, 163, 74", // studio-green (MUSIC / CODE EDITOR)
+        };
+
+        /**
+         * Genera partículas nuevas para un panel según qué instrumento es
+         * (bass/drums/vocals/other), respetando el "carácter" de cada uno:
+         *
+         *  - bass:   brasas que suben lento desde abajo — el calor grave de un ampli.
+         *  - drums:  estallido radial desde el centro en cada golpe (punch) — un platillo.
+         *  - vocals: motas que flotan hacia arriba con vaivén — el aliento de una voz.
+         *  - other:  una corriente que fluye en diagonal — una melodía continua.
+         */
+        private spawnParticles(
+            panel: PanelElement,
+            trackName: string,
+            intensity: number,
+            punch: number,
+        ) {
+            if (!panel.ctx || !panel.canvas) return;
+            if (intensity < 0.1) return; // puerta de ruido: silencio no genera partículas
+            if (panel.particles.length > 70) return; // límite por panel, cuida el rendimiento
+
+            const dpr = window.devicePixelRatio || 1;
+            const w = panel.canvas.width / dpr;
+            const h = panel.canvas.height / dpr;
+            const color = this.PARTICLE_COLORS[trackName] || "255, 255, 255";
+
+            // Más intensidad y más "golpe" → más partículas por frame analizado
+            const spawnCount = Math.min(
+                5,
+                Math.round(intensity * 2.5) + (punch > 0.3 ? 2 : 0),
+            );
+
+            for (let i = 0; i < spawnCount; i++) {
+                let particle: Particle;
+
+                switch (trackName) {
+                    case "bass":
+                        particle = {
+                            x: Math.random() * w,
+                            y: h + 4,
+                            vx: (Math.random() - 0.5) * 0.3,
+                            vy: -(0.35 + Math.random() * 0.5) * (0.6 + intensity),
+                            life: 1,
+                            decay: 0.01 + Math.random() * 0.008,
+                            size: 1.5 + Math.random() * 2 + intensity * 2.5,
+                            color,
+                        };
+                        break;
+
+                    case "drums": {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 1.2 + Math.random() * 1.8 + punch * 3.5;
+                        particle = {
+                            x: w / 2,
+                            y: h / 2,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 1,
+                            decay: 0.035 + Math.random() * 0.02,
+                            size: 1.5 + Math.random() * 1.5 + punch * 1.5,
+                            color,
+                        };
+                        break;
+                    }
+
+                    case "vocals":
+                        particle = {
+                            x: Math.random() * w,
+                            y: h + 4,
+                            vx: Math.sin(Date.now() / 350 + i) * 0.35,
+                            vy: -(0.22 + Math.random() * 0.3),
+                            life: 1,
+                            decay: 0.007 + Math.random() * 0.006,
+                            size: 1 + Math.random() * 1.4,
+                            color,
+                        };
+                        break;
+
+                    case "other":
+                    default:
+                        particle = {
+                            x: -4,
+                            y: Math.random() * h,
+                            vx: 0.55 + Math.random() * 0.55 + intensity * 0.6,
+                            vy: (Math.random() - 0.5) * 0.35,
+                            life: 1,
+                            decay: 0.009 + Math.random() * 0.007,
+                            size: 1.5 + Math.random() * 1.5,
+                            color,
+                        };
+                        break;
+                }
+
+                panel.particles.push(particle);
+            }
+        }
+
+        /**
+         * Actualiza posición/vida y dibuja las partículas de todos los
+         * paneles. Se llama en cada frame (sin el throttle del análisis de
+         * audio) para que el movimiento se vea fluido.
+         */
+        private updateAndRenderParticles() {
+            const dpr = window.devicePixelRatio || 1;
+
+            this.panels.forEach((panel) => {
+                if (!panel.ctx || !panel.canvas) return;
+
+                const w = panel.canvas.width / dpr;
+                const h = panel.canvas.height / dpr;
+                panel.ctx.clearRect(0, 0, w, h);
+
+                if (panel.particles.length === 0) return;
+
+                panel.particles = panel.particles.filter(
+                    (p) => p.life > 0,
+                );
+
+                for (const p of panel.particles) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= p.decay;
+                    if (p.life <= 0) continue;
+
+                    const radius = Math.max(0.3, p.size * p.life);
+                    panel.ctx.beginPath();
+                    panel.ctx.fillStyle = `rgba(${p.color}, ${Math.min(1, p.life) * 0.85})`;
+                    panel.ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                    panel.ctx.fill();
+                }
+            });
+        }
+
+        /**
+         * Lanza una ráfaga de partículas que nace en un panel pero vive en el
+         * canvas de pantalla completa: se ve salir del módulo y cruzar la
+         * ventana. Solo se llama para picos altos de las pistas en ESCAPE_TRACKS.
+         */
+        private spawnEscapeBurst(
+            originElement: HTMLElement,
+            trackName: string,
+            punch: number,
+        ) {
+            if (!this.overlayCtx || !this.overlayCanvas) return;
+            if (this.overlayParticles.length > 140) return; // límite global
+
+            const rect = originElement.getBoundingClientRect();
+            const originX = rect.left + rect.width / 2;
+            const originY = rect.top + rect.height / 2;
+            const color = this.PARTICLE_COLORS[trackName] || "255, 255, 255";
+
+            // El bombo (drums) es el más difícil de notar al pulsar, así que
+            // su ráfaga es más grande, rápida y brillante que la de bass.
+            const isDrums = trackName === "drums";
+            const baseCount = isDrums ? 22 : 14;
+            const punchCount = isDrums ? 22 : 14;
+            const baseSpeed = isDrums ? 4.5 : 3;
+            const speedRange = isDrums ? 6.5 : 5;
+            const punchSpeed = isDrums ? 5.5 : 4;
+            const baseSize = isDrums ? 2.8 : 2;
+            const sizeRange = isDrums ? 3.4 : 2.5;
+            const maxOpacity = isDrums ? 1 : 0.9;
+
+            // Ráfaga más grande cuanto más fuerte fue el golpe
+            const count = baseCount + Math.round(punch * punchCount);
+
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                // Rápidas a propósito: tienen que cruzar la ventana, no quedarse cerca
+                const speed =
+                    baseSpeed + Math.random() * speedRange + punch * punchSpeed;
+
+                this.overlayParticles.push({
+                    x: originX,
+                    y: originY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 1, // leve empuje hacia arriba
+                    life: 1,
+                    decay: 0.006 + Math.random() * 0.006, // vive más para alcanzar a cruzar
+                    size: baseSize + Math.random() * sizeRange,
+                    color,
+                    maxOpacity,
+                });
+            }
+        }
+
+        /**
+         * Actualiza y dibuja las partículas de escape sobre el canvas de
+         * pantalla completa. Se llama en cada frame, igual que las de panel.
+         */
+        private updateAndRenderOverlayParticles() {
+            if (!this.overlayCtx || !this.overlayCanvas) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            const w = this.overlayCanvas.width / dpr;
+            const h = this.overlayCanvas.height / dpr;
+            this.overlayCtx.clearRect(0, 0, w, h);
+
+            if (this.overlayParticles.length === 0) return;
+
+            this.overlayParticles = this.overlayParticles.filter(
+                (p) => p.life > 0,
+            );
+
+            for (const p of this.overlayParticles) {
+                p.vy += 0.01; // gravedad muy leve, para que el trayecto no sea perfectamente recto
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                if (p.life <= 0) continue;
+
+                const radius = Math.max(0.4, p.size * p.life);
+                const opacity = Math.min(1, p.life) * (p.maxOpacity ?? 0.9);
+                this.overlayCtx.beginPath();
+                this.overlayCtx.fillStyle = `rgba(${p.color}, ${opacity})`;
+                this.overlayCtx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                this.overlayCtx.fill();
+            }
         }
 
         private togglePlay() {
@@ -636,6 +983,55 @@
             } else {
                 this.play();
             }
+        }
+
+        /**
+         * Espera a que un <audio> esté realmente listo para reproducirse sin cortes.
+         * Con preload="metadata" el primer play casi nunca alcanza HAVE_FUTURE_DATA a
+         * tiempo, así que sin esto las pistas de análisis se saltan silenciosamente y
+         * los paneles no reaccionan en la primera reproducción. Timeout defensivo para
+         * no bloquear indefinidamente si una pista nunca dispara el evento.
+         */
+        private waitForCanPlay(
+            audio: HTMLAudioElement,
+            timeoutMs = 3000,
+        ): Promise<void> {
+            return new Promise((resolve) => {
+                if (audio.readyState >= 3) {
+                    // HAVE_FUTURE_DATA
+                    resolve();
+                    return;
+                }
+
+                let settled = false;
+                const cleanup = () => {
+                    audio.removeEventListener("canplaythrough", onReady);
+                    clearTimeout(timer);
+                };
+                const onReady = () => {
+                    if (settled) return;
+                    settled = true;
+                    cleanup();
+                    resolve();
+                };
+                const timer = setTimeout(() => {
+                    if (settled) return;
+                    settled = true;
+                    this.debug.warn(
+                        `⏱️ Timeout esperando canplaythrough para ${audio.currentSrc || "pista"}`,
+                    );
+                    cleanup();
+                    resolve();
+                }, timeoutMs);
+
+                audio.addEventListener("canplaythrough", onReady, {
+                    once: true,
+                });
+
+                if (audio.readyState === 0) {
+                    audio.load();
+                }
+            });
         }
 
         private async play() {
@@ -659,6 +1055,18 @@
                     this.debug.log("🎵 Audio principal reproduciendo");
                 }
 
+                // Esperar a que las pistas activas estén realmente listas antes de
+                // reproducirlas (evita que la primera reproducción quede sin efectos
+                // visuales por no haber alcanzado readyState suficiente aún)
+                const activeTracks = Array.from(this.tracks.values()).filter(
+                    (track) => track.active,
+                );
+                await Promise.all(
+                    activeTracks.map((track) =>
+                        this.waitForCanPlay(track.audio),
+                    ),
+                );
+
                 // Reproducir todas las pistas de análisis (silenciosas) de forma sincronizada
                 const playPromises: Promise<void>[] = [];
                 this.debug.log(
@@ -670,8 +1078,7 @@
                         `🔍 Pista ${track.name}: active=${track.active}, readyState=${track.audio.readyState}, currentSrc=${track.audio.currentSrc}`,
                     );
 
-                    if (track.active && track.audio.readyState >= 2) {
-                        // HAVE_CURRENT_DATA
+                    if (track.active) {
                         this.debug.log(
                             `▶️ Reproduciendo pista ${track.name}...`,
                         );
@@ -693,7 +1100,7 @@
                         );
                     } else {
                         this.debug.warn(
-                            `❌ Pista ${track.name} no lista: active=${track.active}, readyState=${track.audio.readyState}`,
+                            `❌ Pista ${track.name} inactiva: active=${track.active}`,
                         );
                     }
                 });
@@ -737,8 +1144,6 @@
         }
 
         private updatePlayButton() {
-            const miniPlayButton = document.getElementById("mini-play-button");
-
             if (this.isPlaying) {
                 // Botón principal - icono de pausa
                 this.playButton.innerHTML = `
@@ -747,14 +1152,6 @@
           </svg>
         `;
                 this.playButton.classList.add("playing");
-
-                // Mini botón - icono de pausa
-                if (miniPlayButton) {
-                    miniPlayButton.innerHTML = `
-                        <svg class="w-4 h-4 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>`;
-                }
             } else {
                 // Botón principal - icono de play
                 this.playButton.innerHTML = `
@@ -763,14 +1160,6 @@
           </svg>
         `;
                 this.playButton.classList.remove("playing");
-
-                // Mini botón - icono de play
-                if (miniPlayButton) {
-                    miniPlayButton.innerHTML = `
-                        <svg class="w-4 h-4 text-neon-blue" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                        </svg>`;
-                }
             }
         }
 
@@ -846,6 +1235,12 @@
                     this.analyzeAudio();
                 }
 
+                // Las partículas se mueven y se dibujan en TODOS los frames
+                // (no solo cuando toca analizar audio) para que el movimiento
+                // se vea fluido en vez de a saltos.
+                this.updateAndRenderParticles();
+                this.updateAndRenderOverlayParticles();
+
                 this.rafId = requestAnimationFrame(visualize);
             };
 
@@ -854,7 +1249,7 @@
 
         // Contador para limitar la frecuencia de análisis
         private analyzeCounter = 0;
-        private readonly ANALYZE_THROTTLE = 3; // Solo analizar 1 de cada 3 frames para reducir carga de CPU
+        private readonly ANALYZE_THROTTLE = 2; // Analizar 1 de cada 2 frames: más reactivo que antes (era 1 de cada 3)
 
         private analyzeAudio() {
             // Limitar la frecuencia de análisis para reducir carga de CPU
@@ -934,19 +1329,29 @@
                             track.dataArray.length;
 
                         // Normalizar valores (0-1) y amplificar para mayor sensibilidad
+                        // de detección (subido respecto a la versión anterior: 10x/15x → 16x/22x)
                         const normalizedBass = Math.min(
-                            (bassAvg / 255) * 10,
+                            (bassAvg / 255) * 16,
                             1,
-                        ); // 10x amplificación
-                        const normalizedMid = Math.min((midAvg / 255) * 10, 1);
+                        );
+                        const normalizedMid = Math.min((midAvg / 255) * 16, 1);
                         const normalizedTreble = Math.min(
-                            (trebleAvg / 255) * 10,
+                            (trebleAvg / 255) * 16,
                             1,
                         );
                         const normalizedTotal = Math.min(
-                            (totalAvg / 255) * 15,
+                            (totalAvg / 255) * 22,
                             1,
-                        ); // 15x amplificación para efectos más visibles
+                        );
+
+                        // Detección de "punch" (transiente/golpe): salto brusco respecto
+                        // al frame anterior. Sirve para que drums/bass reaccionen como un
+                        // golpe real y no solo como volumen sostenido.
+                        const punch = Math.min(
+                            1,
+                            Math.max(0, normalizedTotal - track.prevIntensity) * 3.5,
+                        );
+                        track.prevIntensity = normalizedTotal;
 
                         // Aplicar efectos a paneles específicos para esta pista
                         const relevantPanels = this.panels.filter(
@@ -970,7 +1375,38 @@
                                     normalizedTreble,
                                     normalizedTotal,
                                 );
+                                // Emitir partículas propias de este instrumento
+                                this.spawnParticles(
+                                    panel,
+                                    track.name,
+                                    normalizedTotal,
+                                    punch,
+                                );
                             });
+
+                            // En picos altos de verdad, y solo para las pistas elegidas
+                            // (bombo/drums y bass), una ráfaga que escapa del panel y
+                            // cruza toda la ventana — el resto de las pistas se queda
+                            // contenida dentro de su panel.
+                            if (
+                                this.ESCAPE_TRACKS.has(track.name) &&
+                                punch >=
+                                    (this.ESCAPE_PUNCH_THRESHOLD[
+                                        track.name
+                                    ] ?? 0.55)
+                            ) {
+                                const now = performance.now();
+                                const last =
+                                    this.lastEscapeBurst[track.name] || 0;
+                                if (now - last >= this.ESCAPE_COOLDOWN_MS) {
+                                    this.lastEscapeBurst[track.name] = now;
+                                    this.spawnEscapeBurst(
+                                        relevantPanels[0].element,
+                                        track.name,
+                                        punch,
+                                    );
+                                }
+                            }
                         }
                     } catch (error) {
                         this.debug.warn(
@@ -1012,71 +1448,44 @@
 
             switch (track.name) {
                 case "bass":
-                    // Pulso INTENSO con onda de color (CONTACT)
-                    const bassScale = 1 + intensity * 0.25; // Pulso mucho más grande
-                    const bassOpacity = 0.4 + intensity * 0.8; // Opacidad más dinámica
+                    // Indicador LED rojo recording (CONTACT / MASTER OUT)
+                    const bassScale = 1 + intensity * 0.14;
+                    const bassOpacity = 0.45 + intensity * 0.65;
                     element.style.transform = `scale(${bassScale})`;
-                    element.style.borderColor = `rgba(147, 51, 234, ${bassOpacity})`; // Púrpura intenso
+                    element.style.borderColor = `rgba(220, 38, 38, ${bassOpacity})`;
                     element.style.boxShadow = `
-                        0 0 ${intensity * 60}px rgba(147, 51, 234, ${intensity * 0.8}),
-                        0 0 ${intensity * 120}px rgba(147, 51, 234, ${intensity * 0.4}),
-                        inset 0 0 ${intensity * 40}px rgba(147, 51, 234, ${intensity * 0.3})`; // Triple glow
+                        0 0 ${intensity * 12}px rgba(220, 38, 38, ${intensity * 0.8}),
+                        inset 0 0 ${intensity * 10}px rgba(220, 38, 38, ${intensity * 0.25})`;
                     break;
 
                 case "drums":
-                    // Pulso rítmico INTENSO (PROJECTS)
-                    const drumsScale = 1 + intensity * 0.3; // Pulso muy notable
-                    const drumsOpacity = 0.5 + intensity * 0.7;
-                    const drumsPulse =
-                        Math.sin(Date.now() / 100) * intensity * 0.1; // Pulso adicional
+                    // Indicador LED ámbar cálido de medidor VU (PROJECTS)
+                    const drumsScale = 1 + intensity * 0.17;
+                    const drumsOpacity = 0.55 + intensity * 0.55;
+                    const drumsPulse = Math.sin(Date.now() / 120) * intensity * 0.06;
                     element.style.transform = `scale(${drumsScale + drumsPulse})`;
-                    element.style.borderColor = `rgba(239, 68, 68, ${drumsOpacity})`; // Rojo intenso
+                    element.style.borderColor = `rgba(245, 158, 11, ${drumsOpacity})`;
                     element.style.boxShadow = `
-                        inset 0 0 ${intensity * 50}px rgba(239, 68, 68, ${intensity * 0.6}),
-                        0 0 ${intensity * 80}px rgba(239, 68, 68, ${intensity * 0.5})`; // Doble glow
-                    element.style.borderWidth = `${Math.max(2, intensity * 8)}px`; // Borde más grueso
+                        inset 0 0 ${intensity * 14}px rgba(245, 158, 11, ${intensity * 0.45}),
+                        0 0 ${intensity * 14}px rgba(245, 158, 11, ${intensity * 0.55})`;
                     break;
 
                 case "vocals":
-                    // Onda INTENSA que fluye de izquierda a derecha (PROFILE)
-                    const wavePosition = (Date.now() / 800) % 2; // Más rápido
-                    const waveOpacity = intensity * 0.7; // Más opaco
-                    const vocalsScale = 1 + intensity * 0.15; // Pulso combinado
+                    // Indicador azul pizarra técnico de preamp (PROFILE)
+                    const vocalsScale = 1 + intensity * 0.11;
                     element.style.transform = `scale(${vocalsScale})`;
-                    element.style.background = `
-                        linear-gradient(90deg, 
-                            rgba(59, 130, 246, 0) 0%, 
-                            rgba(59, 130, 246, ${waveOpacity}) ${wavePosition * 60}%, 
-                            rgba(59, 130, 246, ${waveOpacity * 0.6}) ${wavePosition * 80}%,
-                            rgba(59, 130, 246, 0) 100%),
-                        linear-gradient(45deg, 
-                            rgba(59, 130, 246, ${intensity * 0.1}) 0%, 
-                            transparent 50%)`; // Gradiente diagonal adicional
-                    element.style.borderColor = `rgba(59, 130, 246, ${0.5 + intensity * 0.6})`;
-                    element.style.boxShadow = `0 0 ${intensity * 70}px rgba(59, 130, 246, ${intensity * 0.7})`;
+                    element.style.borderColor = `rgba(56, 189, 248, ${0.45 + intensity * 0.65})`;
+                    element.style.boxShadow = `0 0 ${intensity * 14}px rgba(56, 189, 248, ${intensity * 0.55})`;
                     break;
 
                 case "other":
-                    // Onda INTENSA que fluye de arriba a abajo (MUSIC PROJECTS + CODE EDITOR)
-                    const verticalWave = (Date.now() / 1000) % 2; // Más rápido
-                    const verticalOpacity = intensity * 0.6; // Más opaco
-                    const otherScale = 1 + intensity * 0.2; // Pulso más notable
-                    const rotation = Math.sin(Date.now() / 500) * intensity * 3; // Rotación sutil
-                    element.style.transform = `scale(${otherScale}) rotate(${rotation}deg)`;
-                    element.style.background = `
-                        linear-gradient(180deg, 
-                            rgba(34, 197, 94, 0) 0%, 
-                            rgba(34, 197, 94, ${verticalOpacity}) ${verticalWave * 60}%, 
-                            rgba(34, 197, 94, ${verticalOpacity * 0.5}) ${verticalWave * 85}%,
-                            rgba(34, 197, 94, 0) 100%),
-                        linear-gradient(135deg, 
-                            rgba(34, 197, 94, ${intensity * 0.1}) 0%, 
-                            transparent 60%)`; // Gradiente diagonal
-                    element.style.borderColor = `rgba(34, 197, 94, ${0.5 + intensity * 0.5})`;
+                    // Indicador verde señal analógica limpia (MUSIC PROJECTS + CODE EDITOR)
+                    const otherScale = 1 + intensity * 0.13;
+                    element.style.transform = `scale(${otherScale})`;
+                    element.style.borderColor = `rgba(22, 163, 74, ${0.45 + intensity * 0.55})`;
                     element.style.boxShadow = `
-                        0 0 ${intensity * 50}px rgba(34, 197, 94, ${intensity * 0.6}),
-                        inset 0 0 ${intensity * 30}px rgba(34, 197, 94, ${intensity * 0.2})`;
-                    element.style.filter = `brightness(${1 + intensity * 0.4}) saturate(${1 + intensity * 0.8})`;
+                        0 0 ${intensity * 13}px rgba(22, 163, 74, ${intensity * 0.55}),
+                        inset 0 0 ${intensity * 10}px rgba(22, 163, 74, ${intensity * 0.25})`;
                     break;
             }
         }
@@ -1097,7 +1506,31 @@
                 panel.element.style.background = ""; // Limpiar gradientes
                 panel.element.style.filter = ""; // Limpiar filtros
                 panel.element.style.borderWidth = ""; // Limpiar borde dinámico
+
+                // Apagar y limpiar las partículas del panel
+                panel.particles = [];
+                if (panel.ctx && panel.canvas) {
+                    const dpr = window.devicePixelRatio || 1;
+                    panel.ctx.clearRect(
+                        0,
+                        0,
+                        panel.canvas.width / dpr,
+                        panel.canvas.height / dpr,
+                    );
+                }
             });
+
+            // Apagar y limpiar también las partículas de escape
+            this.overlayParticles = [];
+            if (this.overlayCtx && this.overlayCanvas) {
+                const dpr = window.devicePixelRatio || 1;
+                this.overlayCtx.clearRect(
+                    0,
+                    0,
+                    this.overlayCanvas.width / dpr,
+                    this.overlayCanvas.height / dpr,
+                );
+            }
         }
 
         private formatTime(seconds: number): string {
@@ -1142,16 +1575,13 @@
 </script>
 
 <style>
-    #audio-controls {
-        backdrop-filter: blur(12px);
-        border-image: linear-gradient(45deg, #06b6d4, #8b5cf6) 1;
-    }
-
     .track-btn {
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         text-transform: uppercase;
         font-weight: 600;
         letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
     }
 
     .track-btn:hover {
@@ -1159,61 +1589,73 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
-    .track-btn.active {
-        animation: pulse 2s infinite;
+    /* LED de estado: encendido nítido cuando la pista está activa, sin
+       animación continua (un LED de consola real no "respira") */
+    .track-led {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 9999px;
+        margin-right: 4px;
+        background: currentColor;
+        opacity: 0.25;
+        transition: opacity 0.2s ease, box-shadow 0.2s ease;
     }
 
-    @keyframes pulse {
-        0%,
-        100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.7;
-        }
+    .track-btn.active .track-led {
+        opacity: 1;
+        box-shadow: 0 0 4px currentColor;
     }
 
-    #volume-slider {
-        background: linear-gradient(to right, #06b6d4 0%, #8b5cf6 100%);
+    /* Botón de play físico: se hunde al presionarlo, como un transport real */
+    .play-btn-physical:active {
+        box-shadow:
+            inset 0 1px 2px rgba(0, 0, 0, 0.6),
+            inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+        transform: translateY(1px);
     }
 
-    #volume-slider::-webkit-slider-thumb {
+    /* Fader físico: pista con marcas de escala + cap rectangular */
+    .fader-physical {
+        background:
+            repeating-linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.15) 0,
+                rgba(255, 255, 255, 0.15) 1px,
+                transparent 1px,
+                transparent 8px
+            ),
+            #1d1e21;
+        border: 1px solid #323438;
+    }
+
+    .fader-physical::-webkit-slider-thumb {
         appearance: none;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: #06b6d4;
+        width: 8px;
+        height: 18px;
+        border-radius: 2px;
+        background: linear-gradient(to bottom, #404349, #26282c);
+        border: 1px solid #3fa9f5;
         cursor: pointer;
-        box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+        box-shadow:
+            0 0 4px rgba(63, 169, 245, 0.6),
+            0 1px 2px rgba(0, 0, 0, 0.6);
     }
 
-    #volume-slider::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: #06b6d4;
+    .fader-physical::-moz-range-thumb {
+        width: 8px;
+        height: 18px;
+        border-radius: 2px;
+        background: linear-gradient(to bottom, #404349, #26282c);
+        border: 1px solid #3fa9f5;
         cursor: pointer;
-        border: none;
-        box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
-    }
-
-    #waveform-container {
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        background: linear-gradient(
-            45deg,
-            rgba(6, 182, 212, 0.1),
-            rgba(139, 92, 246, 0.1)
-        );
+        box-shadow:
+            0 0 4px rgba(63, 169, 245, 0.6),
+            0 1px 2px rgba(0, 0, 0, 0.6);
     }
 
     /* Efectos responsive */
     @media (max-width: 768px) {
-        #audio-controls {
-            flex-direction: column;
-            gap: 2px;
-            padding: 2px;
-        }
-
         #waveform-container {
             width: 200px;
             height: 32px;

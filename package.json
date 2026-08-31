@@ -9,13 +9,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "lighthouse": "lighthouse http://localhost:4321 --view --output-path=./lighthouse-report.html",
-    "deploy": "./scripts/deploy.sh",
-    "deploy:build": "npm run build && npm run deploy",
     "deploy:check": "npm run build && npm run preview"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.3",
-    "aos": "^2.3.4",
     "astro": "^4.15.8",
     "wavesurfer.js": "^7.10.1"
   },

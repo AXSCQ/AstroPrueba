@@ -3,225 +3,165 @@
 @tailwind utilities;
 
 @layer components {
+  /* Botones físicos estilo equipo analógico / broadcast */
   .btn {
-    @apply px-6 py-3 rounded-full font-medium transition-all duration-300;
+    @apply px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-150 inline-flex items-center justify-center gap-2;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  .btn-primary {
-    @apply bg-neon-blue text-cyber-950 hover:bg-neon-blue/80 transform hover:-translate-y-0.5;
+  .btn:active {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7), inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+    transform: translateY(1px);
   }
 
-  .btn-outline {
-    @apply border-2 border-neon-blue text-neon-blue hover:bg-neon-blue/10 transform hover:-translate-y-0.5;
+  .btn-studio-slate {
+    @apply bg-studio-chassis-700 text-studio-slate border border-studio-slate/30 hover:bg-studio-chassis-600 hover:border-studio-slate/60 hover:text-white;
   }
 
-  .card {
-    @apply bg-cyber-800/50 backdrop-blur-sm border border-neon-blue/10 rounded-lg;
+  .btn-studio-amber {
+    @apply bg-studio-chassis-700 text-studio-amber border border-studio-amber/30 hover:bg-studio-chassis-600 hover:border-studio-amber/60 hover:text-white;
   }
 
-  /* Estilos para el ecualizador de música */
-  .equalizer-bar {
-    @apply rounded-t-sm;
-    transform-origin: bottom;
-    will-change: transform, opacity;
+  .btn-studio-red {
+    @apply bg-studio-red/20 text-studio-red border border-studio-red/40 hover:bg-studio-red/30 hover:border-studio-red hover:text-white;
   }
 
-  /* Estilos para las tarjetas de contacto */
-  .contact-card-optimized {
-    @apply relative overflow-hidden;
-    will-change: transform, box-shadow;
+  .btn-studio-cream {
+    @apply bg-studio-cream text-studio-chassis-950 border border-studio-cream/50 hover:bg-white hover:text-black font-semibold;
+  }
+
+  /* Chasis de módulo de rack de 19" */
+  .rack-chassis {
+    @apply bg-studio-chassis-900 border border-studio-chassis-700 rounded-xl relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+  }
+
+  /* Tornillo de montaje en rack (Hex/Phillips) */
+  .rack-screw {
+    @apply w-2.5 h-2.5 rounded-full bg-gradient-to-br from-studio-chassis-600 via-studio-chassis-700 to-studio-chassis-950 flex items-center justify-center pointer-events-none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  .rack-screw::before {
+    content: '';
+    @apply w-1.5 h-[1px] bg-studio-chassis-950/90 transform rotate-45 block;
+  }
+
+  .rack-screw::after {
+    content: '';
+    @apply w-1.5 h-[1px] bg-studio-chassis-950/90 transform -rotate-45 block absolute;
+  }
+
+  /* Rotulación serigráfica técnica (Silk-screen) */
+  .silk-label {
+    @apply font-mono text-[10px] tracking-wider uppercase font-semibold text-studio-cream/60 select-none;
+  }
+
+  .silk-value {
+    @apply font-mono text-xs text-studio-cream font-medium;
+  }
+
+  /* Tarjeta de rack / ranura de módulo */
+  .rack-slot {
+    @apply bg-studio-chassis-850/80 border border-studio-chassis-700/80 rounded-lg;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* Slider de ecualizador gráfico */
+  .eq-fader {
+    @apply relative flex flex-col items-center select-none;
+  }
+
+  .eq-fader-track {
+    @apply w-1.5 bg-studio-chassis-950 rounded-full relative border border-studio-chassis-700;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+  }
+
+  .eq-fader-cap {
+    @apply absolute w-7 h-4 rounded-sm bg-gradient-to-b from-studio-chassis-600 via-studio-chassis-700 to-studio-chassis-850 border border-studio-chassis-500 cursor-pointer flex items-center justify-center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .eq-fader-cap::after {
+    content: '';
+    @apply w-4 h-[2px] bg-studio-cream/90 rounded-full block;
+  }
+
+  /* LED de indicador de señal */
+  .signal-led {
+    @apply w-2 h-2 rounded-full inline-block transition-all duration-150;
+  }
+
+  .signal-led-green {
+    @apply bg-studio-green;
+    box-shadow: 0 0 3px #16a34a, 0 0 6px rgba(22, 163, 74, 0.5);
+  }
+
+  .signal-led-amber {
+    @apply bg-studio-amber;
+    box-shadow: 0 0 3px #f59e0b, 0 0 6px rgba(245, 158, 11, 0.5);
+  }
+
+  .signal-led-red {
+    @apply bg-studio-red;
+    box-shadow: 0 0 3px #dc2626, 0 0 6px rgba(220, 38, 38, 0.5);
+  }
+
+  .signal-led-slate {
+    @apply bg-studio-slate;
+    box-shadow: 0 0 3px #38bdf8, 0 0 6px rgba(56, 189, 248, 0.5);
+  }
+
+  /* Barras VU segmentadas */
+  .vu-meter-segment {
+    @apply w-1.5 h-1 rounded-[1px] bg-studio-chassis-700;
+  }
+
+  .vu-meter-segment.active-green {
+    @apply bg-studio-green;
+    box-shadow: 0 0 2px rgba(22, 163, 74, 0.8);
+  }
+
+  .vu-meter-segment.active-amber {
+    @apply bg-studio-amber;
+    box-shadow: 0 0 2px rgba(245, 158, 11, 0.8);
+  }
+
+  .vu-meter-segment.active-red {
+    @apply bg-studio-red;
+    box-shadow: 0 0 2px rgba(220, 38, 38, 0.8);
   }
 }
 
-/* Glassmorphism */
-.glass {
-  @apply bg-cyber-800/50 backdrop-blur-sm border border-neon-blue/20;
-}
-
-/* Animaciones personalizadas */
-@keyframes float {
-  0% {
-    transform: translateY(0px);
+/* Glassmorphism sutil para dialog */
+dialog {
+  &::backdrop {
+    @apply bg-studio-chassis-950/85 backdrop-blur-sm;
   }
-
-  50% {
-    transform: translateY(-10px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Efecto de ecualizador */
-@keyframes equalize {
-  0% {
-    transform: scaleY(0.2);
-  }
-
-  50% {
-    transform: scaleY(var(--scale-y, 1));
-  }
-
-  100% {
-    transform: scaleY(0.2);
-  }
-}
-
-.animate-equalize {
-  animation: equalize 1s ease-in-out infinite;
-  animation-delay: calc(var(--bar-index, 0) * 0.05s);
-}
-
-/* Optimización para animaciones */
-.transition-height {
-  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.transition-expand {
-  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
 }
 
 /* Scroll suave */
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
-/* Animaciones personalizadas */
-.hover-lift {
-  @apply transition-transform duration-300 hover:-translate-y-1;
+/* Scrollbar estilo canal de consola */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.hover-glow {
-  @apply transition-all duration-300 hover:shadow-lg hover:shadow-neon-blue/20;
+::-webkit-scrollbar-track {
+  background: #111215;
 }
 
-/* Gradientes */
-.gradient-mask-b {
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+::-webkit-scrollbar-thumb {
+  background: #262931;
+  border-radius: 4px;
+  border: 1px solid #343842;
 }
 
-/* Estilo para dialog */
-dialog {
-  &::backdrop {
-    @apply bg-cyber-950/70 backdrop-blur-sm;
-    will-change: opacity;
-  }
-}
-
-/* Estilos específicos para animaciones */
-.contact-modal-enter {
-  animation: contactModalEnter 0.3s ease-out forwards;
-}
-
-.contact-modal-exit {
-  animation: contactModalExit 0.3s ease-in forwards;
-}
-
-/* Optimización para dispositivos móviles */
-@media (max-width: 768px) {
-  .contact-card-optimized.mobile-expanded {
-    z-index: 10;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--shadow-color, rgba(0, 243, 255, 0.5));
-  }
-
-  /* Reducir complejidad visual en móviles */
-  .equalizer-bar {
-    transition: transform 0.1s ease-out;
-  }
-}
-
-@keyframes contactModalEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes contactModalExit {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-/* Optimizaciones para rendimiento */
-.gpu-accelerate {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Animaciones para el modal de contacto */
-@keyframes slideDown {
-  from {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.form-slide-in {
-  animation: slideDown 0.3s ease forwards;
-}
-
-/* Estilo para las tarjetas de contacto */
-.contact-card-optimized form input,
-.contact-card-optimized form textarea {
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.contact-card-optimized form input:focus,
-.contact-card-optimized form textarea:focus {
-  box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-/* Animación de carga */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Fix para la visualización en dispositivos móviles */
-@media (max-width: 640px) {
-  .contact-card-optimized .max-h-0 {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .contact-card-optimized form,
-  .contact-card-optimized form input,
-  .contact-card-optimized form textarea {
-    max-width: 100%;
-    width: 100%;
-  }
-}
+::-webkit-scrollbar-thumb:hover {
+  background: #343842;
+}
