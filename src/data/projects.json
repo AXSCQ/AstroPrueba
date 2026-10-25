@@ -1,6 +1,105 @@
 {
     "projects": [
         {
+            "id": "codetec",
+            "title": "Codetec · Software a medida",
+            "shortDescription": "Estudio boliviano de desarrollo de software",
+            "description": "Sitio y plataforma de Codetec, el estudio de desarrollo que dirijo: plataformas web, sistemas de gestión y APIs a medida para negocios de Bolivia, con panel de administración, portafolio editable y publicaciones automáticas para redes.",
+            "image": "/images/codetec.jpg",
+            "technologies": [
+                "Laravel",
+                "React",
+                "Inertia",
+                "PostgreSQL",
+                "Docker"
+            ],
+            "features": [
+                "Portafolio de proyectos administrable",
+                "Módulo de publicaciones para redes",
+                "Roles y permisos",
+                "Despliegue continuo en VPS propio"
+            ],
+            "category": "professional",
+            "client": "Codetec",
+            "links": {
+                "demo": "https://codetec.app/",
+                "github": null
+            }
+        },
+        {
+            "id": "sonic-suite",
+            "title": "Sonic Suite · librerías JavaScript",
+            "shortDescription": "Seis librerías para webs que se mueven con la música",
+            "description": "Seis librerías JavaScript sin dependencias, publicadas en npm: análisis de audio por stems (SonicMotion), visualizadores (SonicWave), efectos (SonicFX), animaciones al hacer scroll (SonicScroll), letra sincronizada (SonicLyrics) y rendimiento (SonicPerf). El sitio tiene un ejemplo en vivo de cada una.",
+            "image": "/images/sonic-suite.jpg",
+            "technologies": [
+                "JavaScript",
+                "Web Audio API",
+                "Canvas",
+                "Astro",
+                "npm"
+            ],
+            "features": [
+                "Análisis por stems: voz, batería, bajo y melodía",
+                "Ataques y bandas de frecuencia en tiempo real",
+                "Ejemplos en vivo de las seis librerías",
+                "Sin dependencias, licencia MIT"
+            ],
+            "category": "personal",
+            "links": {
+                "demo": "https://sonic.codetec.app/",
+                "github": null
+            }
+        },
+        {
+            "id": "lapaz-sonora",
+            "title": "La Paz Sonora",
+            "shortDescription": "Un día en La Paz en tres canciones",
+            "description": "Experiencia audio-reactiva en pixel art: un mirador sobre La Paz que pasa de la mañana a la noche con tres canciones. El teleférico, las luces de la ciudad y el clima reaccionan a cada pista de la música, con letra sincronizada.",
+            "image": "/images/lapaz-sonora.jpg",
+            "technologies": [
+                "Astro",
+                "React",
+                "Canvas",
+                "Web Audio API",
+                "Sonic Suite"
+            ],
+            "features": [
+                "Escena de La Paz en pixel art en tres horarios",
+                "Animaciones guiadas por cada stem",
+                "Letra sincronizada palabra por palabra",
+                "Modo liviano para celulares"
+            ],
+            "category": "personal",
+            "links": {
+                "demo": "https://lapazsong.codetec.app/",
+                "github": null
+            }
+        },
+        {
+            "id": "tributo-michael-jackson",
+            "title": "Tributo interactivo a Michael Jackson",
+            "shortDescription": "Ben, Billie Jean y Scream como experiencias web",
+            "description": "Tributo en tres actos: «Ben» (1972), «Billie Jean» (1982) y «Scream» (1995). Cada canción es una escena web que reacciona a sus pistas separadas, con la historia detrás de cada una.",
+            "image": "/images/tributo-mj.jpg",
+            "technologies": [
+                "Astro",
+                "React",
+                "Web Audio API",
+                "Sonic Suite"
+            ],
+            "features": [
+                "Tres actos con estética propia",
+                "Visuales guiados por voz, bajo y coros",
+                "Historia de cada canción"
+            ],
+            "category": "personal",
+            "links": {
+                "demo": "https://tributo.codetec.app/",
+                "github": null
+            }
+        },
+        {
             "id": "ruleta-turismo",
             "title": "Ruleta Interactiva de Turismo Regional",
             "shortDescription": "Rueda de la fortuna para promover turismo",

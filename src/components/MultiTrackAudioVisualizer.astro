@@ -448,8 +448,12 @@
                 normalize: true,
             });
 
-            // Cargar el audio principal (demo.mp3) para la visualización de waveform
-            this.waveSurfer.load("/music/demo.mp3");
+            // La onda sale de una envolvente precalculada (3 KB): con solo la URL,
+            // WaveSurfer bajaba y decodificaba demo.mp3 entero (6 MB) al abrir la página
+            fetch("/music/demo-peaks.json")
+                .then((r) => r.json())
+                .then(({ peaks, duration }) => this.waveSurfer.load("/music/demo.mp3", [peaks], duration))
+                .catch(() => this.waveSurfer.load("/music/demo.mp3"));
 
             this.waveSurfer.on("ready", () => {
                 if (this.masterAudio) {
