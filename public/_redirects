@@ -1,0 +1,3 @@
+# Netlify: la copia vieja del portafolio manda todo al dominio propio (las demás
+# plataformas ignoran este archivo).
+https://axscq.netlify.app/* https://axscq.codetec.app/:splat 301!

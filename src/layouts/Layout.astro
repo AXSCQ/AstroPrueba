@@ -7,14 +7,41 @@ interface Props {
   description?: string;
 }
 
-const SITE_URL = "https://axscq.netlify.app/";
+// Dominio propio desde 2026-10: axscq.netlify.app redirige aquí (public/_redirects)
+const SITE_URL = "https://axscq.codetec.app/";
 
 const {
   title,
   description = "Axel Simon Condori Quispe — Desarrollador Full Stack & Músico. Portafolio interactivo con consola de mezcla de audio.",
 } = Astro.props;
 
-const ogImageUrl = new URL(perfilImage.src, SITE_URL);
+// 1200×630 para que se vea bien al compartir (la foto de perfil es vertical)
+const ogImageUrl = new URL("/og/axscq.jpg", SITE_URL);
+const ogAlt = "Axel Simon Condori Quispe, desarrollador full stack y músico";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}#axel`,
+      name: "Axel Simon Condori Quispe",
+      alternateName: "axscq",
+      url: SITE_URL,
+      image: new URL(perfilImage.src, SITE_URL).href,
+      jobTitle: "Desarrollador Full Stack",
+      description,
+      knowsAbout: ["Desarrollo web", "Laravel", "React", "Astro", "Web Audio API", "Docker", "Música"],
+      address: { "@type": "PostalAddress", addressCountry: "BO" },
+      sameAs: [
+        "https://github.com/AXSCQ",
+        "https://www.linkedin.com/in/axel-simon-condori-quispe-983964215/",
+        "https://www.npmjs.com/~axscq",
+      ],
+    },
+    { "@type": "WebSite", "@id": `${SITE_URL}#web`, name: title, url: SITE_URL, inLanguage: "es", author: { "@id": `${SITE_URL}#axel` } },
+  ],
+};
 ---
 
 <!doctype html>
@@ -25,20 +52,32 @@ const ogImageUrl = new URL(perfilImage.src, SITE_URL);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={SITE_URL} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Axel Simon Condori Quispe" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Axel Simon Condori" />
+    <meta property="og:locale" content="es_ES" />
     <meta property="og:url" content={SITE_URL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta property="profile:first_name" content="Axel Simon" />
+    <meta property="profile:last_name" content="Condori Quispe" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Preload crítico para mejorar performance -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
