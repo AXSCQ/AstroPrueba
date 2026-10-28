@@ -42,6 +42,10 @@ const jsonLd = {
     { "@type": "WebSite", "@id": `${SITE_URL}#web`, name: title, url: SITE_URL, inLanguage: "es", author: { "@id": `${SITE_URL}#axel` } },
   ],
 };
+
+// Analíticas (ver el comentario junto a </head>)
+const UMAMI_ID = 'f7b8bd8c-fc71-4808-a521-35130338f745';
+const GA_ID = '';
 ---
 
 <!doctype html>
@@ -89,6 +93,10 @@ const jsonLd = {
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
     </noscript>
+    <!-- Analíticas: Umami propio (pulso.codetec.app, sin cookies) y Google Analytics si hay GA_ID -->
+    <script defer src="https://pulso.codetec.app/p.js" data-website-id={UMAMI_ID}></script>
+    {GA_ID && <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>}
+    {GA_ID && <script is:inline define:vars={{ GA_ID }}>window.dataLayer = window.dataLayer || []; function gtag(){ dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', GA_ID);</script>}
   </head>
   <body class="bg-studio-chassis-950 text-studio-cream font-light antialiased selection:bg-studio-amber selection:text-studio-chassis-950">
     <!-- Textura sutil de metal anodizado/cepillado de rack -->
