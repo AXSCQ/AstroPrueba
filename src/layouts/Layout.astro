@@ -29,7 +29,8 @@ const jsonLd = {
       alternateName: "axscq",
       url: SITE_URL,
       image: new URL(perfilImage.src, SITE_URL).href,
-      jobTitle: "Desarrollador Full Stack",
+      jobTitle: "Ingeniero de Sistemas y Desarrollador Full Stack",
+      worksFor: { "@type": "Organization", "@id": "https://codetec.app/#codetec", name: "Codetec", url: "https://codetec.app/" },
       description,
       knowsAbout: ["Desarrollo web", "Laravel", "React", "Astro", "Web Audio API", "Docker", "Música"],
       address: { "@type": "PostalAddress", addressCountry: "BO" },
@@ -105,6 +106,9 @@ const GA_ID = '';
       <main>
         <slot />
       </main>
+      <footer class="py-6 text-center text-xs text-studio-cream/50">
+        <a href="https://codetec.app/" class="hover:text-studio-amber transition-colors">Hecho por Codetec</a>
+      </footer>
     </div>
   </body>
 </html>
